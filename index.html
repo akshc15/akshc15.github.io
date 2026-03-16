@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My DevOps Learning Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #060910;
+    --accent: #00e5ff;
+    --orange: #FF6B35;
+    --yellow: #FFD93D;
+    --green: #6BCB77;
+    --text: #e2e8f0;
+    --muted: #64748b;
+    --panel: #101520;
+    --border: #1e2840;
+    --display: 'Bebas Neue', cursive;
+    --body: 'Nunito', sans-serif;
+    --mono: 'JetBrains Mono', monospace;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    background: var(--bg);
+    font-family: var(--body);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 40px 20px;
+    position: relative;
+    overflow-x: hidden;
+  }
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background:
+      radial-gradient(ellipse at 20% 20%, rgba(0,229,255,0.06) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 80%, rgba(255,107,53,0.05) 0%, transparent 50%);
+    pointer-events: none;
+  }
+
+  .badge {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--accent);
+    border: 1px solid rgba(0,229,255,0.3);
+    background: rgba(0,229,255,0.07);
+    padding: 5px 16px;
+    border-radius: 20px;
+    margin-bottom: 24px;
+    letter-spacing: 0.1em;
+    animation: fadeIn 0.6s both;
+  }
+  @keyframes fadeIn { from{opacity:0;transform:translateY(-10px)} to{opacity:1;transform:translateY(0)} }
+
+  h1 {
+    font-family: var(--display);
+    font-size: clamp(48px, 10vw, 96px);
+    line-height: 0.95;
+    text-align: center;
+    letter-spacing: 3px;
+    margin-bottom: 12px;
+    animation: fadeIn 0.6s 0.1s both;
+  }
+  h1 span.line1 { display:block; color: var(--text); }
+  h1 span.line2 { display:block; color: var(--accent); }
+
+  .sub {
+    color: var(--muted);
+    text-align: center;
+    font-size: 16px;
+    max-width: 500px;
+    margin-bottom: 50px;
+    animation: fadeIn 0.6s 0.2s both;
+    line-height: 1.6;
+  }
+
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+    max-width: 750px;
+    width: 100%;
+    animation: fadeIn 0.6s 0.3s both;
+  }
+
+  .card {
+    background: var(--panel);
+    border: 2px solid var(--border);
+    border-radius: 16px;
+    padding: 28px;
+    text-decoration: none;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+    display: block;
+  }
+  .card::before {
+    content: '';
+    position: absolute; inset: 0;
+    opacity: 0;
+    transition: opacity 0.3s;
+    border-radius: 14px;
+  }
+  .card.blue::before { background: radial-gradient(ellipse at top left, rgba(0,229,255,0.1), transparent 60%); }
+  .card.orange::before { background: radial-gradient(ellipse at top left, rgba(255,107,53,0.1), transparent 60%); }
+  .card:hover { transform: translateY(-6px); border-color: var(--accent); }
+  .card.orange:hover { border-color: var(--orange); }
+  .card:hover::before { opacity: 1; }
+
+  .card-icon { font-size: 52px; margin-bottom: 14px; display: block; }
+  .card-title {
+    font-family: var(--display);
+    font-size: 28px;
+    letter-spacing: 2px;
+    margin-bottom: 8px;
+    color: var(--accent);
+  }
+  .card.orange .card-title { color: var(--orange); }
+  .card-desc { color: var(--muted); font-size: 14px; line-height: 1.6; margin-bottom: 18px; }
+  .card-btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--accent);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+  .card.orange .card-btn { color: var(--orange); }
+
+  .footer {
+    margin-top: 50px;
+    color: var(--muted);
+    font-family: var(--mono);
+    font-size: 12px;
+    text-align: center;
+    animation: fadeIn 0.6s 0.5s both;
+  }
+  .footer a { color: var(--accent); text-decoration: none; }
+
+  .stars {
+    position: fixed; inset: 0; pointer-events: none;
+    background:
+      radial-gradient(1px 1px at 15% 25%, rgba(255,255,255,0.8), transparent),
+      radial-gradient(1px 1px at 40% 60%, rgba(255,255,255,0.6), transparent),
+      radial-gradient(1px 1px at 65% 15%, rgba(255,255,255,0.7), transparent),
+      radial-gradient(1px 1px at 85% 75%, rgba(255,255,255,0.5), transparent),
+      radial-gradient(1px 1px at 25% 85%, rgba(255,255,255,0.6), transparent),
+      radial-gradient(1px 1px at 75% 45%, rgba(255,255,255,0.4), transparent),
+      radial-gradient(2px 2px at 50% 35%, rgba(255,255,255,0.3), transparent);
+  }
+</style>
+</head>
+<body>
+<div class="stars"></div>
+<div class="badge">● MY DEVOPS LEARNING PORTAL</div>
+<h1>
+  <span class="line1">DEVOPS</span>
+  <span class="line2">ZERO TO HERO</span>
+</h1>
+<p class="sub">Complete learning materials for the End-to-End Kubernetes Three-Tier DevSecOps Project on AWS EKS.</p>
+
+<div class="cards">
+  <a href="devops-mastery-guide.html" class="card blue">
+    <span class="card-icon">📖</span>
+    <div class="card-title">MASTER GUIDE</div>
+    <p class="card-desc">Complete step-by-step project guide — from AWS account creation to EKS deployment. Every command, every click explained.</p>
+    <div class="card-btn">Open Guide →</div>
+  </a>
+
+  <a href="devops-cartoon.html" class="card orange">
+    <span class="card-icon">🎬</span>
+    <div class="card-title">CARTOON STORY</div>
+    <p class="card-desc">10-episode animated cartoon that teaches every DevOps concept with analogies, stories, and real error fixes you'll never forget.</p>
+    <div class="card-btn">Start Adventure →</div>
+  </a>
+</div>
+
+<div class="footer">
+  Built with ❤️ using AWS EKS · Terraform · Jenkins · ArgoCD · Prometheus<br>
+  <span style="margin-top:6px;display:block">Hosted free on <a href="https://pages.github.com" target="_blank">GitHub Pages</a></span>
+</div>
+</body>
+</html>
