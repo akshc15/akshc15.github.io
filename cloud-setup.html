@@ -1,0 +1,1597 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DevOps Universe 🚀 — akshc15</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800;900&family=Fira+Code:wght@400;600&display=swap" rel="stylesheet">
+<style>
+/* ════════════════════════════════════
+   ROOT & RESET
+════════════════════════════════════ */
+:root {
+  --sky:#0b0e1a; --sky2:#0f1525; --sky3:#151c35;
+  --sun:#FFD93D; --fire:#FF6B35; --mint:#34d399;
+  --sky-blue:#60a5fa; --purple:#a78bfa; --pink:#f472b6;
+  --red:#f87171; --white:#f0f4ff; --dim:#2a3355;
+  --muted:#5c6a90;
+  --fred:'Fredoka One',cursive;
+  --nun:'Nunito',sans-serif;
+  --code:'Fira Code',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  background:var(--sky);
+  font-family:var(--nun);
+  color:var(--white);
+  overflow-x:hidden;
+  cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Ctext y='24' font-size='24'%3E🚀%3C/text%3E%3C/svg%3E") 0 0, auto;
+}
+
+/* ════════════════════════════════════
+   FLOATING PARTICLES
+════════════════════════════════════ */
+#particles{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden;}
+.star{
+  position:absolute;border-radius:50%;
+  background:white;
+  animation:starTwinkle var(--d,3s) var(--delay,0s) infinite alternate;
+}
+@keyframes starTwinkle{from{opacity:.2;transform:scale(1)}to{opacity:1;transform:scale(1.5)}}
+.floaty{
+  position:absolute;font-size:var(--fs,24px);
+  animation:floatUp var(--fd,8s) var(--fdelay,0s) infinite linear;
+  opacity:.15;pointer-events:none;
+}
+@keyframes floatUp{
+  0%{transform:translateY(100vh) rotate(0deg);opacity:0}
+  10%{opacity:.15}
+  90%{opacity:.15}
+  100%{transform:translateY(-100px) rotate(360deg);opacity:0}
+}
+
+/* ════════════════════════════════════
+   HERO — THE UNIVERSE
+════════════════════════════════════ */
+#universe{
+  position:relative;z-index:1;
+  min-height:100vh;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  text-align:center;padding:60px 20px 40px;
+  background:radial-gradient(ellipse at 50% 0%,rgba(96,165,250,.12) 0%,transparent 60%);
+}
+
+/* ANIMATED PLANET */
+.planet-wrapper{
+  position:relative;width:200px;height:200px;
+  margin:0 auto 30px;
+}
+.planet{
+  width:180px;height:180px;border-radius:50%;
+  background:radial-gradient(circle at 35% 35%,#60a5fa,#1e3a8a,#0a1128);
+  box-shadow:0 0 60px rgba(96,165,250,.4),inset -30px -20px 40px rgba(0,0,0,.5);
+  animation:planetSpin 20s linear infinite;
+  position:relative;overflow:hidden;margin:10px auto;
+}
+@keyframes planetSpin{from{filter:hue-rotate(0deg)}to{filter:hue-rotate(15deg)}}
+.planet-ring{
+  position:absolute;top:50%;left:50%;
+  width:260px;height:50px;border-radius:50%;
+  border:6px solid rgba(255,217,61,.4);
+  transform:translate(-50%,-50%) rotateX(75deg);
+  box-shadow:0 0 20px rgba(255,217,61,.2);
+  pointer-events:none;
+}
+.planet-orbit{
+  position:absolute;inset:-40px;border-radius:50%;
+  border:1px dashed rgba(96,165,250,.2);
+  animation:orbitSpin 8s linear infinite;
+}
+@keyframes orbitSpin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+.orbit-dot{
+  position:absolute;top:0;left:50%;
+  width:16px;height:16px;border-radius:50%;
+  background:var(--sun);
+  transform:translate(-50%,-50%);
+  box-shadow:0 0 10px var(--sun);
+}
+
+.hero-title{
+  font-family:var(--fred);
+  font-size:clamp(42px,9vw,96px);
+  line-height:.95;
+  margin-bottom:16px;
+  animation:heroIn 1s cubic-bezier(.34,1.56,.64,1) both;
+}
+@keyframes heroIn{from{transform:scale(.5) rotate(-5deg);opacity:0}to{transform:scale(1) rotate(0);opacity:1}}
+.hero-title .t1{
+  display:block;
+  background:linear-gradient(135deg,var(--sun),var(--fire));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;
+  filter:drop-shadow(0 0 30px rgba(255,217,61,.4));
+}
+.hero-title .t2{color:var(--sky-blue);display:block;}
+.hero-title .t3{
+  display:block;
+  background:linear-gradient(135deg,var(--mint),var(--sky-blue));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+
+.hero-sub{
+  font-size:clamp(16px,2.5vw,20px);
+  color:rgba(240,244,255,.6);
+  max-width:600px;margin:0 auto 36px;
+  font-weight:600;line-height:1.6;
+  animation:fadeUp .8s .3s both;
+}
+@keyframes fadeUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+
+/* MASCOT */
+.mascot{
+  font-size:80px;display:inline-block;
+  animation:mascotBounce 2s ease-in-out infinite;
+  filter:drop-shadow(0 10px 20px rgba(0,0,0,.5));
+  margin-bottom:10px;
+}
+@keyframes mascotBounce{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(-20px) rotate(3deg)}}
+
+.speech-bubble{
+  background:white;color:#1a1a2e;
+  border-radius:20px;padding:12px 20px;
+  font-size:15px;font-weight:800;
+  box-shadow:0 8px 30px rgba(0,0,0,.3);
+  position:relative;display:inline-block;
+  max-width:320px;
+  animation:fadeUp .8s .5s both;
+}
+.speech-bubble::before{
+  content:'';position:absolute;
+  bottom:-14px;left:50%;transform:translateX(-50%);
+  border:14px solid transparent;
+  border-top:14px solid white;
+  border-bottom:none;
+}
+
+/* ════════════════════════════════════
+   SECTION COMMON
+════════════════════════════════════ */
+section{
+  position:relative;z-index:1;
+  padding:60px 0;
+}
+.container{max-width:1100px;margin:0 auto;padding:0 24px;}
+
+.sec-eyebrow{
+  font-family:var(--code);font-size:12px;
+  text-transform:uppercase;letter-spacing:.12em;
+  color:var(--mint);
+  background:rgba(52,211,153,.08);
+  border:1px solid rgba(52,211,153,.2);
+  padding:4px 14px;border-radius:100px;
+  display:inline-block;margin-bottom:16px;
+}
+.sec-title{
+  font-family:var(--fred);
+  font-size:clamp(32px,5vw,56px);
+  line-height:1;margin-bottom:12px;
+}
+.sec-desc{color:var(--muted);font-size:15px;max-width:600px;}
+
+/* ════════════════════════════════════
+   WORLD MAP — JOURNEY
+════════════════════════════════════ */
+#journey{background:linear-gradient(180deg,var(--sky) 0%,var(--sky2) 100%);}
+
+.journey-path{
+  position:relative;
+  display:flex;flex-direction:column;gap:0;
+  max-width:800px;margin:40px auto 0;
+}
+.journey-path::before{
+  content:'';
+  position:absolute;
+  left:39px;top:20px;bottom:20px;width:4px;
+  background:linear-gradient(to bottom,var(--sun),var(--mint),var(--sky-blue),var(--purple));
+  border-radius:4px;
+  z-index:0;
+}
+
+.journey-stop{
+  display:flex;gap:20px;align-items:flex-start;
+  position:relative;z-index:1;margin-bottom:8px;
+  animation:stopIn .5s both;
+}
+@keyframes stopIn{from{opacity:0;transform:translateX(-30px)}to{opacity:1;transform:translateX(0)}}
+
+.stop-icon{
+  width:80px;height:80px;border-radius:50%;
+  flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-size:36px;
+  border:4px solid;
+  transition:all .3s;position:relative;z-index:1;
+  cursor:pointer;
+  animation:iconPulse 3s ease-in-out infinite;
+}
+@keyframes iconPulse{0%,100%{box-shadow:0 0 0 0 currentColor}50%{box-shadow:0 0 0 8px transparent}}
+.stop-icon:hover{transform:scale(1.15) rotate(10deg);}
+.si-1{background:rgba(255,217,61,.15);border-color:var(--sun);color:var(--sun);}
+.si-2{background:rgba(255,107,53,.15);border-color:var(--fire);color:var(--fire);}
+.si-3{background:rgba(52,211,153,.15);border-color:var(--mint);color:var(--mint);}
+.si-4{background:rgba(96,165,250,.15);border-color:var(--sky-blue);color:var(--sky-blue);}
+.si-5{background:rgba(167,139,250,.15);border-color:var(--purple);color:var(--purple);}
+.si-6{background:rgba(244,114,182,.15);border-color:var(--pink);color:var(--pink);}
+
+.stop-content{
+  background:var(--sky3);
+  border:1px solid var(--dim);
+  border-radius:16px;padding:20px 24px;
+  flex:1;transition:all .3s;cursor:pointer;margin:8px 0 20px;
+}
+.stop-content:hover{border-color:var(--sky-blue);transform:translateY(-2px);box-shadow:0 10px 40px rgba(0,0,0,.3);}
+.stop-num{
+  font-family:var(--code);font-size:11px;
+  color:var(--muted);letter-spacing:.08em;margin-bottom:6px;
+}
+.stop-title{
+  font-family:var(--fred);font-size:22px;
+  margin-bottom:6px;
+}
+.stop-desc{color:var(--muted);font-size:14px;line-height:1.6;}
+.stop-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;}
+.stag{
+  font-family:var(--code);font-size:10px;
+  padding:2px 10px;border-radius:100px;
+  border:1px solid var(--dim);color:var(--muted);
+}
+
+/* ════════════════════════════════════
+   CLOUD VM SETUP — BIG INTERACTIVE
+════════════════════════════════════ */
+#cloud-setup{background:linear-gradient(180deg,var(--sky2) 0%,var(--sky3) 100%);}
+
+/* CLOUD PROVIDER SELECTOR */
+.provider-tabs{
+  display:flex;gap:12px;flex-wrap:wrap;
+  margin-bottom:32px;
+}
+.ptab{
+  display:flex;align-items:center;gap:10px;
+  background:var(--sky3);border:2px solid var(--dim);
+  border-radius:14px;padding:14px 20px;
+  cursor:pointer;transition:all .25s;
+  font-weight:800;font-size:15px;
+}
+.ptab:hover,.ptab.active{transform:translateY(-3px);}
+.ptab-aws.active{border-color:var(--fire);background:rgba(255,107,53,.1);color:var(--fire);}
+.ptab-azure.active{border-color:var(--sky-blue);background:rgba(96,165,250,.1);color:var(--sky-blue);}
+.ptab-gcp.active{border-color:var(--mint);background:rgba(52,211,153,.1);color:var(--mint);}
+.ptab-icon{font-size:28px;}
+
+.provider-content{display:none;}
+.provider-content.active{display:block;}
+
+/* STEP WIZARD */
+.wizard{
+  background:var(--sky);
+  border:2px solid var(--dim);
+  border-radius:20px;overflow:hidden;
+}
+.wizard-header{
+  background:linear-gradient(135deg,rgba(255,107,53,.1),rgba(96,165,250,.05));
+  padding:20px 28px;border-bottom:1px solid var(--dim);
+  display:flex;align-items:center;gap:16px;flex-wrap:wrap;
+}
+.wizard-title{font-family:var(--fred);font-size:24px;}
+.wizard-steps-nav{
+  display:flex;gap:0;overflow-x:auto;
+}
+.wnav-btn{
+  font-family:var(--code);font-size:11px;
+  padding:8px 16px;border:none;
+  background:transparent;color:var(--muted);
+  cursor:pointer;transition:all .2s;
+  border-bottom:2px solid transparent;
+  white-space:nowrap;
+}
+.wnav-btn.active{color:var(--sun);border-bottom-color:var(--sun);}
+.wnav-btn:hover{color:var(--white);}
+
+.wizard-body{padding:28px;}
+.wstep{display:none;}
+.wstep.active{display:block;animation:wstepIn .4s both;}
+@keyframes wstepIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+
+/* CLICK GUIDE STEPS */
+.click-guide{display:flex;flex-direction:column;gap:10px;margin:16px 0;}
+.cg-step{
+  display:flex;gap:14px;align-items:flex-start;
+  background:rgba(255,255,255,.03);
+  border:1px solid var(--dim);
+  border-radius:12px;padding:16px;
+  transition:all .2s;
+}
+.cg-step:hover{border-color:var(--sky-blue);background:rgba(96,165,250,.05);}
+.cg-num{
+  width:32px;height:32px;border-radius:50%;
+  background:var(--sun);color:#1a1a2e;
+  font-family:var(--fred);font-size:15px;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;margin-top:2px;
+  box-shadow:0 4px 12px rgba(255,217,61,.3);
+}
+.cg-content{flex:1;}
+.cg-title{font-weight:800;font-size:14px;margin-bottom:4px;}
+.cg-desc{color:var(--muted);font-size:13px;line-height:1.6;}
+.cg-desc strong{color:var(--white);}
+.btn-pill{
+  display:inline-flex;align-items:center;gap:4px;
+  background:rgba(255,217,61,.15);
+  border:1px solid rgba(255,217,61,.3);
+  color:var(--sun);
+  font-family:var(--code);font-size:11px;
+  padding:2px 10px;border-radius:6px;
+  margin:0 3px;vertical-align:middle;
+}
+.btn-pill-blue{background:rgba(96,165,250,.12);border-color:rgba(96,165,250,.3);color:var(--sky-blue);}
+.btn-pill-green{background:rgba(52,211,153,.12);border-color:rgba(52,211,153,.3);color:var(--mint);}
+
+/* CODE TERMINAL */
+.terminal{
+  background:#050810;
+  border:1px solid rgba(52,211,153,.3);
+  border-radius:12px;overflow:hidden;
+  margin:14px 0;
+  box-shadow:0 0 30px rgba(52,211,153,.05);
+}
+.terminal-bar{
+  background:#0d1117;
+  padding:10px 16px;
+  display:flex;align-items:center;gap:8px;
+  border-bottom:1px solid rgba(255,255,255,.06);
+}
+.tb-dot{width:12px;height:12px;border-radius:50%;}
+.tb-red{background:#ff5f57;}
+.tb-yellow{background:#febc2e;}
+.tb-green{background:#28c840;}
+.tb-title{font-family:var(--code);font-size:11px;color:var(--muted);margin-left:8px;}
+.terminal-body{
+  padding:16px 20px;
+  font-family:var(--code);font-size:13px;
+  line-height:1.9;overflow-x:auto;
+}
+.tc{color:#374151;}
+.tk{color:#818cf8;}
+.ts{color:var(--mint);}
+.tf{color:var(--sun);}
+.tcmd{color:var(--sky-blue);}
+.terror{color:var(--red);}
+.tfix{color:var(--mint);}
+.tpath{color:var(--pink);}
+
+/* WIZARD NAV BUTTONS */
+.wizard-nav{
+  display:flex;justify-content:space-between;
+  padding:16px 28px 24px;
+  border-top:1px solid var(--dim);
+  margin-top:10px;
+}
+.wnav-prev,.wnav-next{
+  font-family:var(--fred);font-size:16px;
+  padding:10px 28px;border-radius:50px;
+  border:2px solid;cursor:pointer;
+  transition:all .2s;letter-spacing:.05em;
+}
+.wnav-prev{border-color:var(--dim);color:var(--muted);background:transparent;}
+.wnav-prev:hover{border-color:var(--white);color:var(--white);}
+.wnav-next{border-color:var(--sun);color:var(--sky);background:var(--sun);}
+.wnav-next:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(255,217,61,.3);}
+
+/* ════════════════════════════════════
+   TOOL CONNECTION DIAGRAM
+════════════════════════════════════ */
+.connection-map{
+  background:var(--sky);border:1px solid var(--dim);
+  border-radius:20px;padding:32px;margin:24px 0;
+}
+.cm-row{
+  display:flex;align-items:center;justify-content:center;
+  gap:6px;flex-wrap:wrap;margin:8px 0;
+}
+.cm-box{
+  background:var(--sky2);border:2px solid var(--dim);
+  border-radius:12px;padding:12px 16px;
+  text-align:center;min-width:90px;
+  transition:all .3s;cursor:pointer;
+}
+.cm-box:hover{transform:scale(1.08);border-color:var(--sky-blue);}
+.cm-icon{font-size:26px;display:block;margin-bottom:4px;}
+.cm-label{font-family:var(--code);font-size:10px;color:var(--muted);}
+.cm-name{font-weight:800;font-size:12px;}
+.cm-arr{font-size:20px;color:var(--dim);}
+.cm-line{
+  height:2px;flex:1;min-width:20px;
+  background:linear-gradient(to right,var(--dim),var(--sky-blue),var(--dim));
+  border-radius:2px;
+}
+
+/* ════════════════════════════════════
+   PROJECTS GRID — CLOUD VM
+════════════════════════════════════ */
+#projects{background:var(--sky);}
+
+.level-section{margin-bottom:48px;}
+.level-header{
+  display:flex;align-items:center;gap:14px;
+  margin-bottom:24px;padding:16px 20px;
+  border-radius:14px;
+  border-left:4px solid;
+}
+.lh-rookie{background:rgba(52,211,153,.06);border-color:var(--mint);}
+.lh-mid{background:rgba(96,165,250,.06);border-color:var(--sky-blue);}
+.lh-senior{background:rgba(245,158,11,.06);border-color:#f59e0b;}
+.lh-pro{background:rgba(167,139,250,.06);border-color:var(--purple);}
+
+.level-icon{font-size:40px;}
+.level-name{font-family:var(--fred);font-size:26px;}
+.level-desc{color:var(--muted);font-size:13px;}
+
+.proj-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(300px,1fr));
+  gap:14px;
+}
+
+.pcard{
+  background:var(--sky2);
+  border:1px solid var(--dim);
+  border-radius:16px;padding:20px;
+  transition:all .3s;position:relative;
+  overflow:hidden;cursor:pointer;
+}
+.pcard::after{
+  content:'';position:absolute;
+  inset:0;border-radius:16px;
+  background:radial-gradient(circle at var(--mx,50%) var(--my,50%),rgba(96,165,250,.08),transparent 60%);
+  opacity:0;transition:opacity .3s;pointer-events:none;
+}
+.pcard:hover::after{opacity:1;}
+.pcard:hover{transform:translateY(-5px);border-color:var(--sky-blue);box-shadow:0 20px 50px rgba(0,0,0,.4);}
+
+.pcard-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;}
+.pcard-emoji{font-size:36px;}
+.pcard-num{
+  font-family:var(--code);font-size:10px;
+  color:var(--muted);
+  background:rgba(255,255,255,.04);
+  border:1px solid var(--dim);
+  padding:2px 10px;border-radius:6px;
+}
+.pcard-title{font-family:var(--fred);font-size:18px;margin-bottom:6px;line-height:1.2;}
+.pcard-desc{color:var(--muted);font-size:13px;line-height:1.6;margin-bottom:12px;}
+.pcard-vm{
+  display:flex;align-items:center;gap:6px;
+  font-family:var(--code);font-size:11px;
+  color:var(--mint);
+  background:rgba(52,211,153,.08);
+  border:1px solid rgba(52,211,153,.2);
+  padding:3px 10px;border-radius:6px;
+  width:fit-content;margin-bottom:10px;
+}
+.pcard-tags{display:flex;flex-wrap:wrap;gap:5px;}
+.ptag{
+  font-family:var(--code);font-size:10px;
+  padding:2px 9px;border-radius:5px;
+  border:1px solid var(--dim);color:var(--muted);
+}
+.pcard-time{
+  font-family:var(--code);font-size:11px;
+  color:var(--muted);margin-top:10px;
+  padding-top:10px;border-top:1px solid var(--dim);
+}
+
+/* ════════════════════════════════════
+   TOOL SETUP SECTION
+════════════════════════════════════ */
+#tools{background:linear-gradient(180deg,var(--sky3) 0%,var(--sky) 100%);}
+
+.tools-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:24px;}
+.ttab{
+  font-family:var(--fred);font-size:15px;
+  padding:8px 20px;border-radius:50px;
+  border:2px solid var(--dim);
+  background:transparent;color:var(--muted);
+  cursor:pointer;transition:all .2s;
+}
+.ttab.active,.ttab:hover{border-color:var(--sun);color:var(--sun);background:rgba(255,217,61,.08);}
+
+.tool-content{display:none;}
+.tool-content.active{display:block;animation:wstepIn .3s both;}
+
+.tool-card{
+  background:var(--sky2);border:1px solid var(--dim);
+  border-radius:16px;padding:24px;margin-bottom:14px;
+}
+.tc-header{
+  display:flex;align-items:center;gap:14px;margin-bottom:16px;
+}
+.tc-icon{font-size:44px;}
+.tc-title{font-family:var(--fred);font-size:22px;}
+.tc-sub{color:var(--muted);font-size:13px;margin-top:2px;}
+
+/* ════════════════════════════════════
+   MEMORY CARDS — NEVER FORGET
+════════════════════════════════════ */
+#memory{background:var(--sky2);}
+.memory-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(200px,1fr));
+  gap:12px;margin-top:24px;
+}
+.mem-card{
+  background:var(--sky);
+  border:2px solid var(--dim);
+  border-radius:16px;padding:20px;
+  text-align:center;
+  transition:all .3s;cursor:pointer;
+  position:relative;overflow:hidden;
+}
+.mem-card:hover{transform:scale(1.05) rotate(-1deg);}
+.mem-front,.mem-back{transition:all .3s;}
+.mem-card:hover .mem-front{opacity:0;transform:scale(.8);}
+.mem-back{
+  position:absolute;inset:0;
+  display:flex;align-items:center;justify-content:center;
+  padding:16px;font-size:13px;font-weight:700;
+  background:var(--sky3);border-radius:14px;
+  opacity:0;transform:scale(.8);
+  transition:all .3s;
+  line-height:1.5;
+}
+.mem-card:hover .mem-back{opacity:1;transform:scale(1);}
+.mem-emoji{font-size:44px;margin-bottom:8px;display:block;}
+.mem-word{font-family:var(--fred);font-size:20px;}
+.mem-hint{font-family:var(--code);font-size:10px;color:var(--muted);margin-top:4px;}
+
+/* ════════════════════════════════════
+   FOOTER
+════════════════════════════════════ */
+footer{
+  position:relative;z-index:1;
+  background:var(--sky);
+  border-top:1px solid var(--dim);
+  padding:30px 24px;text-align:center;
+  font-family:var(--code);font-size:12px;color:var(--muted);
+}
+footer a{color:var(--mint);text-decoration:none;}
+
+/* ════════════════════════════════════
+   UTILITY
+════════════════════════════════════ */
+.divider{height:1px;background:linear-gradient(to right,transparent,var(--dim),transparent);margin:24px 0;}
+.tip-box{
+  display:flex;gap:12px;
+  background:rgba(52,211,153,.06);
+  border:1px solid rgba(52,211,153,.2);
+  border-radius:10px;padding:14px 16px;
+  margin:12px 0;font-size:13px;
+  line-height:1.6;color:var(--muted);
+}
+.tip-box strong{color:var(--white);}
+.warn-box{
+  display:flex;gap:12px;
+  background:rgba(248,113,113,.06);
+  border:1px solid rgba(248,113,113,.2);
+  border-radius:10px;padding:14px 16px;
+  margin:12px 0;font-size:13px;color:var(--muted);
+}
+.warn-box strong{color:var(--white);}
+.note-box{
+  display:flex;gap:12px;
+  background:rgba(96,165,250,.06);
+  border:1px solid rgba(96,165,250,.2);
+  border-radius:10px;padding:14px 16px;
+  margin:12px 0;font-size:13px;color:var(--muted);
+}
+.note-box strong{color:var(--white);}
+h3{font-family:var(--fred);font-size:20px;margin-bottom:10px;}
+h4{font-family:var(--code);font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:8px;}
+
+/* scrollbar */
+::-webkit-scrollbar{width:5px;height:5px;}
+::-webkit-scrollbar-track{background:var(--sky);}
+::-webkit-scrollbar-thumb{background:var(--dim);border-radius:3px;}
+
+/* responsive */
+@media(max-width:640px){
+  .journey-path::before{left:29px;}
+  .stop-icon{width:60px;height:60px;font-size:26px;}
+  .wizard-body{padding:16px;}
+}
+</style>
+</head>
+<body>
+
+<!-- PARTICLES -->
+<div id="particles"></div>
+
+<!-- ══════════════════════════════════════
+     HERO — THE UNIVERSE
+══════════════════════════════════════ -->
+<section id="universe">
+  <div class="planet-wrapper">
+    <div class="planet"></div>
+    <div class="planet-ring"></div>
+    <div class="planet-orbit"><div class="orbit-dot"></div></div>
+  </div>
+
+  <h1 class="hero-title">
+    <span class="t1">DEVOPS</span>
+    <span class="t2">UNIVERSE</span>
+    <span class="t3">🚀 CLOUD EDITION</span>
+  </h1>
+  <p class="hero-sub">Hey! I'm DEVO — your robot best friend 🤖<br>I'll teach you to build REAL stuff on cloud computers in the sky — and save your Mac's storage!</p>
+
+  <div class="mascot">🤖</div>
+  <div class="speech-bubble">
+    "Your M4 Mac is the REMOTE CONTROL. The CLOUD is your SUPERCOMPUTER in the sky! Let's connect them! 🌩️"
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     THE JOURNEY MAP
+══════════════════════════════════════ -->
+<section id="journey" style="border-top:1px solid var(--dim);">
+  <div class="container">
+    <div class="sec-eyebrow">// your adventure map</div>
+    <h2 class="sec-title">🗺️ The 6 Worlds to Conquer</h2>
+    <p class="sec-desc">Each world builds on the last. Complete them in order and you'll be a DevOps legend!</p>
+
+    <div class="journey-path">
+      <div class="journey-stop" style="animation-delay:.1s">
+        <div class="stop-icon si-1">☁️</div>
+        <div class="stop-content" onclick="location='#cloud-setup'">
+          <div class="stop-num">// WORLD 1</div>
+          <div class="stop-title" style="color:var(--sun)">Cloud Kingdom — Setup Your VM</div>
+          <div class="stop-desc">Create your FREE cloud computer in the sky (AWS/Azure/GCP). Connect from M4 Mac. Never use your own storage again!</div>
+          <div class="stop-tags">
+            <span class="stag">AWS EC2</span><span class="stag">Azure VM</span><span class="stag">SSH</span><span class="stag">VS Code Remote</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="journey-stop" style="animation-delay:.2s">
+        <div class="stop-icon si-2">🐙</div>
+        <div class="stop-content" onclick="location='#tools'">
+          <div class="stop-num">// WORLD 2</div>
+          <div class="stop-title" style="color:var(--fire)">GitHub City — Master Git</div>
+          <div class="stop-desc">Set up GitHub properly. Connect VS Code to GitHub. Branching, PRs, Actions — the pro way from day one.</div>
+          <div class="stop-tags">
+            <span class="stag">Git</span><span class="stag">GitHub</span><span class="stag">VS Code</span><span class="stag">SSH Keys</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="journey-stop" style="animation-delay:.3s">
+        <div class="stop-icon si-3">🐳</div>
+        <div class="stop-content" onclick="location='#projects'">
+          <div class="stop-num">// WORLD 3</div>
+          <div class="stop-title" style="color:var(--mint)">Docker Island — Containers</div>
+          <div class="stop-desc">Build and run containers on your cloud VM. No storage on Mac. Everything runs in the cloud!</div>
+          <div class="stop-tags">
+            <span class="stag">Docker</span><span class="stag">Dockerfile</span><span class="stag">Compose</span><span class="stag">ECR</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="journey-stop" style="animation-delay:.4s">
+        <div class="stop-icon si-4">☸️</div>
+        <div class="stop-content" onclick="location='#projects'">
+          <div class="stop-num">// WORLD 4</div>
+          <div class="stop-title" style="color:var(--sky-blue)">Kubernetes Galaxy — Orchestration</div>
+          <div class="stop-desc">Deploy apps to Kubernetes clusters. Scale them. Monitor them. The most in-demand skill in DevOps 2026.</div>
+          <div class="stop-tags">
+            <span class="stag">K8s</span><span class="stag">EKS</span><span class="stag">Helm</span><span class="stag">ArgoCD</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="journey-stop" style="animation-delay:.5s">
+        <div class="stop-icon si-5">🏗️</div>
+        <div class="stop-content" onclick="location='#projects'">
+          <div class="stop-num">// WORLD 5</div>
+          <div class="stop-title" style="color:var(--purple)">Terraform Fortress — IaC</div>
+          <div class="stop-desc">Write code that BUILDS cloud infrastructure. No clicking. Repeatable. Versioned. Professional.</div>
+          <div class="stop-tags">
+            <span class="stag">Terraform</span><span class="stag">Ansible</span><span class="stag">IaC</span><span class="stag">Modules</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="journey-stop" style="animation-delay:.6s">
+        <div class="stop-icon si-6">📊</div>
+        <div class="stop-content" onclick="location='#projects'">
+          <div class="stop-num">// WORLD 6</div>
+          <div class="stop-title" style="color:var(--pink)">Observatory — Monitor Everything</div>
+          <div class="stop-desc">See inside every app, every server. Prometheus. Grafana. Alerts. SLOs. The eyes of your system.</div>
+          <div class="stop-tags">
+            <span class="stag">Prometheus</span><span class="stag">Grafana</span><span class="stag">Loki</span><span class="stag">AlertManager</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     CLOUD VM SETUP — THE BIG ONE
+══════════════════════════════════════ -->
+<section id="cloud-setup" style="border-top:1px solid var(--dim);">
+  <div class="container">
+    <div class="sec-eyebrow">// world 1 — cloud kingdom</div>
+    <h2 class="sec-title">☁️ Create Your Cloud Computer</h2>
+    <p class="sec-desc">Pick a cloud — I'll show you exactly where to click, step by step. Your M4 Mac becomes the remote control!</p>
+
+    <!-- HOW IT WORKS DIAGRAM -->
+    <div class="connection-map" style="margin:28px 0;">
+      <div style="font-family:var(--code);font-size:11px;color:var(--muted);text-align:center;margin-bottom:20px;text-transform:uppercase;letter-spacing:.1em">How Your M4 Mac Connects to Cloud VM</div>
+      <div class="cm-row">
+        <div class="cm-box">
+          <span class="cm-icon">💻</span>
+          <div class="cm-name">M4 Mac</div>
+          <div class="cm-label">Your laptop</div>
+        </div>
+        <div class="cm-arr">━━</div>
+        <div class="cm-box" style="border-color:rgba(52,211,153,.4)">
+          <span class="cm-icon">🔐</span>
+          <div class="cm-name">SSH</div>
+          <div class="cm-label">Encrypted tunnel</div>
+        </div>
+        <div class="cm-arr">━━</div>
+        <div class="cm-box" style="border-color:rgba(96,165,250,.4)">
+          <span class="cm-icon">☁️</span>
+          <div class="cm-name">Cloud VM</div>
+          <div class="cm-label">Your server</div>
+        </div>
+        <div class="cm-arr">━━</div>
+        <div class="cm-box">
+          <span class="cm-icon">💾</span>
+          <div class="cm-name">Storage</div>
+          <div class="cm-label">In the cloud</div>
+        </div>
+      </div>
+      <div style="text-align:center;margin-top:16px;font-size:13px;color:var(--muted);">
+        VS Code on your Mac → SSH → edits files ON the cloud VM → all tools run IN the cloud → <strong style="color:var(--mint)">zero storage used on your Mac!</strong>
+      </div>
+    </div>
+
+    <!-- PROVIDER TABS -->
+    <div class="provider-tabs">
+      <div class="ptab ptab-aws active" onclick="switchProvider('aws')">
+        <span class="ptab-icon">🟠</span> AWS (Recommended)
+      </div>
+      <div class="ptab ptab-azure" onclick="switchProvider('azure')">
+        <span class="ptab-icon">🔵</span> Azure
+      </div>
+      <div class="ptab ptab-gcp" onclick="switchProvider('gcp')">
+        <span class="ptab-icon">🟢</span> Google Cloud
+      </div>
+    </div>
+
+    <!-- ── AWS ── -->
+    <div class="provider-content active" id="prov-aws">
+      <div class="wizard">
+        <div class="wizard-header">
+          <div class="wizard-title">🟠 AWS EC2 Setup</div>
+          <div style="font-family:var(--code);font-size:12px;color:var(--muted);">Free Tier · t2.micro · 750 hrs/month free</div>
+        </div>
+        <div class="wizard-steps-nav">
+          <button class="wnav-btn active" onclick="switchWStep('aws',0,this)">1. Account</button>
+          <button class="wnav-btn" onclick="switchWStep('aws',1,this)">2. Launch VM</button>
+          <button class="wnav-btn" onclick="switchWStep('aws',2,this)">3. Connect SSH</button>
+          <button class="wnav-btn" onclick="switchWStep('aws',3,this)">4. VS Code</button>
+          <button class="wnav-btn" onclick="switchWStep('aws',4,this)">5. Install Tools</button>
+        </div>
+
+        <div class="wizard-body">
+          <!-- STEP 0: ACCOUNT -->
+          <div class="wstep active" id="aws-step-0">
+            <h3>🏦 Create Your FREE AWS Account</h3>
+            <div class="tip-box"><span>💡</span><div><strong>Free Tier:</strong> AWS gives you a t2.micro VM (1 vCPU, 1GB RAM) FREE for 12 months — 750 hours/month. That's enough for all your DevOps learning!</div></div>
+            <div class="click-guide">
+              <div class="cg-step">
+                <div class="cg-num">1</div>
+                <div class="cg-content">
+                  <div class="cg-title">Go to AWS Website</div>
+                  <div class="cg-desc">Open browser → type <strong>aws.amazon.com</strong> → click the big orange <span class="btn-pill">Create an AWS Account</span> button in the top right corner</div>
+                </div>
+              </div>
+              <div class="cg-step">
+                <div class="cg-num">2</div>
+                <div class="cg-content">
+                  <div class="cg-title">Fill in your details</div>
+                  <div class="cg-desc">Enter your <strong>email address</strong> → type a <strong>password</strong> (make it strong!) → AWS Account name: type <code style="background:rgba(255,255,255,.08);padding:1px 6px;border-radius:4px;font-family:var(--code)">my-devops-lab</code> → click <span class="btn-pill">Continue</span></div>
+                </div>
+              </div>
+              <div class="cg-step">
+                <div class="cg-num">3</div>
+                <div class="cg-content">
+                  <div class="cg-title">Account type & contact info</div>
+                  <div class="cg-desc">Select <span class="btn-pill">Personal</span> → fill your name, phone, address → click <span class="btn-pill">Continue</span></div>
+                </div>
+              </div>
+              <div class="cg-step">
+                <div class="cg-num">4</div>
+                <div class="cg-content">
+                  <div class="cg-title">Add credit/debit card</div>
+                  <div class="cg-desc">Required even for free tier. <strong>You will NOT be charged</strong> if you stay within free limits. Enter card details → click <span class="btn-pill">Verify and Continue</span></div>
+                </div>
+              </div>
+              <div class="cg-step">
+                <div class="cg-num">5</div>
+                <div class="cg-content">
+                  <div class="cg-title">Phone verification</div>
+                  <div class="cg-desc">Enter your phone number → click <span class="btn-pill">Send SMS</span> → enter the 4-digit code you receive → click <span class="btn-pill">Verify Code</span></div>
+                </div>
+              </div>
+              <div class="cg-step">
+                <div class="cg-num">6</div>
+                <div class="cg-content">
+                  <div class="cg-title">Choose support plan</div>
+                  <div class="cg-desc">Select <span class="btn-pill">Basic Support — Free</span> → click <span class="btn-pill">Complete sign up</span> → check your email and verify → you're in! 🎉</div>
+                </div>
+              </div>
+              <div class="cg-step">
+                <div class="cg-num">7</div>
+                <div class="cg-content">
+                  <div class="cg-title">🔐 Secure your root account — IMPORTANT!</div>
+                  <div class="cg-desc">Click your name (top right) → <span class="btn-pill">Security Credentials</span> → <span class="btn-pill">Assign MFA</span> → use Google Authenticator or Authy app on your phone. <strong>Never use root for daily work!</strong></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- STEP 1: LAUNCH VM -->
+          <div class="wstep" id="aws-step-1">
+            <h3>🚀 Launch Your EC2 Virtual Machine</h3>
+            <div class="tip-box"><span>🤖</span><div><strong>What is EC2?</strong> Elastic Compute Cloud = a computer in Amazon's data center that YOU control. Think of it as renting a powerful PC in the sky!</div></div>
+            <div class="click-guide">
+              <div class="cg-step">
+                <div class="cg-num">1</div>
+                <div class="cg-content">
+                  <div class="cg-title">Go to EC2 Dashboard</div>
+                  <div class="cg-desc">In AWS Console (console.aws.amazon.com) → top search bar → type <strong>EC2</strong> → click <strong>EC2</strong> in results → you see the EC2 dashboard</div>
+                </div>
+              </div>
+              <div class="cg-step">
+                <div class="cg-num">2</div>
+                <div class="cg-content">
+                  <div class="cg-title">Launch Instance</div>
+                  <div class="cg-desc">Click the big orange <span class="btn-pill">Launch instance</span> button</div>
+                </div>
+              </div>
+              <div class="cg-step">
+                <div class="cg-num">3</div>
+                <div class="cg-content">
+                  <div class="cg-title">Name your VM</div>
+                  <div class="cg-desc">In "Name and tags" box → type <code style="background:rgba(255,255,255,.08);padding:1px 6px;border-radius:4px;font-family:var(--code)">devops-lab-vm</code></div>
+                </div>
+              </div>
+              <div class="cg-step">
+                <div class="cg-num">4</div>
+                <div class="cg-content">
+                  <div class="cg-title">Choose Operating System</div>
+                  <div class="cg-desc">Under "Application and OS Images" → click <span class="btn-pill">Ubuntu</span> → make sure it says <strong>Ubuntu Server 22.04 LTS</strong> → look for <span class="btn-pill-green">Free tier eligible</span> label</div>
+                </div>
+              </div>
+              <div class="cg-step">
+                <div class="cg-num">5</div>
+                <div class="cg-content">
+                  <div class="cg-title">Choose instance size</div>
+                  <div class="cg-desc">Under "Instance type" → select <strong>t2.micro</strong> → you'll see <span class="btn-pill-green">Free tier eligible</span> next to it. This gives you 1 CPU + 1GB RAM free!</div>
+                </div>
+              </div>
+              <div class="cg-step">
+                <div class="cg-num">6</div>
+                <div class="cg-content">
+                  <div class="cg-title">Create SSH Key Pair (your password to login)</div>
+                  <div class="cg-desc">Under "Key pair" → click <span class="btn-pill">Create new key pair</span> → Name: <code style="background:rgba(255,255,255,.08);padding:1px 6px;border-radius:4px;font-family:var(--code)">devops-key</code> → Type: RSA → Format: <strong>.pem</strong> → click <span class="btn-pill">Create key pair</span>. A file downloads — <strong>SAVE IT SAFELY</strong>, you can never download it again!</div>
+                </div>
+              </div>
+              <div class="cg-step">
+                <div class="cg-num">7</div>
+                <div class="cg-content">
+                  <div class="cg-title">Network settings (firewall)</div>
+                  <div class="cg-desc">Check these 3 boxes: ✅ <strong>Allow SSH traffic from My IP</strong> &nbsp; ✅ <strong>Allow HTTPS traffic</strong> &nbsp; ✅ <strong>Allow HTTP traffic</strong></div>
+                </div>
+              </div>
+              <div class="cg-step">
+                <div class="cg-num">8</div>
+                <div class="cg-content">
+                  <div class="cg-title">Storage — increase it!</div>
+                  <div class="cg-desc">Under "Configure storage" → change 8 GB to <strong>20 GB</strong> (still free tier!) → this is where all your code and tools will live in the cloud</div>
+                </div>
+              </div>
+              <div class="cg-step">
+                <div class="cg-num">9</div>
+                <div class="cg-content">
+                  <div class="cg-title">Launch! 🚀</div>
+                  <div class="cg-desc">Click <span class="btn-pill">Launch instance</span> → wait 1-2 minutes → click <span class="btn-pill">View all instances</span> → your VM shows "Running" with a green dot ✅ → note down the <strong>Public IPv4 address</strong> (looks like 54.123.45.67)</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- STEP 2: CONNECT SSH -->
+          <div class="wstep" id="aws-step-2">
+            <h3>🔐 Connect to Your VM via SSH from M4 Mac</h3>
+            <div class="tip-box"><span>🧠</span><div><strong>SSH = Secure Shell.</strong> It's like a magic tunnel from your Mac to your cloud VM. Once connected, every command you type runs on the cloud computer — not your Mac!</div></div>
+            <div class="terminal">
+              <div class="terminal-bar">
+                <div class="tb-dot tb-red"></div><div class="tb-dot tb-yellow"></div><div class="tb-dot tb-green"></div>
+                <div class="tb-title">Terminal — M4 Mac</div>
+              </div>
+              <div class="terminal-body">
+<span class="tc"># Step 1: Move key file to .ssh folder and secure it</span><br>
+<span class="tcmd">mv</span> ~/Downloads/devops-key.pem ~/.ssh/<br>
+<span class="tcmd">chmod</span> <span class="tf">400</span> ~/.ssh/devops-key.pem<br>
+<span class="tc"># chmod 400 = only YOU can read this file (required by SSH)</span><br><br>
+<span class="tc"># Step 2: Connect! Replace IP with your EC2 Public IPv4</span><br>
+<span class="tcmd">ssh</span> <span class="tf">-i</span> ~/.ssh/devops-key.pem ubuntu@<span class="ts">YOUR-EC2-IP</span><br><br>
+<span class="tc"># First time: it asks "Are you sure you want to continue?"</span><br>
+<span class="tc"># Type: yes  then press Enter</span><br><br>
+<span class="tc"># 🎉 You'll see this — you're now INSIDE your cloud VM!</span><br>
+ubuntu@ip-172-31-xx-xx:~$
+              </div>
+            </div>
+            <div class="tip-box"><span>💡</span><div><strong>Make SSH easier — create a shortcut!</strong> Add this to <code style="font-family:var(--code)">~/.ssh/config</code> on your Mac:</div></div>
+            <div class="terminal">
+              <div class="terminal-bar">
+                <div class="tb-dot tb-red"></div><div class="tb-dot tb-yellow"></div><div class="tb-dot tb-green"></div>
+                <div class="tb-title">~/.ssh/config</div>
+              </div>
+              <div class="terminal-body">
+<span class="tcmd">nano</span> ~/.ssh/config<br><br>
+<span class="tc"># Paste this (replace IP):</span><br>
+Host devops-vm<br>
+&nbsp;&nbsp;HostName <span class="ts">YOUR-EC2-IP</span><br>
+&nbsp;&nbsp;User ubuntu<br>
+&nbsp;&nbsp;IdentityFile ~/.ssh/devops-key.pem<br><br>
+<span class="tc"># Save: Ctrl+X → Y → Enter</span><br><br>
+<span class="tc"># Now connect with just this!</span><br>
+<span class="tcmd">ssh</span> devops-vm
+              </div>
+            </div>
+          </div>
+
+          <!-- STEP 3: VS CODE -->
+          <div class="wstep" id="aws-step-3">
+            <h3>💻 Connect VS Code on Your Mac to the Cloud VM</h3>
+            <div class="tip-box"><span>🤖</span><div><strong>This is MAGIC!</strong> VS Code on your Mac will open files that are ACTUALLY stored on your cloud VM. You type code on Mac, it saves in cloud. Zero Mac storage used!</div></div>
+            <div class="click-guide">
+              <div class="cg-step">
+                <div class="cg-num">1</div>
+                <div class="cg-content">
+                  <div class="cg-title">Install VS Code on your M4 Mac</div>
+                  <div class="cg-desc">Go to <strong>code.visualstudio.com</strong> → click <span class="btn-pill">Download for Mac</span> (Apple Silicon) → open the downloaded .zip → drag VS Code to Applications folder</div>
+                </div>
+              </div>
+              <div class="cg-step">
+                <div class="cg-num">2</div>
+                <div class="cg-content">
+                  <div class="cg-title">Install Remote-SSH Extension</div>
+                  <div class="cg-desc">Open VS Code → press <strong>Cmd+Shift+X</strong> (Extensions panel) → search <strong>Remote - SSH</strong> → click <span class="btn-pill-green">Install</span> on the one by Microsoft (it has millions of installs)</div>
+                </div>
+              </div>
+              <div class="cg-step">
+                <div class="cg-num">3</div>
+                <div class="cg-content">
+                  <div class="cg-title">Connect to your VM!</div>
+                  <div class="cg-desc">Press <strong>Cmd+Shift+P</strong> → type <strong>Remote-SSH: Connect to Host</strong> → click it → select <strong>devops-vm</strong> (from your SSH config) → a new VS Code window opens — this window is running ON your cloud VM! 🎉</div>
+                </div>
+              </div>
+              <div class="cg-step">
+                <div class="cg-num">4</div>
+                <div class="cg-content">
+                  <div class="cg-title">Open a folder on the VM</div>
+                  <div class="cg-desc">In the new VS Code window → <strong>File</strong> → <strong>Open Folder</strong> → type <code style="background:rgba(255,255,255,.08);padding:1px 6px;border-radius:4px;font-family:var(--code)">/home/ubuntu</code> → click <span class="btn-pill">OK</span>. You're now browsing the cloud VM's files!</div>
+                </div>
+              </div>
+              <div class="cg-step">
+                <div class="cg-num">5</div>
+                <div class="cg-content">
+                  <div class="cg-title">Open integrated terminal</div>
+                  <div class="cg-desc">Press <strong>Ctrl+`</strong> (backtick) → a terminal opens at the bottom → this terminal is running on your CLOUD VM — type <code style="background:rgba(255,255,255,.08);padding:1px 6px;border-radius:4px;font-family:var(--code)">pwd</code> → it shows <strong>/home/ubuntu</strong> — you're in the cloud! ☁️</div>
+                </div>
+              </div>
+            </div>
+            <div class="warn-box"><span>⚠️</span><div><strong>VS Code tip:</strong> The bottom-left corner of VS Code shows a green SSH badge like <strong>SSH: devops-vm</strong> — this means you're connected to the cloud. If it shows nothing, you're working locally on your Mac.</div></div>
+          </div>
+
+          <!-- STEP 4: INSTALL TOOLS -->
+          <div class="wstep" id="aws-step-4">
+            <h3>⚙️ Install ALL DevOps Tools on Your Cloud VM</h3>
+            <div class="tip-box"><span>🤖</span><div>Run this ONE script and your VM gets: Docker, Git, kubectl, Terraform, Ansible, Helm, AWS CLI, Node.js, Python — everything for your entire DevOps journey!</div></div>
+            <div class="terminal">
+              <div class="terminal-bar">
+                <div class="tb-dot tb-red"></div><div class="tb-dot tb-yellow"></div><div class="tb-dot tb-green"></div>
+                <div class="tb-title">Cloud VM Terminal (in VS Code)</div>
+              </div>
+              <div class="terminal-body">
+<span class="tc"># Run this on your Cloud VM terminal in VS Code</span><br>
+<span class="tc"># ════ MASTER SETUP SCRIPT ════</span><br><br>
+
+<span class="tc"># 1. Update system</span><br>
+<span class="tcmd">sudo apt update -y && sudo apt upgrade -y</span><br><br>
+
+<span class="tc"># 2. Install Docker</span><br>
+<span class="tcmd">curl -fsSL https://get.docker.com | sudo sh</span><br>
+<span class="tcmd">sudo usermod -aG docker ubuntu</span><br>
+<span class="tc"># Log out and back in after this for Docker to work without sudo</span><br><br>
+
+<span class="tc"># 3. Install Git</span><br>
+<span class="tcmd">sudo apt install git -y</span><br>
+<span class="tcmd">git config --global user.name</span> <span class="ts">"Your Name"</span><br>
+<span class="tcmd">git config --global user.email</span> <span class="ts">"your@email.com"</span><br><br>
+
+<span class="tc"># 4. Install kubectl</span><br>
+<span class="tcmd">curl -LO "https://dl.k8s.io/release/$(curl -sL https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"</span><br>
+<span class="tcmd">sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl</span><br><br>
+
+<span class="tc"># 5. Install Terraform</span><br>
+<span class="tcmd">sudo snap install terraform --classic</span><br><br>
+
+<span class="tc"># 6. Install Ansible</span><br>
+<span class="tcmd">sudo apt install ansible -y</span><br><br>
+
+<span class="tc"># 7. Install Helm</span><br>
+<span class="tcmd">curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash</span><br><br>
+
+<span class="tc"># 8. Install AWS CLI</span><br>
+<span class="tcmd">curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"</span><br>
+<span class="tcmd">unzip awscliv2.zip && sudo ./aws/install</span><br><br>
+
+<span class="tc"># 9. Install Node.js 20</span><br>
+<span class="tcmd">curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -</span><br>
+<span class="tcmd">sudo apt install nodejs -y</span><br><br>
+
+<span class="tc"># ✅ Verify everything</span><br>
+<span class="tcmd">docker --version && git --version && kubectl version --client && terraform --version</span>
+              </div>
+            </div>
+            <div class="tip-box"><span>🎉</span><div><strong>All tools are now on your cloud VM!</strong> Your Mac has zero extra software installed (except VS Code and SSH — tiny!). All the heavy stuff lives in the cloud.</div></div>
+          </div>
+        </div>
+        <div class="wizard-nav">
+          <button class="wnav-prev" onclick="prevStep('aws')">← Back</button>
+          <button class="wnav-next" onclick="nextStep('aws')">Next Step →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── AZURE ── -->
+    <div class="provider-content" id="prov-azure">
+      <div class="wizard">
+        <div class="wizard-header">
+          <div class="wizard-title">🔵 Azure VM Setup</div>
+          <div style="font-family:var(--code);font-size:12px;color:var(--muted);">Free Tier · B1s · 750 hrs/month free for 12 months</div>
+        </div>
+        <div class="wizard-steps-nav">
+          <button class="wnav-btn active" onclick="switchWStep('azure',0,this)">1. Account</button>
+          <button class="wnav-btn" onclick="switchWStep('azure',1,this)">2. Create VM</button>
+          <button class="wnav-btn" onclick="switchWStep('azure',2,this)">3. Connect</button>
+          <button class="wnav-btn" onclick="switchWStep('azure',3,this)">4. VS Code</button>
+        </div>
+        <div class="wizard-body">
+          <div class="wstep active" id="azure-step-0">
+            <h3>🔵 Create Azure Free Account</h3>
+            <div class="tip-box"><span>🎁</span><div><strong>Azure free tier:</strong> $200 credit for 30 days + B1s VM (1 vCPU, 1GB RAM) free for 12 months. Also includes free SQL, Blob storage, and more!</div></div>
+            <div class="click-guide">
+              <div class="cg-step"><div class="cg-num">1</div><div class="cg-content"><div class="cg-title">Go to Azure Free Account page</div><div class="cg-desc">Open <strong>azure.microsoft.com/free</strong> → click <span class="btn-pill-blue">Start free</span></div></div></div>
+              <div class="cg-step"><div class="cg-num">2</div><div class="cg-content"><div class="cg-title">Sign in or create Microsoft account</div><div class="cg-desc">Use existing Microsoft/Outlook account OR click <span class="btn-pill">Create one</span> → enter email → create password → verify email</div></div></div>
+              <div class="cg-step"><div class="cg-num">3</div><div class="cg-content"><div class="cg-title">Fill profile & add card</div><div class="cg-desc">Enter your details → add credit card (for identity only, <strong>not charged in free tier</strong>) → phone verification → click <span class="btn-pill-blue">Sign up</span></div></div></div>
+              <div class="cg-step"><div class="cg-num">4</div><div class="cg-content"><div class="cg-title">Enter Azure Portal</div><div class="cg-desc">You'll land at <strong>portal.azure.com</strong> — this is your Azure control panel. Bookmark it!</div></div></div>
+            </div>
+          </div>
+          <div class="wstep" id="azure-step-1">
+            <h3>🖥️ Create Your Azure Virtual Machine</h3>
+            <div class="click-guide">
+              <div class="cg-step"><div class="cg-num">1</div><div class="cg-content"><div class="cg-title">Find Virtual Machines</div><div class="cg-desc">In Azure Portal → search bar at top → type <strong>Virtual machines</strong> → click it → click <span class="btn-pill-blue">+ Create</span> → <span class="btn-pill-blue">Azure virtual machine</span></div></div></div>
+              <div class="cg-step"><div class="cg-num">2</div><div class="cg-content"><div class="cg-title">Basic settings</div><div class="cg-desc">Resource group: click <span class="btn-pill">Create new</span> → name: <code style="font-family:var(--code);background:rgba(255,255,255,.08);padding:1px 6px;border-radius:4px">devops-lab-rg</code> → VM name: <code style="font-family:var(--code);background:rgba(255,255,255,.08);padding:1px 6px;border-radius:4px">devops-lab-vm</code> → Region: choose nearest to you</div></div></div>
+              <div class="cg-step"><div class="cg-num">3</div><div class="cg-content"><div class="cg-title">Image & Size</div><div class="cg-desc">Image: <strong>Ubuntu Server 22.04 LTS</strong> → Size: click <span class="btn-pill">See all sizes</span> → search <strong>B1s</strong> → select it (look for free tier label) → click <span class="btn-pill-blue">Select</span></div></div></div>
+              <div class="cg-step"><div class="cg-num">4</div><div class="cg-content"><div class="cg-title">SSH Authentication</div><div class="cg-desc">Authentication type: <strong>SSH public key</strong> → Username: <code style="font-family:var(--code);background:rgba(255,255,255,.08);padding:1px 6px;border-radius:4px">azureuser</code> → Key pair name: <code style="font-family:var(--code);background:rgba(255,255,255,.08);padding:1px 6px;border-radius:4px">devops-azure-key</code></div></div></div>
+              <div class="cg-step"><div class="cg-num">5</div><div class="cg-content"><div class="cg-title">Review + Create</div><div class="cg-desc">Click <span class="btn-pill-blue">Review + create</span> → wait for validation → click <span class="btn-pill-blue">Create</span> → a popup says "Download private key" → click <span class="btn-pill-blue">Download private key and create resource</span> → SAVE the .pem file!</div></div></div>
+            </div>
+          </div>
+          <div class="wstep" id="azure-step-2">
+            <h3>🔐 Connect to Azure VM via SSH</h3>
+            <div class="terminal">
+              <div class="terminal-bar"><div class="tb-dot tb-red"></div><div class="tb-dot tb-yellow"></div><div class="tb-dot tb-green"></div><div class="tb-title">Terminal — M4 Mac</div></div>
+              <div class="terminal-body">
+<span class="tc"># Secure the key</span><br>
+<span class="tcmd">chmod 400</span> ~/Downloads/devops-azure-key.pem<br>
+<span class="tcmd">mv</span> ~/Downloads/devops-azure-key.pem ~/.ssh/<br><br>
+<span class="tc"># Get VM IP: Azure Portal → Virtual Machines → your VM → Public IP</span><br>
+<span class="tcmd">ssh</span> <span class="tf">-i</span> ~/.ssh/devops-azure-key.pem azureuser@<span class="ts">YOUR-AZURE-VM-IP</span><br><br>
+<span class="tc"># Add to SSH config for easy access:</span><br>
+Host azure-vm<br>
+&nbsp;&nbsp;HostName <span class="ts">YOUR-AZURE-IP</span><br>
+&nbsp;&nbsp;User azureuser<br>
+&nbsp;&nbsp;IdentityFile ~/.ssh/devops-azure-key.pem
+              </div>
+            </div>
+          </div>
+          <div class="wstep" id="azure-step-3">
+            <h3>💻 VS Code → Azure VM (same as AWS!)</h3>
+            <div class="note-box"><span>💡</span><div>The VS Code Remote-SSH steps are <strong>identical to AWS</strong> — just use <code style="font-family:var(--code)">azure-vm</code> as the host name instead. Install the same tools script. Everything works the same!</div></div>
+            <div class="tip-box"><span>🤖</span><div>Once connected in VS Code, run the same Master Setup Script from the AWS Step 4 tab — it works on any Ubuntu VM whether it's AWS, Azure, or GCP!</div></div>
+          </div>
+        </div>
+        <div class="wizard-nav">
+          <button class="wnav-prev" onclick="prevStep('azure')">← Back</button>
+          <button class="wnav-next" onclick="nextStep('azure')">Next Step →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── GCP ── -->
+    <div class="provider-content" id="prov-gcp">
+      <div class="wizard">
+        <div class="wizard-header">
+          <div class="wizard-title">🟢 Google Cloud VM Setup</div>
+          <div style="font-family:var(--code);font-size:12px;color:var(--muted);">$300 free credit · 90 days · e2-micro always free</div>
+        </div>
+        <div class="wizard-steps-nav">
+          <button class="wnav-btn active" onclick="switchWStep('gcp',0,this)">1. Account</button>
+          <button class="wnav-btn" onclick="switchWStep('gcp',1,this)">2. Create VM</button>
+          <button class="wnav-btn" onclick="switchWStep('gcp',2,this)">3. Connect</button>
+        </div>
+        <div class="wizard-body">
+          <div class="wstep active" id="gcp-step-0">
+            <h3>🟢 Create Google Cloud Account</h3>
+            <div class="tip-box"><span>🎁</span><div><strong>GCP gives $300 free credit for 90 days</strong> AND an e2-micro VM that's free FOREVER (even after trial). Best for long-term free usage!</div></div>
+            <div class="click-guide">
+              <div class="cg-step"><div class="cg-num">1</div><div class="cg-content"><div class="cg-title">Go to GCP Free Tier</div><div class="cg-desc">Open <strong>cloud.google.com/free</strong> → click <span class="btn-pill-green">Get started for free</span> → sign in with your Google account</div></div></div>
+              <div class="cg-step"><div class="cg-num">2</div><div class="cg-content"><div class="cg-title">Fill details</div><div class="cg-desc">Choose Country → agree to terms → add payment method (for verification, <strong>$300 free credit won't be used unless you upgrade</strong>) → click <span class="btn-pill-green">Start my free trial</span></div></div></div>
+              <div class="cg-step"><div class="cg-num">3</div><div class="cg-content"><div class="cg-title">Access Cloud Console</div><div class="cg-desc">You land at <strong>console.cloud.google.com</strong> — this is your GCP control panel</div></div></div>
+            </div>
+          </div>
+          <div class="wstep" id="gcp-step-1">
+            <h3>🖥️ Create GCP Compute Engine VM</h3>
+            <div class="click-guide">
+              <div class="cg-step"><div class="cg-num">1</div><div class="cg-content"><div class="cg-title">Go to Compute Engine</div><div class="cg-desc">Search bar → type <strong>Compute Engine</strong> → click it → click <span class="btn-pill-green">CREATE INSTANCE</span></div></div></div>
+              <div class="cg-step"><div class="cg-num">2</div><div class="cg-content"><div class="cg-title">Configure VM</div><div class="cg-desc">Name: <code style="font-family:var(--code);background:rgba(255,255,255,.08);padding:1px 6px;border-radius:4px">devops-lab-vm</code> → Region: choose nearest → Machine type: <strong>e2-micro</strong> (free forever!)</div></div></div>
+              <div class="cg-step"><div class="cg-num">3</div><div class="cg-content"><div class="cg-title">Boot disk</div><div class="cg-desc">Click <span class="btn-pill">CHANGE</span> → Select <strong>Ubuntu 22.04 LTS</strong> → Size: 20 GB → click <span class="btn-pill-green">SELECT</span></div></div></div>
+              <div class="cg-step"><div class="cg-num">4</div><div class="cg-content"><div class="cg-title">Add SSH key</div><div class="cg-desc">On your M4 Mac terminal: <code style="font-family:var(--code);background:rgba(255,255,255,.08);padding:1px 6px;border-radius:4px">ssh-keygen -t rsa -f ~/.ssh/gcp-key -C ubuntu</code> → then copy the public key: <code style="font-family:var(--code);background:rgba(255,255,255,.08);padding:1px 6px;border-radius:4px">cat ~/.ssh/gcp-key.pub</code> → paste it in "Security → SSH Keys → ADD ITEM"</div></div></div>
+              <div class="cg-step"><div class="cg-num">5</div><div class="cg-content"><div class="cg-title">Create!</div><div class="cg-desc">Click <span class="btn-pill-green">CREATE</span> → wait 1 min → note the <strong>External IP</strong> shown in the VM list</div></div></div>
+            </div>
+          </div>
+          <div class="wstep" id="gcp-step-2">
+            <h3>🔐 Connect to GCP VM</h3>
+            <div class="terminal">
+              <div class="terminal-bar"><div class="tb-dot tb-red"></div><div class="tb-dot tb-yellow"></div><div class="tb-dot tb-green"></div><div class="tb-title">Terminal — M4 Mac</div></div>
+              <div class="terminal-body">
+<span class="tcmd">ssh</span> <span class="tf">-i</span> ~/.ssh/gcp-key ubuntu@<span class="ts">YOUR-GCP-IP</span><br><br>
+<span class="tc"># SSH config shortcut:</span><br>
+Host gcp-vm<br>
+&nbsp;&nbsp;HostName <span class="ts">YOUR-GCP-IP</span><br>
+&nbsp;&nbsp;User ubuntu<br>
+&nbsp;&nbsp;IdentityFile ~/.ssh/gcp-key<br><br>
+<span class="tcmd">ssh</span> gcp-vm  <span class="tc"># Now connect with just this!</span>
+              </div>
+            </div>
+            <div class="tip-box"><span>💚</span><div>Same VS Code Remote-SSH setup and same Master Install Script work here too! Once you know the pattern, all 3 clouds feel the same.</div></div>
+          </div>
+        </div>
+        <div class="wizard-nav">
+          <button class="wnav-prev" onclick="prevStep('gcp')">← Back</button>
+          <button class="wnav-next" onclick="nextStep('gcp')">Next Step →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     GITHUB + TOOLS SETUP
+══════════════════════════════════════ -->
+<section id="tools" style="border-top:1px solid var(--dim);">
+  <div class="container">
+    <div class="sec-eyebrow">// world 2 — github city</div>
+    <h2 class="sec-title">🐙 GitHub + VS Code Professional Setup</h2>
+    <div class="tools-tabs">
+      <button class="ttab active" onclick="switchTool('github')">🐙 GitHub</button>
+      <button class="ttab" onclick="switchTool('vscode')">💻 VS Code</button>
+      <button class="ttab" onclick="switchTool('sshkeys')">🔑 SSH Keys</button>
+      <button class="ttab" onclick="switchTool('gitconfig')">⚙️ Git Config</button>
+    </div>
+
+    <div class="tool-content active" id="tool-github">
+      <div class="tool-card">
+        <div class="tc-header"><div class="tc-icon">🐙</div><div><div class="tc-title">GitHub Account Setup</div><div class="tc-sub">Your code's home — where the world sees your work</div></div></div>
+        <div class="click-guide">
+          <div class="cg-step"><div class="cg-num">1</div><div class="cg-content"><div class="cg-title">Create GitHub Account</div><div class="cg-desc">Go to <strong>github.com</strong> → click <span class="btn-pill">Sign up</span> → enter email, password, username → pick a <strong>professional username</strong> (like your real name or initials — employers will see this!) → verify email</div></div></div>
+          <div class="cg-step"><div class="cg-num">2</div><div class="cg-content"><div class="cg-title">Complete your profile</div><div class="cg-desc">Click your avatar (top right) → <span class="btn-pill">Settings</span> → <span class="btn-pill">Profile</span> → add: Name, Bio (e.g. "DevOps Engineer | AWS | K8s"), Location → click <span class="btn-pill-green">Update profile</span>. A complete profile = more interview callbacks!</div></div></div>
+          <div class="cg-step"><div class="cg-num">3</div><div class="cg-content"><div class="cg-title">Enable 2FA security</div><div class="cg-desc">Settings → <span class="btn-pill">Password and authentication</span> → <span class="btn-pill">Enable two-factor authentication</span> → use Authenticator app → scan QR code → save backup codes!</div></div></div>
+          <div class="cg-step"><div class="cg-num">4</div><div class="cg-content"><div class="cg-title">Create your first repo</div><div class="cg-desc">Click <span class="btn-pill">+</span> → <span class="btn-pill">New repository</span> → name: <code style="font-family:var(--code);background:rgba(255,255,255,.08);padding:1px 6px;border-radius:4px">devops-projects</code> → Public → check <strong>Add README</strong> → <span class="btn-pill-green">Create repository</span></div></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tool-content" id="tool-vscode">
+      <div class="tool-card">
+        <div class="tc-header"><div class="tc-icon">💻</div><div><div class="tc-title">VS Code Power User Setup</div><div class="tc-sub">10 extensions that make you 10x faster</div></div></div>
+        <div class="note-box"><span>💡</span><div>Install these on your M4 Mac. Press <strong>Cmd+Shift+X</strong> in VS Code to open extensions. Search each name and click Install.</div></div>
+        <div class="click-guide">
+          <div class="cg-step"><div class="cg-num">🔌</div><div class="cg-content"><div class="cg-title">Remote - SSH</div><div class="cg-desc">By Microsoft. <strong>THE most important one.</strong> Lets VS Code connect to your cloud VM. Everything runs in cloud, not your Mac.</div></div></div>
+          <div class="cg-step"><div class="cg-num">🔌</div><div class="cg-content"><div class="cg-title">GitLens</div><div class="cg-desc">Shows WHO wrote every line of code and WHEN. Supercharges Git inside VS Code. Essential for team work.</div></div></div>
+          <div class="cg-step"><div class="cg-num">🔌</div><div class="cg-content"><div class="cg-title">Docker</div><div class="cg-desc">By Microsoft. See all containers, images, volumes in a sidebar. Right-click to start/stop/delete. No terminal needed for basic Docker ops.</div></div></div>
+          <div class="cg-step"><div class="cg-num">🔌</div><div class="cg-content"><div class="cg-title">Kubernetes</div><div class="cg-desc">By Microsoft. Browse pods, services, deployments. View logs. Port-forward — all from VS Code sidebar.</div></div></div>
+          <div class="cg-step"><div class="cg-num">🔌</div><div class="cg-content"><div class="cg-title">HashiCorp Terraform</div><div class="cg-desc">Syntax highlighting, auto-complete, and formatting for .tf files. Makes writing Terraform 3x faster.</div></div></div>
+          <div class="cg-step"><div class="cg-num">🔌</div><div class="cg-content"><div class="cg-title">YAML</div><div class="cg-desc">By Red Hat. Validates and highlights all your YAML files (K8s manifests, GitHub Actions, Ansible). Catches indentation errors before they break things!</div></div></div>
+          <div class="cg-step"><div class="cg-num">🔌</div><div class="cg-content"><div class="cg-title">GitHub Actions</div><div class="cg-desc">By GitHub. Autocomplete for GitHub Actions YAML syntax. See workflow runs directly in VS Code.</div></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tool-content" id="tool-sshkeys">
+      <div class="tool-card">
+        <div class="tc-header"><div class="tc-icon">🔑</div><div><div class="tc-title">SSH Keys — Connect Without Password</div><div class="tc-sub">Set this up ONCE — never type passwords again</div></div></div>
+        <div class="tip-box"><span>🧠</span><div><strong>SSH key = two files.</strong> Private key (stays on your Mac, NEVER share!) + Public key (goes everywhere — GitHub, cloud VMs, servers). Like a lock and key — public key is the lock, private key opens it.</div></div>
+        <div class="terminal">
+          <div class="terminal-bar"><div class="tb-dot tb-red"></div><div class="tb-dot tb-yellow"></div><div class="tb-dot tb-green"></div><div class="tb-title">M4 Mac Terminal — One-time Setup</div></div>
+          <div class="terminal-body">
+<span class="tc"># Generate a strong SSH key pair (Ed25519 is best in 2026)</span><br>
+<span class="tcmd">ssh-keygen</span> <span class="tf">-t ed25519</span> <span class="tf">-C</span> <span class="ts">"your@email.com"</span><br>
+<span class="tc"># Press Enter 3 times (accept defaults + no passphrase for convenience)</span><br><br>
+
+<span class="tc"># See your public key (this goes to GitHub)</span><br>
+<span class="tcmd">cat</span> ~/.ssh/id_ed25519.pub<br>
+<span class="tc"># Copy the output — starts with "ssh-ed25519 AAAA..."</span><br><br>
+
+<span class="tc"># Add to GitHub:</span><br>
+<span class="tc"># GitHub → Settings → SSH and GPG keys → New SSH key</span><br>
+<span class="tc"># Title: "My M4 MacBook"  → paste public key → Add SSH key</span><br><br>
+
+<span class="tc"># Test GitHub connection</span><br>
+<span class="tcmd">ssh</span> <span class="tf">-T</span> git@github.com<br>
+<span class="tc"># Should say: "Hi akshc15! You've successfully authenticated"</span><br><br>
+
+<span class="tc"># Now clone with SSH (not HTTPS) — no password prompts!</span><br>
+<span class="tcmd">git clone</span> git@github.com:akshc15/my-repo.git
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tool-content" id="tool-gitconfig">
+      <div class="tool-card">
+        <div class="tc-header"><div class="tc-icon">⚙️</div><div><div class="tc-title">Git Config — Professional Settings</div><div class="tc-sub">How senior engineers configure Git from day one</div></div></div>
+        <div class="terminal">
+          <div class="terminal-bar"><div class="tb-dot tb-red"></div><div class="tb-dot tb-yellow"></div><div class="tb-dot tb-green"></div><div class="tb-title">Run on Cloud VM Terminal</div></div>
+          <div class="terminal-body">
+<span class="tc"># Identity</span><br>
+<span class="tcmd">git config --global</span> user.name <span class="ts">"Aksh C"</span><br>
+<span class="tcmd">git config --global</span> user.email <span class="ts">"your@email.com"</span><br><br>
+
+<span class="tc"># Default branch name (industry standard)</span><br>
+<span class="tcmd">git config --global</span> init.defaultBranch main<br><br>
+
+<span class="tc"># Better diff tool</span><br>
+<span class="tcmd">git config --global</span> core.editor <span class="ts">"code --wait"</span><br><br>
+
+<span class="tc"># Auto-correct typos (git comit → git commit)</span><br>
+<span class="tcmd">git config --global</span> help.autocorrect <span class="tf">10</span><br><br>
+
+<span class="tc"># Colorful output</span><br>
+<span class="tcmd">git config --global</span> color.ui auto<br><br>
+
+<span class="tc"># Useful aliases</span><br>
+<span class="tcmd">git config --global</span> alias.st status<br>
+<span class="tcmd">git config --global</span> alias.co checkout<br>
+<span class="tcmd">git config --global</span> alias.br branch<br>
+<span class="tcmd">git config --global</span> alias.last <span class="ts">"log -1 HEAD"</span><br>
+<span class="tcmd">git config --global</span> alias.lg <span class="ts">"log --oneline --graph --all"</span><br><br>
+
+<span class="tc"># See your full config</span><br>
+<span class="tcmd">git config --list</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     PROJECTS ON CLOUD VM
+══════════════════════════════════════ -->
+<section id="projects" style="border-top:1px solid var(--dim);">
+  <div class="container">
+    <div class="sec-eyebrow">// worlds 3-6 — cloud projects</div>
+    <h2 class="sec-title">🛠️ 20 Projects — All on Cloud VM</h2>
+    <p class="sec-desc" style="margin-bottom:32px">Every project runs on your cloud VM. Zero storage on your Mac. Each card shows which VM size you need.</p>
+
+    <!-- ROOKIE -->
+    <div class="level-section">
+      <div class="level-header lh-rookie">
+        <div class="level-icon">🟢</div>
+        <div><div class="level-name">Rookie Zone</div><div class="level-desc">Projects 1–5 · Free tier VM · 1–3 hours each</div></div>
+      </div>
+      <div class="proj-grid">
+        <div class="pcard" onmousemove="cardGlow(event,this)">
+          <div class="pcard-top"><div class="pcard-emoji">🐳</div><div class="pcard-num">#01</div></div>
+          <div class="pcard-title">Dockerize a Website</div>
+          <div class="pcard-desc">Build nginx Docker container on your cloud VM. Access it from your Mac browser. Zero local storage!</div>
+          <div class="pcard-vm">☁️ Free t2.micro / B1s</div>
+          <div class="pcard-tags"><span class="ptag">Docker</span><span class="ptag">nginx</span><span class="ptag">SSH</span></div>
+          <div class="pcard-time">⏱ 1–2 hrs</div>
+        </div>
+        <div class="pcard" onmousemove="cardGlow(event,this)">
+          <div class="pcard-top"><div class="pcard-emoji">🐙</div><div class="pcard-num">#02</div></div>
+          <div class="pcard-title">Git Branching Lab</div>
+          <div class="pcard-desc">Full git workflow on cloud VM. Branches, PRs, merge conflicts — all from VS Code connected remotely.</div>
+          <div class="pcard-vm">☁️ Free t2.micro / B1s</div>
+          <div class="pcard-tags"><span class="ptag">Git</span><span class="ptag">GitHub</span><span class="ptag">VS Code</span></div>
+          <div class="pcard-time">⏱ 2 hrs</div>
+        </div>
+        <div class="pcard" onmousemove="cardGlow(event,this)">
+          <div class="pcard-top"><div class="pcard-emoji">⚡</div><div class="pcard-num">#03</div></div>
+          <div class="pcard-title">GitHub Actions CI</div>
+          <div class="pcard-desc">Auto-build and deploy on every git push. GitHub's free runners do all the work — not your Mac!</div>
+          <div class="pcard-vm">☁️ GitHub Free Runners</div>
+          <div class="pcard-tags"><span class="ptag">GitHub Actions</span><span class="ptag">YAML</span><span class="ptag">CI/CD</span></div>
+          <div class="pcard-time">⏱ 2 hrs</div>
+        </div>
+        <div class="pcard" onmousemove="cardGlow(event,this)">
+          <div class="pcard-top"><div class="pcard-emoji">🐧</div><div class="pcard-num">#04</div></div>
+          <div class="pcard-title">Linux Bash Automation</div>
+          <div class="pcard-desc">Write bash scripts on cloud VM. Cron jobs, systemd services, log management. Real Linux sysadmin skills.</div>
+          <div class="pcard-vm">☁️ Free t2.micro / B1s</div>
+          <div class="pcard-tags"><span class="ptag">Linux</span><span class="ptag">Bash</span><span class="ptag">systemd</span><span class="ptag">cron</span></div>
+          <div class="pcard-time">⏱ 3 hrs</div>
+        </div>
+        <div class="pcard" onmousemove="cardGlow(event,this)">
+          <div class="pcard-top"><div class="pcard-emoji">📦</div><div class="pcard-num">#05</div></div>
+          <div class="pcard-title">Docker Compose Stack</div>
+          <div class="pcard-desc">WordPress + MySQL running together in Docker Compose on your VM. See it live from your Mac browser.</div>
+          <div class="pcard-vm">☁️ Free t2.micro / B1s</div>
+          <div class="pcard-tags"><span class="ptag">Compose</span><span class="ptag">MySQL</span><span class="ptag">Volumes</span></div>
+          <div class="pcard-time">⏱ 2 hrs</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MID -->
+    <div class="level-section">
+      <div class="level-header lh-mid">
+        <div class="level-icon">🔵</div>
+        <div><div class="level-name">Mid-Level Zone</div><div class="level-desc">Projects 6–11 · t2.medium or t3.medium · ~$0.05/hr</div></div>
+      </div>
+      <div class="proj-grid">
+        <div class="pcard" onmousemove="cardGlow(event,this)">
+          <div class="pcard-top"><div class="pcard-emoji">☸️</div><div class="pcard-num">#06</div></div>
+          <div class="pcard-title">Kubernetes with minikube</div>
+          <div class="pcard-desc">Install minikube on your cloud VM. Deploy your first app to K8s. All kubectl commands run in cloud!</div>
+          <div class="pcard-vm">☁️ t2.medium (2 vCPU, 4GB)</div>
+          <div class="pcard-tags"><span class="ptag">K8s</span><span class="ptag">minikube</span><span class="ptag">kubectl</span></div>
+          <div class="pcard-time">⏱ 3 hrs</div>
+        </div>
+        <div class="pcard" onmousemove="cardGlow(event,this)">
+          <div class="pcard-top"><div class="pcard-emoji">📜</div><div class="pcard-num">#07</div></div>
+          <div class="pcard-title">Ansible Configuration</div>
+          <div class="pcard-desc">Run Ansible FROM your cloud VM to configure OTHER VMs. Playbooks, roles, inventory — real automation.</div>
+          <div class="pcard-vm">☁️ t2.micro (Ansible controller)</div>
+          <div class="pcard-tags"><span class="ptag">Ansible</span><span class="ptag">Playbooks</span><span class="ptag">Roles</span></div>
+          <div class="pcard-time">⏱ 4 hrs</div>
+        </div>
+        <div class="pcard" onmousemove="cardGlow(event,this)">
+          <div class="pcard-top"><div class="pcard-emoji">🏗️</div><div class="pcard-num">#08</div></div>
+          <div class="pcard-title">Terraform AWS VPC</div>
+          <div class="pcard-desc">Write and run Terraform FROM your cloud VM to create another VPC and EC2. Infrastructure built by infrastructure!</div>
+          <div class="pcard-vm">☁️ Free t2.micro</div>
+          <div class="pcard-tags"><span class="ptag">Terraform</span><span class="ptag">VPC</span><span class="ptag">S3 Backend</span></div>
+          <div class="pcard-time">⏱ 4 hrs</div>
+        </div>
+        <div class="pcard" onmousemove="cardGlow(event,this)">
+          <div class="pcard-top"><div class="pcard-emoji">🤖</div><div class="pcard-num">#09</div></div>
+          <div class="pcard-title">Jenkins CI Pipeline</div>
+          <div class="pcard-desc">Run Jenkins in Docker on your VM. Build pipelines. Watch builds happen in cloud, pushed to ECR automatically.</div>
+          <div class="pcard-vm">☁️ t2.large (Jenkins needs RAM)</div>
+          <div class="pcard-tags"><span class="ptag">Jenkins</span><span class="ptag">Pipelines</span><span class="ptag">ECR</span></div>
+          <div class="pcard-time">⏱ 5 hrs</div>
+        </div>
+        <div class="pcard" onmousemove="cardGlow(event,this)">
+          <div class="pcard-top"><div class="pcard-emoji">📊</div><div class="pcard-num">#10</div></div>
+          <div class="pcard-title">Prometheus + Grafana</div>
+          <div class="pcard-desc">Full monitoring stack on VM. Port-forward Grafana to see beautiful dashboards on your Mac browser!</div>
+          <div class="pcard-vm">☁️ t2.medium</div>
+          <div class="pcard-tags"><span class="ptag">Prometheus</span><span class="ptag">Grafana</span><span class="ptag">Alerts</span></div>
+          <div class="pcard-time">⏱ 4 hrs</div>
+        </div>
+        <div class="pcard" onmousemove="cardGlow(event,this)">
+          <div class="pcard-top"><div class="pcard-emoji">🔐</div><div class="pcard-num">#11</div></div>
+          <div class="pcard-title">Docker Security & Multi-stage</div>
+          <div class="pcard-desc">Reduce image size 80%. Add non-root users. Scan with Trivy on VM. Best practice Docker security.</div>
+          <div class="pcard-vm">☁️ Free t2.micro</div>
+          <div class="pcard-tags"><span class="ptag">Multi-stage</span><span class="ptag">Trivy</span><span class="ptag">Security</span></div>
+          <div class="pcard-time">⏱ 3 hrs</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SENIOR + PRO teaser -->
+    <div class="level-section">
+      <div class="level-header lh-senior">
+        <div class="level-icon">🟡</div>
+        <div><div class="level-name">Senior + Pro Zone</div><div class="level-desc">Projects 12–20 · EKS Clusters · Full DevSecOps</div></div>
+      </div>
+      <div class="proj-grid">
+        <div class="pcard" onmousemove="cardGlow(event,this)">
+          <div class="pcard-top"><div class="pcard-emoji">🚀</div><div class="pcard-num">#12–16</div></div>
+          <div class="pcard-title">EKS + ArgoCD + Helm</div>
+          <div class="pcard-desc">Full EKS cluster with Terraform. GitOps with ArgoCD. Helm charts for every service. Connect via kubectl from VM.</div>
+          <div class="pcard-vm">☁️ EKS t3.medium × 2 nodes</div>
+          <div class="pcard-tags"><span class="ptag">EKS</span><span class="ptag">ArgoCD</span><span class="ptag">Helm</span><span class="ptag">RBAC</span></div>
+          <div class="pcard-time">⏱ 1–2 days</div>
+        </div>
+        <div class="pcard" onmousemove="cardGlow(event,this)">
+          <div class="pcard-top"><div class="pcard-emoji">🏆</div><div class="pcard-num">#17–20</div></div>
+          <div class="pcard-title">Full DevSecOps Pipeline</div>
+          <div class="pcard-desc">The complete project: Jenkins + SonarQube + Trivy + EKS + ArgoCD + Prometheus. Interview-winning portfolio project.</div>
+          <div class="pcard-vm">☁️ Multiple VMs + EKS</div>
+          <div class="pcard-tags"><span class="ptag">DevSecOps</span><span class="ptag">Blue-Green</span><span class="ptag">SLOs</span><span class="ptag">Chaos</span></div>
+          <div class="pcard-time">⏱ 3–5 days</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     MEMORY FLIP CARDS
+══════════════════════════════════════ -->
+<section id="memory" style="border-top:1px solid var(--dim);">
+  <div class="container">
+    <div class="sec-eyebrow">// never forget</div>
+    <h2 class="sec-title">🧠 Hover to Remember Forever</h2>
+    <p class="sec-desc">Hover over each card to see what it means. Test yourself daily!</p>
+    <div class="memory-grid">
+      <div class="mem-card" style="border-color:rgba(255,217,61,.3)">
+        <div class="mem-front"><span class="mem-emoji">☁️</span><div class="mem-word">Cloud VM</div><div class="mem-hint">hover me!</div></div>
+        <div class="mem-back" style="color:var(--sun)">Computer in the sky! Your Mac is just the remote control. All storage & power is in the cloud.</div>
+      </div>
+      <div class="mem-card" style="border-color:rgba(96,165,250,.3)">
+        <div class="mem-front"><span class="mem-emoji">🔐</span><div class="mem-word">SSH</div><div class="mem-hint">hover me!</div></div>
+        <div class="mem-back" style="color:var(--sky-blue)">Secure Shell. A magic encrypted tunnel from your Mac to any server. Private key = your key. Never share it!</div>
+      </div>
+      <div class="mem-card" style="border-color:rgba(52,211,153,.3)">
+        <div class="mem-front"><span class="mem-emoji">🐳</span><div class="mem-word">Docker</div><div class="mem-hint">hover me!</div></div>
+        <div class="mem-back" style="color:var(--mint)">Sealed magic box with your app + everything it needs. Runs identically everywhere. Mac, VM, Cloud — same!</div>
+      </div>
+      <div class="mem-card" style="border-color:rgba(167,139,250,.3)">
+        <div class="mem-front"><span class="mem-emoji">☸️</span><div class="mem-word">Kubernetes</div><div class="mem-hint">hover me!</div></div>
+        <div class="mem-back" style="color:var(--purple)">Orchestra conductor for containers. Restarts crashed ones. Scales up for traffic. Routes requests. Works 24/7!</div>
+      </div>
+      <div class="mem-card" style="border-color:rgba(255,107,53,.3)">
+        <div class="mem-front"><span class="mem-emoji">🏗️</span><div class="mem-word">Terraform</div><div class="mem-hint">hover me!</div></div>
+        <div class="mem-back" style="color:var(--fire)">Write CODE to create cloud infrastructure. No clicking. Run it 100 times = same result. Idempotent magic!</div>
+      </div>
+      <div class="mem-card" style="border-color:rgba(96,165,250,.3)">
+        <div class="mem-front"><span class="mem-emoji">📜</span><div class="mem-word">Ansible</div><div class="mem-hint">hover me!</div></div>
+        <div class="mem-back" style="color:var(--sky-blue)">SSH into 100 servers and run tasks automatically. No agent needed. Playbook = list of instructions. YAML!</div>
+      </div>
+      <div class="mem-card" style="border-color:rgba(244,114,182,.3)">
+        <div class="mem-front"><span class="mem-emoji">🌊</span><div class="mem-word">ArgoCD</div><div class="mem-hint">hover me!</div></div>
+        <div class="mem-back" style="color:var(--pink)">Temple guardian watching your Git repo. When you commit new K8s YAML, ArgoCD deploys it automatically!</div>
+      </div>
+      <div class="mem-card" style="border-color:rgba(52,211,153,.3)">
+        <div class="mem-front"><span class="mem-emoji">📊</span><div class="mem-word">Grafana</div><div class="mem-hint">hover me!</div></div>
+        <div class="mem-back" style="color:var(--mint)">The dashboard artist! Takes Prometheus data and makes beautiful live charts. See CPU, errors, traffic in real-time!</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div>akshc15.github.io/cloud-setup.html — DevOps Universe Cloud Edition</div>
+  <div style="margin-top:6px">M4 Mac → SSH → Cloud VM → No Local Storage → 🚀 Interview Ready</div>
+  <div style="margin-top:6px"><a href="index.html">← Back to Portal</a> · <a href="projects.html">Projects Roadmap</a></div>
+</footer>
+
+<!-- ══════════════════════════════════════
+     JAVASCRIPT
+══════════════════════════════════════ -->
+<script>
+// ── PARTICLES ──
+(function(){
+  const p=document.getElementById('particles');
+  for(let i=0;i<80;i++){
+    const s=document.createElement('div');
+    s.className='star';
+    const size=Math.random()*2+1;
+    s.style.cssText=`width:${size}px;height:${size}px;left:${Math.random()*100}%;top:${Math.random()*100}%;--d:${2+Math.random()*4}s;--delay:${Math.random()*4}s;`;
+    p.appendChild(s);
+  }
+  const emojis=['🐳','☁️','⚙️','🔐','📦','☸️','🏗️','📜','🚀','💻','🐙'];
+  for(let i=0;i<15;i++){
+    const f=document.createElement('div');
+    f.className='floaty';
+    f.textContent=emojis[Math.floor(Math.random()*emojis.length)];
+    f.style.cssText=`left:${Math.random()*100}%;--fd:${8+Math.random()*12}s;--fdelay:${Math.random()*10}s;--fs:${16+Math.random()*16}px;`;
+    p.appendChild(f);
+  }
+})();
+
+// ── PROVIDER TABS ──
+function switchProvider(name){
+  document.querySelectorAll('.ptab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.provider-content').forEach(c=>c.classList.remove('active'));
+  document.querySelector('.ptab-'+name).classList.add('active');
+  document.getElementById('prov-'+name).classList.add('active');
+}
+
+// ── WIZARD STEPS ──
+const wSteps={aws:0,azure:0,gcp:0};
+const wMax={aws:4,azure:3,gcp:2};
+
+function switchWStep(prov,idx,btn){
+  const steps=document.querySelectorAll(`#prov-${prov} .wstep`);
+  steps.forEach(s=>s.classList.remove('active'));
+  steps[idx].classList.add('active');
+  wSteps[prov]=idx;
+  document.querySelectorAll(`#prov-${prov} .wnav-btn`).forEach(b=>b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  else document.querySelectorAll(`#prov-${prov} .wnav-btn`)[idx].classList.add('active');
+}
+function nextStep(prov){
+  const next=Math.min(wSteps[prov]+1,wMax[prov]);
+  switchWStep(prov,next,null);
+}
+function prevStep(prov){
+  const prev=Math.max(wSteps[prov]-1,0);
+  switchWStep(prov,prev,null);
+}
+
+// ── TOOL TABS ──
+function switchTool(name){
+  document.querySelectorAll('.ttab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tool-content').forEach(c=>c.classList.remove('active'));
+  document.getElementById('tool-'+name).classList.add('active');
+  event.target.classList.add('active');
+}
+
+// ── CARD GLOW ──
+function cardGlow(e,card){
+  const r=card.getBoundingClientRect();
+  const x=((e.clientX-r.left)/r.width)*100;
+  const y=((e.clientY-r.top)/r.height)*100;
+  card.style.setProperty('--mx',x+'%');
+  card.style.setProperty('--my',y+'%');
+}
+
+// ── SCROLL ANIMATIONS ──
+const obs=new IntersectionObserver(entries=>{
+  entries.forEach((e,i)=>{
+    if(e.isIntersecting){
+      setTimeout(()=>{
+        e.target.style.opacity='1';
+        e.target.style.transform='translateY(0) translateX(0)';
+      },i*60);
+      obs.unobserve(e.target);
+    }
+  });
+},{threshold:.1});
+
+document.querySelectorAll('.pcard,.journey-stop,.mem-card,.tool-card').forEach(el=>{
+  el.style.opacity='0';
+  el.style.transform='translateY(20px)';
+  el.style.transition='opacity .5s ease, transform .5s ease';
+  obs.observe(el);
+});
+</script>
+</body>
+</html>
