@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DREAM Interview Quiz — 60 Days to Hero</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Exo+2:wght@300;400;600;700;800&family=Fira+Code:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#07080d;--bg2:#0c0e18;--bg3:#111525;
+  --cyan:#00f5ff;--lime:#39ff14;--amber:#ffb300;
+  --red:#ff3b5c;--purple:#c084fc;--pink:#f472b6;
+  --text:#e2eaff;--muted:#4a5580;--dim:#1e2540;
+  --orb:'Orbitron',sans-serif;
+  --exo:'Exo 2',sans-serif;
+  --code:'Fira Code',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:var(--exo);overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(0,245,255,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(0,245,255,0.025) 1px,transparent 1px);background-size:50px 50px;pointer-events:none;z-index:0;}
+
+/* NAV */
+.nav{position:sticky;top:0;z-index:200;background:rgba(7,8,13,0.95);backdrop-filter:blur(20px);border-bottom:1px solid rgba(0,245,255,0.15);padding:0 28px;display:flex;align-items:center;gap:0;overflow-x:auto;}
+.nav-brand{font-family:var(--orb);font-size:16px;color:var(--cyan);margin-right:24px;white-space:nowrap;padding:14px 0;flex-shrink:0;text-shadow:0 0 20px rgba(0,245,255,0.4);}
+.nav a{font-family:var(--code);font-size:11px;letter-spacing:.06em;color:var(--muted);text-decoration:none;padding:16px 12px;border-bottom:2px solid transparent;transition:all .2s;white-space:nowrap;}
+.nav a:hover{color:var(--cyan);border-bottom-color:var(--cyan);}
+
+/* HERO */
+.hero{position:relative;z-index:1;padding:80px 24px 50px;text-align:center;background:radial-gradient(ellipse at 50% 0%,rgba(192,132,252,0.08) 0%,transparent 60%);}
+.hero-title{font-family:var(--orb);font-size:clamp(36px,7vw,72px);font-weight:900;letter-spacing:.04em;line-height:1;margin-bottom:12px;background:linear-gradient(135deg,var(--purple),var(--cyan),var(--lime));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;filter:drop-shadow(0 0 30px rgba(192,132,252,0.3));}
+.hero-sub{font-family:var(--exo);font-size:16px;color:var(--muted);max-width:560px;margin:0 auto 30px;line-height:1.7;}
+
+/* SCORE BOARD */
+.scoreboard{
+  display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:30px;
+}
+.score-card{
+  background:var(--bg3);border:1px solid var(--dim);border-radius:12px;
+  padding:14px 24px;text-align:center;min-width:100px;
+}
+.score-num{font-family:var(--orb);font-size:32px;font-weight:900;line-height:1;}
+.score-label{font-family:var(--code);font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-top:4px;}
+
+/* 60-DAY PLAN */
+.plan-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));
+  gap:8px;margin:28px 0;max-width:900px;margin-left:auto;margin-right:auto;
+}
+.day-chip{
+  background:var(--bg3);border:1px solid var(--dim);
+  border-radius:8px;padding:10px 8px;text-align:center;
+  font-size:11px;cursor:pointer;transition:all .2s;
+}
+.day-chip:hover{border-color:var(--purple);transform:scale(1.04);}
+.day-chip.active{border-color:var(--cyan);background:rgba(0,245,255,0.06);}
+.day-chip.complete{border-color:var(--lime);background:rgba(57,255,20,0.05);}
+.day-chip.complete::after{content:'✓';display:block;color:var(--lime);font-size:14px;margin-top:2px;}
+.day-num{font-family:var(--orb);font-size:13px;font-weight:700;color:var(--cyan);}
+.day-topic{color:var(--muted);font-size:10px;margin-top:3px;font-family:var(--code);}
+
+/* SECTION */
+section{position:relative;z-index:1;padding:50px 0;border-top:1px solid var(--dim);}
+.container{max-width:900px;margin:0 auto;padding:0 24px;}
+.sec-label{font-family:var(--code);font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--purple);background:rgba(192,132,252,0.06);border:1px solid rgba(192,132,252,0.2);padding:4px 14px;border-radius:100px;display:inline-block;margin-bottom:16px;}
+.sec-title{font-family:var(--orb);font-size:clamp(22px,4vw,36px);font-weight:700;letter-spacing:.03em;margin-bottom:16px;}
+
+/* QUIZ TABS */
+.quiz-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:28px;}
+.qtab{font-family:var(--orb);font-size:13px;padding:9px 20px;border-radius:8px;border:1px solid var(--dim);background:transparent;color:var(--muted);cursor:pointer;transition:all .2s;letter-spacing:.03em;}
+.qtab.active{border-color:var(--purple);color:var(--purple);background:rgba(192,132,252,0.08);}
+.qtab:hover:not(.active){border-color:var(--cyan);color:var(--cyan);}
+
+.quiz-panel{display:none;}
+.quiz-panel.active{display:block;}
+
+/* QUESTION CARD */
+.q-card{
+  background:var(--bg3);border:1px solid var(--dim);
+  border-radius:14px;padding:24px;margin-bottom:14px;
+  transition:all .25s;
+}
+.q-card:hover{border-color:rgba(192,132,252,0.3);}
+.q-header{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:16px;}
+.q-num{font-family:var(--code);font-size:11px;color:var(--muted);background:rgba(255,255,255,0.04);border:1px solid var(--dim);padding:2px 10px;border-radius:6px;flex-shrink:0;}
+.q-difficulty{font-family:var(--code);font-size:10px;padding:2px 10px;border-radius:5px;}
+.qd-easy{color:var(--lime);background:rgba(57,255,20,0.08);border:1px solid rgba(57,255,20,0.2);}
+.qd-med{color:var(--amber);background:rgba(255,179,0,0.08);border:1px solid rgba(255,179,0,0.2);}
+.qd-hard{color:var(--red);background:rgba(255,59,92,0.08);border:1px solid rgba(255,59,92,0.2);}
+.q-text{font-size:15px;font-weight:700;line-height:1.5;margin-bottom:16px;color:var(--text);}
+
+/* OPTIONS */
+.options{display:flex;flex-direction:column;gap:8px;margin-bottom:14px;}
+.opt{
+  display:flex;align-items:flex-start;gap:12px;
+  background:rgba(255,255,255,0.02);
+  border:1px solid var(--dim);border-radius:8px;
+  padding:12px 16px;cursor:pointer;transition:all .2s;
+  font-size:13px;color:var(--muted);
+  text-align:left;width:100%;
+}
+.opt:hover{border-color:var(--purple);color:var(--text);background:rgba(192,132,252,0.04);}
+.opt.correct{border-color:var(--lime)!important;background:rgba(57,255,20,0.08)!important;color:var(--lime)!important;}
+.opt.wrong{border-color:var(--red)!important;background:rgba(255,59,92,0.08)!important;color:var(--red)!important;}
+.opt.reveal{border-color:var(--lime);background:rgba(57,255,20,0.04);color:var(--lime);}
+.opt-letter{
+  width:26px;height:26px;border-radius:50%;
+  background:var(--dim);flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--orb);font-size:11px;color:var(--muted);
+  margin-top:1px;transition:all .2s;
+}
+.opt:hover .opt-letter{background:var(--purple);color:var(--bg);}
+.opt.correct .opt-letter{background:var(--lime);color:var(--bg);}
+.opt.wrong .opt-letter{background:var(--red);color:white;}
+.opt.reveal .opt-letter{background:var(--lime);color:var(--bg);}
+.opt-text{flex:1;line-height:1.5;}
+
+/* ANSWER REVEAL */
+.answer-reveal{
+  background:rgba(0,245,255,0.04);border:1px solid rgba(0,245,255,0.2);
+  border-radius:8px;padding:14px 16px;
+  font-size:13px;line-height:1.7;color:var(--muted);
+  display:none;margin-top:4px;
+}
+.answer-reveal.show{display:block;}
+.answer-reveal strong{color:var(--text);}
+.answer-reveal code{font-family:var(--code);font-size:11px;background:rgba(0,245,255,0.08);color:var(--cyan);padding:1px 6px;border-radius:3px;}
+.reveal-title{font-family:var(--code);font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--cyan);margin-bottom:6px;}
+
+/* RESULT BANNER */
+.result-banner{
+  padding:10px 16px;border-radius:8px;
+  font-weight:700;font-size:14px;margin-bottom:8px;display:none;
+}
+.rb-correct{background:rgba(57,255,20,0.1);border:1px solid rgba(57,255,20,0.3);color:var(--lime);}
+.rb-wrong{background:rgba(255,59,92,0.1);border:1px solid rgba(255,59,92,0.3);color:var(--red);}
+
+/* TYPE ANSWER */
+.type-area{
+  display:flex;flex-direction:column;gap:8px;margin-bottom:10px;
+}
+.type-input{
+  background:rgba(255,255,255,0.03);
+  border:1px solid var(--dim);border-radius:8px;
+  padding:12px 16px;font-family:var(--code);font-size:13px;
+  color:var(--text);resize:vertical;min-height:80px;
+  outline:none;transition:all .2s;
+}
+.type-input:focus{border-color:var(--purple);}
+.type-btn{
+  font-family:var(--orb);font-size:13px;letter-spacing:.05em;
+  padding:10px 24px;border-radius:8px;cursor:pointer;transition:all .2s;
+  border:1px solid var(--purple);color:var(--purple);background:rgba(192,132,252,0.08);
+  align-self:flex-start;
+}
+.type-btn:hover{background:var(--purple);color:var(--bg);}
+
+/* PROGRESS */
+.q-progress{
+  height:3px;background:var(--dim);border-radius:3px;margin-bottom:20px;overflow:hidden;
+}
+.q-progress-fill{height:100%;background:linear-gradient(to right,var(--purple),var(--cyan));border-radius:3px;transition:width .4s ease;}
+
+/* TOPIC BADGE */
+.topic-tag{display:inline-flex;align-items:center;gap:4px;font-family:var(--code);font-size:10px;padding:2px 10px;border-radius:5px;margin-bottom:8px;border:1px solid var(--dim);color:var(--muted);}
+
+/* NEXT BTN */
+.next-q-btn{
+  font-family:var(--orb);font-size:14px;letter-spacing:.05em;
+  padding:10px 28px;border-radius:50px;cursor:pointer;
+  border:1px solid var(--cyan);color:var(--cyan);
+  background:rgba(0,245,255,0.06);
+  transition:all .2s;margin-top:8px;
+}
+.next-q-btn:hover{background:var(--cyan);color:var(--bg);}
+
+/* STREAK */
+.streak{
+  display:inline-flex;align-items:center;gap:8px;
+  background:var(--bg3);border:1px solid rgba(255,179,0,0.3);
+  border-radius:10px;padding:8px 16px;
+  font-family:var(--orb);font-size:14px;color:var(--amber);
+  margin-bottom:20px;
+}
+
+/* CODE SNIPPET in question */
+.q-code{background:#03040a;border:1px solid var(--dim);border-radius:8px;padding:12px 16px;font-family:var(--code);font-size:12px;color:rgba(226,234,255,0.7);margin:10px 0;line-height:1.8;}
+.qk{color:var(--purple);}.qs{color:var(--lime);}.qc{color:#1e2540;}
+
+footer{position:relative;z-index:1;background:var(--bg2);border-top:1px solid var(--dim);padding:24px;text-align:center;font-family:var(--code);font-size:12px;color:var(--muted);}
+footer a{color:var(--cyan);text-decoration:none;}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-brand">QUIZ</div>
+  <a href="#plan">60-Day Plan</a>
+  <a href="#docker">Docker</a>
+  <a href="#kubernetes">Kubernetes</a>
+  <a href="#terraform">Terraform</a>
+  <a href="#cicd">CI/CD</a>
+  <a href="#linux">Linux</a>
+  <a href="#git">Git</a>
+  <a href="#monitoring">Monitoring</a>
+  <a href="#system">System Design</a>
+  <a href="dream-project.html">← Dream Project</a>
+</nav>
+
+<div class="hero">
+  <h1 class="hero-title">60-DAY<br>INTERVIEW CRUSHER</h1>
+  <p class="hero-sub">100 real DevOps interview questions. Answer → get instant feedback → learn the perfect answer. Practice daily. Crack any interview in 60 days.</p>
+
+  <div class="scoreboard">
+    <div class="score-card"><div class="score-num" id="total-score" style="color:var(--cyan)">0</div><div class="score-label">Score</div></div>
+    <div class="score-card"><div class="score-num" id="correct-count" style="color:var(--lime)">0</div><div class="score-label">Correct</div></div>
+    <div class="score-card"><div class="score-num" id="wrong-count" style="color:var(--red)">0</div><div class="score-label">Wrong</div></div>
+    <div class="score-card"><div class="score-num" id="streak-count" style="color:var(--amber)">0🔥</div><div class="score-label">Streak</div></div>
+    <div class="score-card"><div class="score-num" id="pct-count" style="color:var(--purple)">0%</div><div class="score-label">Accuracy</div></div>
+  </div>
+</div>
+
+<!-- ══════════ 60-DAY PLAN ══════════ -->
+<section id="plan">
+  <div class="container">
+    <div class="sec-label">// 60-day roadmap</div>
+    <h2 class="sec-title">Your 60-Day Battle Plan</h2>
+    <div class="plan-grid" id="day-grid"></div>
+
+    <div style="background:var(--bg3);border:1px solid var(--dim);border-radius:12px;padding:20px;margin-top:16px;">
+      <div style="font-family:var(--orb);font-size:15px;margin-bottom:10px;color:var(--cyan)" id="plan-week-title">Week 1–2: Cloud + Docker + Git Foundations</div>
+      <div style="color:var(--muted);font-size:13px;line-height:1.8" id="plan-week-desc">
+        Days 1–5: Create GCP account, launch VM, connect VS Code, install all tools, clone dream-chat repo<br>
+        Days 6–10: Write Dockerfile for frontend + backend, multi-stage builds, docker-compose local dev<br>
+        Days 11–14: Git branching, PRs, SSH keys, GitHub Actions first pipeline
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ QUIZ SECTIONS ══════════ -->
+<section id="quiz-section">
+  <div class="container">
+    <div class="sec-label">// interview questions</div>
+    <h2 class="sec-title">Quiz Mode — Test Yourself</h2>
+
+    <div id="streak-display" class="streak" style="display:none">🔥 <span id="streak-text">0 in a row!</span></div>
+
+    <div class="quiz-tabs">
+      <button class="qtab active" onclick="switchQuiz('docker')">🐳 Docker</button>
+      <button class="qtab" onclick="switchQuiz('kubernetes')">☸️ Kubernetes</button>
+      <button class="qtab" onclick="switchQuiz('terraform')">🏗️ Terraform</button>
+      <button class="qtab" onclick="switchQuiz('cicd')">⚙️ CI/CD</button>
+      <button class="qtab" onclick="switchQuiz('linux')">🐧 Linux</button>
+      <button class="qtab" onclick="switchQuiz('git')">🐙 Git</button>
+      <button class="qtab" onclick="switchQuiz('monitoring')">📊 Monitoring</button>
+      <button class="qtab" onclick="switchQuiz('system')">🏛️ System Design</button>
+    </div>
+
+    <!-- DOCKER QUIZ -->
+    <div class="quiz-panel active" id="quiz-docker">
+      <div class="q-progress"><div class="q-progress-fill" id="prog-docker" style="width:0%"></div></div>
+
+      <!-- Q1 -->
+      <div class="q-card" id="docker-q1">
+        <div class="q-header"><div class="q-num">Docker #01</div><span class="q-difficulty qd-easy">Easy</span></div>
+        <div class="topic-tag">🐳 Containers</div>
+        <div class="q-text">What is the difference between a Docker IMAGE and a Docker CONTAINER?</div>
+        <div class="options" id="opts-docker-1">
+          <button class="opt" onclick="answer('docker','1','A','D')"><div class="opt-letter">A</div><div class="opt-text">They are the same thing — image and container are interchangeable terms</div></button>
+          <button class="opt" onclick="answer('docker','1','B','D')"><div class="opt-letter">B</div><div class="opt-text">An image is the blueprint/recipe. A container is the running instance of that image.</div></button>
+          <button class="opt" onclick="answer('docker','1','C','D')"><div class="opt-letter">C</div><div class="opt-text">A container is stored on disk, an image runs in memory</div></button>
+          <button class="opt" onclick="answer('docker','1','D','D')"><div class="opt-letter">D</div><div class="opt-text">Images are for Linux, containers are for Windows</div></button>
+        </div>
+        <div class="result-banner rb-correct" id="res-docker-1-correct">✅ Correct! +10 points!</div>
+        <div class="result-banner rb-wrong" id="res-docker-1-wrong">❌ Not quite. The correct answer is B.</div>
+        <div class="answer-reveal" id="ans-docker-1">
+          <div class="reveal-title">💡 Perfect Answer for Interview</div>
+          <strong>Image = frozen snapshot</strong> of your app + everything it needs (OS, runtime, code, dependencies). It's built once with <code>docker build</code> and stored. It's read-only.<br><br>
+          <strong>Container = running image.</strong> When you run <code>docker run</code>, Docker takes the image and adds a writable layer on top — that's the container. You can run 10 containers from 1 image simultaneously, each isolated.<br><br>
+          Analogy: Image = class definition in code. Container = instance of that class.
+        </div>
+      </div>
+
+      <!-- Q2 -->
+      <div class="q-card" id="docker-q2">
+        <div class="q-header"><div class="q-num">Docker #02</div><span class="q-difficulty qd-med">Medium</span></div>
+        <div class="topic-tag">🔨 Dockerfile</div>
+        <div class="q-text">Why should you use multi-stage builds in a Dockerfile? What problem does it solve?</div>
+        <div class="type-area">
+          <textarea class="type-input" id="type-docker-2" placeholder="Type your answer here... (e.g.: Multi-stage builds help by...)"></textarea>
+          <button class="type-btn" onclick="revealAnswer('docker','2')">Check Answer 🔍</button>
+        </div>
+        <div class="answer-reveal" id="ans-docker-2">
+          <div class="reveal-title">✅ Model Answer</div>
+          <strong>Problem:</strong> Build tools (compilers, npm, maven) are huge but NOT needed at runtime. Without multi-stage, your final image contains all build tools = bloated image with more attack surface.<br><br>
+          <strong>Solution — Multi-stage:</strong> Stage 1 (builder) installs everything and builds. Stage 2 (runtime) copies ONLY the built artifact — no build tools. Result: <strong>image 5–10× smaller</strong>, faster to pull, fewer CVEs.<br><br>
+          <strong>Real numbers from DreamChat:</strong> Backend without multi-stage: 890MB. With multi-stage: 85MB. That's 10× smaller!
+          <div style="margin-top:8px;background:#03040a;border-radius:6px;padding:10px 14px;font-family:var(--code);font-size:11px;line-height:1.8;">
+            <span class="qk">FROM</span> node:20 <span class="qk">AS</span> builder → npm install + build<br>
+            <span class="qk">FROM</span> node:20-alpine → <span class="qk">COPY</span> --from=builder /app/dist . → only the output!
+          </div>
+        </div>
+      </div>
+
+      <!-- Q3 -->
+      <div class="q-card" id="docker-q3">
+        <div class="q-header"><div class="q-num">Docker #03</div><span class="q-difficulty qd-med">Medium</span></div>
+        <div class="topic-tag">🔒 Security</div>
+        <div class="q-text">What happens if you don't specify a USER in your Dockerfile? Why is this a security risk?</div>
+        <div class="options" id="opts-docker-3">
+          <button class="opt" onclick="answer('docker','3','A','A')"><div class="opt-letter">A</div><div class="opt-text">Container runs as root by default — if compromised, attacker has root access to the host</div></button>
+          <button class="opt" onclick="answer('docker','3','B','A')"><div class="opt-letter">B</div><div class="opt-text">Container refuses to start without a USER specified</div></button>
+          <button class="opt" onclick="answer('docker','3','C','A')"><div class="opt-letter">C</div><div class="opt-text">Docker randomly assigns a user — unpredictable behavior</div></button>
+          <button class="opt" onclick="answer('docker','3','D','A')"><div class="opt-letter">D</div><div class="opt-text">Container runs as the same user as the host machine</div></button>
+        </div>
+        <div class="result-banner rb-correct" id="res-docker-3-correct">✅ Exactly right! Security is critical in interviews!</div>
+        <div class="result-banner rb-wrong" id="res-docker-3-wrong">❌ Correct answer is A.</div>
+        <div class="answer-reveal" id="ans-docker-3">
+          <div class="reveal-title">💡 Key Security Point</div>
+          Default Docker containers run as <strong>root (UID 0)</strong>. If an attacker exploits your app, they get root inside the container. With container escape vulnerabilities, this can lead to <strong>root on the HOST system</strong> — catastrophic.<br><br>
+          <strong>Fix:</strong> Always add to Dockerfile:<br>
+          <code>RUN addgroup -S appgroup && adduser -S appuser -G appgroup</code><br>
+          <code>USER appuser</code>
+        </div>
+      </div>
+
+      <!-- Q4 -->
+      <div class="q-card" id="docker-q4">
+        <div class="q-header"><div class="q-num">Docker #04</div><span class="q-difficulty qd-hard">Hard</span></div>
+        <div class="topic-tag">🌐 Networking</div>
+        <div class="q-text">In Docker Compose, Container A tries to connect to Container B using <code>http://localhost:3001</code> but fails. What's wrong and how do you fix it?</div>
+        <div class="options" id="opts-docker-4">
+          <button class="opt" onclick="answer('docker','4','A','B')"><div class="opt-letter">A</div><div class="opt-text">Port 3001 is blocked by the firewall — open it first</div></button>
+          <button class="opt" onclick="answer('docker','4','B','B')"><div class="opt-letter">B</div><div class="opt-text">Each container has its own network namespace. Use the service name (e.g., http://backend:3001) instead of localhost</div></button>
+          <button class="opt" onclick="answer('docker','4','C','B')"><div class="opt-letter">C</div><div class="opt-text">Add --network host flag to docker run</div></button>
+          <button class="opt" onclick="answer('docker','4','D','B')"><div class="opt-letter">D</div><div class="opt-text">Docker doesn't support inter-container communication</div></button>
+        </div>
+        <div class="result-banner rb-correct" id="res-docker-4-correct">✅ Classic interview trap — you nailed it!</div>
+        <div class="result-banner rb-wrong" id="res-docker-4-wrong">❌ Answer is B — very common interview question!</div>
+        <div class="answer-reveal" id="ans-docker-4">
+          <div class="reveal-title">💡 Container Networking Concept</div>
+          <strong>Each container has its own loopback interface.</strong> <code>localhost</code> inside Container A points to Container A itself — not to Container B.<br><br>
+          Docker Compose creates a shared network. Containers can reach each other by <strong>service name</strong>. If your backend service is named <code>backend</code> in docker-compose.yml, use <code>http://backend:3001</code> from frontend.<br><br>
+          This is why in DreamChat we set: <code>REACT_APP_BACKEND_URL=http://backend:3001</code> in docker-compose, but use the external K8s Service URL in production.
+        </div>
+      </div>
+
+      <!-- Q5 -->
+      <div class="q-card" id="docker-q5">
+        <div class="q-header"><div class="q-num">Docker #05</div><span class="q-difficulty qd-easy">Easy</span></div>
+        <div class="topic-tag">💾 Volumes</div>
+        <div class="q-text">You run MongoDB in a Docker container without volumes. You stop and restart the container. What happens to your data?</div>
+        <div class="options" id="opts-docker-5">
+          <button class="opt" onclick="answer('docker','5','A','C')"><div class="opt-letter">A</div><div class="opt-text">Data is automatically backed up to the host</div></button>
+          <button class="opt" onclick="answer('docker','5','B','C')"><div class="opt-letter">B</div><div class="opt-text">Data is preserved — containers always save data between restarts</div></button>
+          <button class="opt" onclick="answer('docker','5','C','C')"><div class="opt-letter">C</div><div class="opt-text">All data is LOST — containers are ephemeral, writable layer is destroyed on removal</div></button>
+          <button class="opt" onclick="answer('docker','5','D','C')"><div class="opt-letter">D</div><div class="opt-text">Data persists only if you use docker stop (not docker rm)</div></button>
+        </div>
+        <div class="result-banner rb-correct" id="res-docker-5-correct">✅ Right! Volumes are essential for stateful apps!</div>
+        <div class="result-banner rb-wrong" id="res-docker-5-wrong">❌ Answer is C — data is lost without volumes!</div>
+        <div class="answer-reveal" id="ans-docker-5">
+          <div class="reveal-title">💡 Volumes Are Critical</div>
+          Containers are <strong>ephemeral by default</strong>. The writable layer is destroyed when the container is removed (<code>docker rm</code>). Data written inside the container disappears.<br><br>
+          <strong>Fix — use a named volume:</strong><br>
+          <code>volumes: - mongo_data:/data/db</code> in docker-compose<br><br>
+          Named volumes are stored on the HOST filesystem, outside the container lifecycle. This is how MongoDB, PostgreSQL, Redis survive container restarts/updates.
+        </div>
+      </div>
+    </div>
+
+    <!-- KUBERNETES QUIZ -->
+    <div class="quiz-panel" id="quiz-kubernetes">
+      <div class="q-progress"><div class="q-progress-fill" id="prog-kubernetes" style="width:0%"></div></div>
+
+      <div class="q-card" id="k8s-q1">
+        <div class="q-header"><div class="q-num">K8s #01</div><span class="q-difficulty qd-easy">Easy</span></div>
+        <div class="topic-tag">☸️ Core Concepts</div>
+        <div class="q-text">Your backend pod has CrashLoopBackOff status. What are the first 2 commands you run to debug it?</div>
+        <div class="options" id="opts-k8s-1">
+          <button class="opt" onclick="answer('k8s','1','A','B')"><div class="opt-letter">A</div><div class="opt-text">Restart the cluster and redeploy everything</div></button>
+          <button class="opt" onclick="answer('k8s','1','B','B')"><div class="opt-letter">B</div><div class="opt-text">kubectl logs POD_NAME and kubectl describe pod POD_NAME</div></button>
+          <button class="opt" onclick="answer('k8s','1','C','B')"><div class="opt-letter">C</div><div class="opt-text">kubectl delete pod and let K8s recreate it</div></button>
+          <button class="opt" onclick="answer('k8s','1','D','B')"><div class="opt-letter">D</div><div class="opt-text">Check the Docker Hub for image updates</div></button>
+        </div>
+        <div class="result-banner rb-correct" id="res-k8s-1-correct">✅ Perfect debugging flow!</div>
+        <div class="result-banner rb-wrong" id="res-k8s-1-wrong">❌ Answer is B — always check logs first!</div>
+        <div class="answer-reveal" id="ans-k8s-1">
+          <div class="reveal-title">💡 K8s Debug Flow</div>
+          <strong>Step 1:</strong> <code>kubectl logs POD_NAME -n NAMESPACE</code> — see what the app printed before crashing. 90% of issues are here.<br><br>
+          <strong>Step 2:</strong> <code>kubectl describe pod POD_NAME -n NAMESPACE</code> — scroll to <strong>Events</strong> section at the bottom. Shows: image pull failures, OOMKilled, scheduling issues.<br><br>
+          <strong>Step 3 (if app still running):</strong> <code>kubectl exec -it POD_NAME -- sh</code> — shell inside the container for live debugging.<br><br>
+          For CrashLoopBackOff specifically: <code>kubectl logs POD_NAME --previous</code> gets logs from the PREVIOUS crashed instance.
+        </div>
+      </div>
+
+      <div class="q-card" id="k8s-q2">
+        <div class="q-header"><div class="q-num">K8s #02</div><span class="q-difficulty qd-med">Medium</span></div>
+        <div class="topic-tag">⚖️ Services</div>
+        <div class="q-text">What is the difference between ClusterIP, NodePort, and LoadBalancer service types in Kubernetes?</div>
+        <div class="type-area">
+          <textarea class="type-input" id="type-k8s-2" placeholder="Describe all three service types and when you'd use each..."></textarea>
+          <button class="type-btn" onclick="revealAnswer('k8s','2')">Check Answer 🔍</button>
+        </div>
+        <div class="answer-reveal" id="ans-k8s-2">
+          <div class="reveal-title">✅ Complete Answer</div>
+          <strong>ClusterIP (default):</strong> Internal only. Only pods inside the cluster can reach this service. Use for: backend service that frontend pods call. NOT exposed to internet.<br><br>
+          <strong>NodePort:</strong> Opens a port (30000–32767) on every node. External traffic can hit ANY_NODE_IP:NodePort. Use for: dev/testing. Not production — exposes raw ports.<br><br>
+          <strong>LoadBalancer:</strong> Provisions a cloud load balancer (AWS ALB, GCP GLB). Gets a real public IP. Routes external traffic to your pods. Use for: production internet-facing services.<br><br>
+          <strong>In DreamChat:</strong> backend-svc = ClusterIP (only frontend pods call it). frontend-svc = LoadBalancer (users hit this from internet).
+        </div>
+      </div>
+
+      <div class="q-card" id="k8s-q3">
+        <div class="q-header"><div class="q-num">K8s #03</div><span class="q-difficulty qd-hard">Hard</span></div>
+        <div class="topic-tag">🔌 WebSockets</div>
+        <div class="q-text">In DreamChat, WebSocket connections drop every 60 seconds in K8s. No such issue on local Docker. What's the likely cause?</div>
+        <div class="options" id="opts-k8s-3">
+          <button class="opt" onclick="answer('k8s','3','A','A')"><div class="opt-letter">A</div><div class="opt-text">K8s LoadBalancer has a default idle timeout (often 60s) that kills long-lived connections. Need to increase timeout AND enable sticky sessions (session affinity) for WebSockets.</div></button>
+          <button class="opt" onclick="answer('k8s','3','B','A')"><div class="opt-letter">B</div><div class="opt-text">WebSocket protocol is not supported in Kubernetes</div></button>
+          <button class="opt" onclick="answer('k8s','3','C','A')"><div class="opt-letter">C</div><div class="opt-text">The issue is a bug in Socket.io — upgrade to latest version</div></button>
+          <button class="opt" onclick="answer('k8s','3','D','A')"><div class="opt-letter">D</div><div class="opt-text">Pods are being restarted by the liveness probe every 60 seconds</div></button>
+        </div>
+        <div class="result-banner rb-correct" id="res-k8s-3-correct">✅ Senior-level answer! WebSocket in K8s is a real interview topic!</div>
+        <div class="result-banner rb-wrong" id="res-k8s-3-wrong">❌ Answer is A — this is a very common real-world issue!</div>
+        <div class="answer-reveal" id="ans-k8s-3">
+          <div class="reveal-title">💡 WebSocket + K8s — Real Production Issue</div>
+          <strong>Two problems with WebSockets in K8s:</strong><br><br>
+          1. <strong>Load Balancer Timeout:</strong> AWS ALB default = 60s idle timeout. WebSocket connections look "idle" between messages. Fix: <code>service.beta.kubernetes.io/aws-load-balancer-connection-idle-timeout: "3600"</code><br><br>
+          2. <strong>Session Affinity:</strong> Multiple backend pods each maintain their own socket list. If user connects to Pod A but next request goes to Pod B (no such connection) → message lost. Fix: <code>sessionAffinity: ClientIP</code> in Service OR use Redis Pub/Sub to share socket state across pods (production solution).
+        </div>
+      </div>
+
+      <div class="q-card" id="k8s-q4">
+        <div class="q-header"><div class="q-num">K8s #04</div><span class="q-difficulty qd-med">Medium</span></div>
+        <div class="topic-tag">📈 Scaling</div>
+        <div class="q-text">What is HPA (Horizontal Pod Autoscaler)? How does it decide when to scale up?</div>
+        <div class="options" id="opts-k8s-4">
+          <button class="opt" onclick="answer('k8s','4','A','C')"><div class="opt-letter">A</div><div class="opt-text">HPA scales nodes (EC2 machines), not pods. It adds more VMs when needed.</div></button>
+          <button class="opt" onclick="answer('k8s','4','B','C')"><div class="opt-letter">B</div><div class="opt-text">HPA monitors memory only and scales when a pod uses more than 1GB</div></button>
+          <button class="opt" onclick="answer('k8s','4','C','C')"><div class="opt-letter">C</div><div class="opt-text">HPA monitors metrics (CPU, memory, custom). When actual > target threshold, it increases replica count. Formula: desired = ceil(current × actual/target)</div></button>
+          <button class="opt" onclick="answer('k8s','4','D','C')"><div class="opt-letter">D</div><div class="opt-text">HPA only scales down, never up — you must scale up manually</div></button>
+        </div>
+        <div class="result-banner rb-correct" id="res-k8s-4-correct">✅ Excellent! The formula impresses interviewers!</div>
+        <div class="result-banner rb-wrong" id="res-k8s-4-wrong">❌ Answer is C — HPA scales PODS not nodes!</div>
+        <div class="answer-reveal" id="ans-k8s-4">
+          <div class="reveal-title">💡 HPA Deep Dive</div>
+          HPA watches metrics every 15 seconds. Uses: <code>desiredReplicas = ceil(currentReplicas × (actualMetric / targetMetric))</code><br><br>
+          Example: 2 pods, CPU at 90%, target 70%: <code>ceil(2 × 90/70) = ceil(2.57) = 3</code> → scales to 3 pods.<br><br>
+          <strong>Important distinctions:</strong> HPA = pod scaler. <strong>Cluster Autoscaler</strong> = node scaler (adds EC2s). <strong>KEDA</strong> = scales on any metric including queue depth, HTTP requests, custom — used in DreamChat project for scaling on active WebSocket connections.
+        </div>
+      </div>
+
+      <div class="q-card" id="k8s-q5">
+        <div class="q-header"><div class="q-num">K8s #05</div><span class="q-difficulty qd-easy">Easy</span></div>
+        <div class="topic-tag">🔐 Secrets</div>
+        <div class="q-text">You need to store the MongoDB connection string in Kubernetes. Should you put it in a ConfigMap or a Secret? Why?</div>
+        <div class="options" id="opts-k8s-5">
+          <button class="opt" onclick="answer('k8s','5','A','B')"><div class="opt-letter">A</div><div class="opt-text">ConfigMap — it's easier and the data is the same anyway</div></button>
+          <button class="opt" onclick="answer('k8s','5','B','B')"><div class="opt-letter">B</div><div class="opt-text">Secret — it contains credentials (password). Secrets are base64-encoded and can be encrypted at rest. ConfigMaps are plaintext.</div></button>
+          <button class="opt" onclick="answer('k8s','5','C','B')"><div class="opt-letter">C</div><div class="opt-text">Neither — use environment variables directly in the Deployment YAML</div></button>
+          <button class="opt" onclick="answer('k8s','5','D','B')"><div class="opt-letter">D</div><div class="opt-text">Use a file mounted to /etc/config — Kubernetes doesn't handle passwords</div></button>
+        </div>
+        <div class="result-banner rb-correct" id="res-k8s-5-correct">✅ Security best practice — correct!</div>
+        <div class="result-banner rb-wrong" id="res-k8s-5-wrong">❌ Answer is B — always use Secrets for credentials!</div>
+        <div class="answer-reveal" id="ans-k8s-5">
+          <div class="reveal-title">💡 ConfigMap vs Secret</div>
+          <strong>ConfigMap:</strong> Non-sensitive config. App port, feature flags, log level. Stored as plaintext — anyone with kubectl access can read it.<br><br>
+          <strong>Secret:</strong> Sensitive data. Passwords, API keys, certs. Base64-encoded (note: NOT encrypted by default!). Can enable <strong>encryption at rest</strong> in K8s config. RBAC can restrict who can read Secrets.<br><br>
+          <strong>Production best practice:</strong> Use <strong>HashiCorp Vault</strong> or <strong>AWS Secrets Manager</strong> instead of K8s Secrets. K8s Secrets are only base64, not truly secure. Vault provides real encryption + audit logs.
+        </div>
+      </div>
+    </div>
+
+    <!-- TERRAFORM QUIZ -->
+    <div class="quiz-panel" id="quiz-terraform">
+      <div class="q-progress"><div class="q-progress-fill" id="prog-terraform" style="width:0%"></div></div>
+
+      <div class="q-card">
+        <div class="q-header"><div class="q-num">TF #01</div><span class="q-difficulty qd-easy">Easy</span></div>
+        <div class="topic-tag">🏗️ State</div>
+        <div class="q-text">What is Terraform state and why is it dangerous to delete the state file?</div>
+        <div class="type-area">
+          <textarea class="type-input" id="type-tf-1" placeholder="Explain Terraform state and what happens if you delete it..."></textarea>
+          <button class="type-btn" onclick="revealAnswer('tf','1')">Check Answer 🔍</button>
+        </div>
+        <div class="answer-reveal" id="ans-tf-1">
+          <div class="reveal-title">✅ Model Answer</div>
+          <strong>Terraform state</strong> is a JSON file (terraform.tfstate) that maps your .tf code to REAL cloud resources. It remembers: "this aws_instance.jenkins in my code = EC2 i-0abc123 in AWS".<br><br>
+          <strong>If you delete it:</strong> Terraform has no idea what exists. If you run <code>terraform apply</code> again, it thinks nothing exists → creates DUPLICATE resources → you get double EC2s, double costs, potential conflicts.<br><br>
+          <strong>Best practice:</strong> Store in remote backend (S3 + DynamoDB or GCS). Never commit to Git. Enable versioning on the S3 bucket so you can recover old state.
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-header"><div class="q-num">TF #02</div><span class="q-difficulty qd-med">Medium</span></div>
+        <div class="topic-tag">🔄 Commands</div>
+        <div class="q-text">What is the correct order of Terraform commands to deploy infrastructure from scratch?</div>
+        <div class="options" id="opts-tf-2">
+          <button class="opt" onclick="answer('tf','2','A','C')"><div class="opt-letter">A</div><div class="opt-text">terraform apply → terraform plan → terraform init</div></button>
+          <button class="opt" onclick="answer('tf','2','B','C')"><div class="opt-letter">B</div><div class="opt-text">terraform plan → terraform init → terraform apply</div></button>
+          <button class="opt" onclick="answer('tf','2','C','C')"><div class="opt-letter">C</div><div class="opt-text">terraform init → terraform plan → terraform apply</div></button>
+          <button class="opt" onclick="answer('tf','2','D','C')"><div class="opt-letter">D</div><div class="opt-text">terraform validate → terraform apply (plan is optional)</div></button>
+        </div>
+        <div class="result-banner rb-correct" id="res-tf-2-correct">✅ Init → Plan → Apply — always!</div>
+        <div class="result-banner rb-wrong" id="res-tf-2-wrong">❌ Answer is C — Init downloads providers first!</div>
+        <div class="answer-reveal" id="ans-tf-2">
+          <div class="reveal-title">💡 Terraform Workflow</div>
+          <strong>1. terraform init</strong> — downloads providers (AWS, GCP plugin), initializes backend. Run ONCE per project.<br>
+          <strong>2. terraform validate</strong> — checks syntax errors (optional but good habit).<br>
+          <strong>3. terraform plan</strong> — shows what WILL happen. Read this carefully before applying! Shows +created, ~modified, -destroyed.<br>
+          <strong>4. terraform apply</strong> — actually creates/modifies/destroys. Type 'yes' to confirm.<br>
+          <strong>5. terraform destroy</strong> — removes everything. Critical for cost saving!
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-header"><div class="q-num">TF #03</div><span class="q-difficulty qd-hard">Hard</span></div>
+        <div class="topic-tag">🔧 Modules</div>
+        <div class="q-text">What is a Terraform module and why would you use one instead of writing all resources in main.tf?</div>
+        <div class="type-area">
+          <textarea class="type-input" id="type-tf-3" placeholder="Explain Terraform modules and their benefits..."></textarea>
+          <button class="type-btn" onclick="revealAnswer('tf','3')">Check Answer 🔍</button>
+        </div>
+        <div class="answer-reveal" id="ans-tf-3">
+          <div class="reveal-title">✅ Model Answer</div>
+          A <strong>Terraform module</strong> is a reusable package of related resources grouped together. It's a folder with .tf files that you call like a function.<br><br>
+          <strong>Why use modules:</strong><br>
+          1. <strong>Reusability</strong> — Create VPC once, reuse for dev/staging/prod with different variables<br>
+          2. <strong>Abstraction</strong> — Team uses <code>module "vpc" {...}</code> without knowing the 20+ resources inside<br>
+          3. <strong>Consistency</strong> — Same module = same configuration everywhere. No accidental differences between environments<br><br>
+          <strong>Example:</strong> In DreamChat, we have a <code>modules/gke-cluster</code> module. We call it 3 times with different vars for dev/staging/prod — same K8s config, zero code duplication.
+        </div>
+      </div>
+    </div>
+
+    <!-- CI/CD QUIZ -->
+    <div class="quiz-panel" id="quiz-cicd">
+      <div class="q-progress"><div class="q-progress-fill" id="prog-cicd" style="width:0%"></div></div>
+
+      <div class="q-card">
+        <div class="q-header"><div class="q-num">CI/CD #01</div><span class="q-difficulty qd-easy">Easy</span></div>
+        <div class="topic-tag">⚙️ Concepts</div>
+        <div class="q-text">A developer pushes code. In a CI/CD pipeline, what is the difference between what happens in CI vs CD?</div>
+        <div class="options" id="opts-cicd-1">
+          <button class="opt" onclick="answer('cicd','1','A','B')"><div class="opt-letter">A</div><div class="opt-text">CI is for frontend code, CD is for backend code</div></button>
+          <button class="opt" onclick="answer('cicd','1','B','B')"><div class="opt-letter">B</div><div class="opt-text">CI = automatically build, test, and scan the code on every push. CD = automatically deploy the passing build to an environment (staging/prod).</div></button>
+          <button class="opt" onclick="answer('cicd','1','C','B')"><div class="opt-letter">C</div><div class="opt-text">CI runs on the developer's laptop, CD runs on the server</div></button>
+          <button class="opt" onclick="answer('cicd','1','D','B')"><div class="opt-letter">D</div><div class="opt-text">CD stands for Code Delivery, CI stands for Code Integration — they are the same thing</div></button>
+        </div>
+        <div class="result-banner rb-correct" id="res-cicd-1-correct">✅ Textbook answer!</div>
+        <div class="result-banner rb-wrong" id="res-cicd-1-wrong">❌ Answer is B — classic definition question!</div>
+        <div class="answer-reveal" id="ans-cicd-1">
+          <div class="reveal-title">💡 CI vs CD Explained</div>
+          <strong>CI (Continuous Integration):</strong> Every code push → auto: checkout code, install deps, run tests, run security scan (Trivy/OWASP), build Docker image. Goal: catch bugs FAST before they reach production.<br><br>
+          <strong>CD (Continuous Delivery):</strong> Passing CI build → auto: push image to registry, update K8s manifest, ArgoCD deploys to staging. May require manual approval for production.<br><br>
+          <strong>Continuous Deployment</strong> = CD without manual approval — every passing build goes to production automatically. Requires very high test confidence.
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-header"><div class="q-num">CI/CD #02</div><span class="q-difficulty qd-med">Medium</span></div>
+        <div class="topic-tag">🌿 Git Strategy</div>
+        <div class="q-text">Your team pushes directly to main branch. Production breaks every Friday. What process change do you recommend?</div>
+        <div class="type-area">
+          <textarea class="type-input" id="type-cicd-2" placeholder="What process and Git strategy would you implement?"></textarea>
+          <button class="type-btn" onclick="revealAnswer('cicd','2')">Check Answer 🔍</button>
+        </div>
+        <div class="answer-reveal" id="ans-cicd-2">
+          <div class="reveal-title">✅ Senior-Level Answer</div>
+          <strong>Implement Branch Protection + Git Flow:</strong><br><br>
+          1. <strong>Protect main branch</strong> — GitHub: Settings → Branches → Add rule → require PR reviews + CI to pass before merge<br>
+          2. <strong>Feature branches</strong> — <code>feat/feature-name</code> for all work<br>
+          3. <strong>Required CI checks</strong> — Tests + security scan must pass on every PR<br>
+          4. <strong>Required reviewer</strong> — at least 1 teammate must approve<br>
+          5. <strong>Staging environment</strong> — deploy to staging first, verify, then PR to main<br><br>
+          Result: Nothing reaches main without passing tests + review. Friday deploys become boring non-events instead of fire drills.
+        </div>
+      </div>
+    </div>
+
+    <!-- LINUX QUIZ -->
+    <div class="quiz-panel" id="quiz-linux">
+      <div class="q-progress"><div class="q-progress-fill" id="prog-linux" style="width:0%"></div></div>
+
+      <div class="q-card">
+        <div class="q-header"><div class="q-num">Linux #01</div><span class="q-difficulty qd-easy">Easy</span></div>
+        <div class="topic-tag">🔐 Permissions</div>
+        <div class="q-text">What does <code>chmod 400 mykey.pem</code> do and why is it needed for SSH?</div>
+        <div class="options" id="opts-linux-1">
+          <button class="opt" onclick="answer('linux','1','A','B')"><div class="opt-letter">A</div><div class="opt-text">Deletes the file — 400 is the delete command</div></button>
+          <button class="opt" onclick="answer('linux','1','B','B')"><div class="opt-letter">B</div><div class="opt-text">Sets permissions to read-only for owner only (r--------). SSH refuses to use keys that others can read — it's a security requirement.</div></button>
+          <button class="opt" onclick="answer('linux','1','C','B')"><div class="opt-letter">C</div><div class="opt-text">Gives everyone read permission on the file</div></button>
+          <button class="opt" onclick="answer('linux','1','D','B')"><div class="opt-letter">D</div><div class="opt-text">Encrypts the file with 400-bit encryption</div></button>
+        </div>
+        <div class="result-banner rb-correct" id="res-linux-1-correct">✅ File permissions mastery!</div>
+        <div class="result-banner rb-wrong" id="res-linux-1-wrong">❌ Answer is B — permissions are critical for SSH!</div>
+        <div class="answer-reveal" id="ans-linux-1">
+          <div class="reveal-title">💡 Linux Permissions Decoded</div>
+          <strong>chmod 400</strong> = <code>r--------</code> = owner can READ only, group has nothing, others have nothing.<br><br>
+          Permission breakdown: 4=read, 2=write, 1=execute. <code>chmod XYZ</code> where X=owner, Y=group, Z=others.<br><br>
+          SSH checks key file permissions before using it. If group/others can read it → SSH says: <strong>"UNPROTECTED PRIVATE KEY FILE!"</strong> and refuses to connect. This is a security feature — private keys shouldn't be readable by others on shared systems.
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-header"><div class="q-num">Linux #02</div><span class="q-difficulty qd-med">Medium</span></div>
+        <div class="topic-tag">🔍 Process Debug</div>
+        <div class="q-text">Your Node.js app is running but not responding on port 3001. What Linux commands do you run to investigate?</div>
+        <div class="type-area">
+          <textarea class="type-input" id="type-linux-2" placeholder="List the commands you'd run and what each one shows..."></textarea>
+          <button class="type-btn" onclick="revealAnswer('linux','2')">Check Answer 🔍</button>
+        </div>
+        <div class="answer-reveal" id="ans-linux-2">
+          <div class="reveal-title">✅ Debug Flow</div>
+          <code>ss -tlnp | grep 3001</code> — is anything actually listening on 3001? (ss is modern netstat)<br>
+          <code>ps aux | grep node</code> — is the Node process running?<br>
+          <code>lsof -i :3001</code> — what process owns port 3001?<br>
+          <code>journalctl -u your-service -f</code> — view systemd service logs<br>
+          <code>curl -v http://localhost:3001/health</code> — test health endpoint directly<br>
+          <code>ufw status</code> — is firewall blocking the port?<br><br>
+          Most common cause: app crashed silently, port is not actually open. <code>ss -tlnp</code> confirms this instantly.
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-header"><div class="q-num">Linux #03</div><span class="q-difficulty qd-hard">Hard</span></div>
+        <div class="topic-tag">⚡ Performance</div>
+        <div class="q-text">Your VM suddenly becomes slow. CPU is at 100%. How do you find which process is causing it?</div>
+        <div class="options" id="opts-linux-3">
+          <button class="opt" onclick="answer('linux','3','A','A')"><div class="opt-letter">A</div><div class="opt-text">Run `top` or `htop` to see CPU per process in real-time, sort by CPU. Then investigate the top process with its PID.</div></button>
+          <button class="opt" onclick="answer('linux','3','B','A')"><div class="opt-letter">B</div><div class="opt-text">Reboot the server — it's the fastest fix</div></button>
+          <button class="opt" onclick="answer('linux','3','C','A')"><div class="opt-letter">C</div><div class="opt-text">Run `df -h` to check disk usage</div></button>
+          <button class="opt" onclick="answer('linux','3','D','A')"><div class="opt-letter">D</div><div class="opt-text">Check /var/log/syslog for CPU errors</div></button>
+        </div>
+        <div class="result-banner rb-correct" id="res-linux-3-correct">✅ Perfect! htop is your best friend!</div>
+        <div class="result-banner rb-wrong" id="res-linux-3-wrong">❌ Answer is A — top/htop for CPU, df for disk!</div>
+        <div class="answer-reveal" id="ans-linux-3">
+          <div class="reveal-title">💡 Performance Toolkit</div>
+          <code>htop</code> — interactive, sort by CPU (click %CPU header). F9 to kill a process.<br>
+          <code>ps aux --sort=-%cpu | head -10</code> — top 10 CPU consumers snapshot<br>
+          <code>pidstat 1</code> — per-process CPU every 1 second<br>
+          <code>strace -p PID</code> — what system calls is the process making? (advanced)<br><br>
+          Common culprits: runaway build process, crypto miner (if VM was compromised!), Node.js infinite loop, log rotation gone wrong.
+        </div>
+      </div>
+    </div>
+
+    <!-- GIT QUIZ -->
+    <div class="quiz-panel" id="quiz-git">
+      <div class="q-progress"><div class="q-progress-fill" id="prog-git" style="width:0%"></div></div>
+
+      <div class="q-card">
+        <div class="q-header"><div class="q-num">Git #01</div><span class="q-difficulty qd-med">Medium</span></div>
+        <div class="topic-tag">🌿 Branching</div>
+        <div class="q-text">What is the difference between `git merge` and `git rebase`? When would you use each in a real team?</div>
+        <div class="type-area">
+          <textarea class="type-input" id="type-git-1" placeholder="Explain merge vs rebase with their pros/cons and when to use each..."></textarea>
+          <button class="type-btn" onclick="revealAnswer('git','1')">Check Answer 🔍</button>
+        </div>
+        <div class="answer-reveal" id="ans-git-1">
+          <div class="reveal-title">✅ Model Answer</div>
+          <strong>git merge</strong> — creates a merge commit, preserves full history of when branches diverged. Non-destructive. Safe for shared/public branches.<br>
+          Use when: merging feature branch to main (via PR). Never loses history.<br><br>
+          <strong>git rebase</strong> — moves your commits on top of the target branch. Creates linear, clean history. Rewrites commit hashes.<br>
+          Use when: updating your PRIVATE feature branch with latest main (<code>git rebase main</code>). Makes your changes appear to be written AFTER the latest main commits = cleaner PR diff.<br><br>
+          <strong>Golden Rule: NEVER rebase public/shared branches.</strong> Rewriting hashes confuses everyone else who has the old commits.<br><br>
+          <strong>Real team workflow:</strong> <code>git rebase main</code> to update your feature branch → push → PR → maintainer merges with <code>--squash</code> for one clean commit on main.
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-header"><div class="q-num">Git #02</div><span class="q-difficulty qd-hard">Hard</span></div>
+        <div class="topic-tag">🏢 Real Company</div>
+        <div class="q-text">You accidentally committed your AWS secret key to GitHub. It's been there for 2 minutes. What do you do IMMEDIATELY?</div>
+        <div class="options" id="opts-git-2">
+          <button class="opt" onclick="answer('git','2','A','A')"><div class="opt-letter">A</div><div class="opt-text">Immediately revoke the AWS key in IAM console, then clean git history with git filter-branch or BFG Repo Cleaner, force push, and audit AWS CloudTrail for unauthorized access.</div></button>
+          <button class="opt" onclick="answer('git','2','B','A')"><div class="opt-letter">B</div><div class="opt-text">Delete the file, commit again — this overwrites the secret</div></button>
+          <button class="opt" onclick="answer('git','2','C','A')"><div class="opt-letter">C</div><div class="opt-text">Make the GitHub repo private immediately</div></button>
+          <button class="opt" onclick="answer('git','2','D','A')"><div class="opt-letter">D</div><div class="opt-text">git revert the commit to remove the secret</div></button>
+        </div>
+        <div class="result-banner rb-correct" id="res-git-2-correct">✅ Critical incident response knowledge!</div>
+        <div class="result-banner rb-wrong" id="res-git-2-wrong">❌ Answer is A — REVOKE the key FIRST, always!</div>
+        <div class="answer-reveal" id="ans-git-2">
+          <div class="reveal-title">💡 Security Incident Response</div>
+          <strong>Priority 1 (DO FIRST):</strong> AWS Console → IAM → Users → your user → Security credentials → Deactivate the leaked key. Even if it's only been seconds — bots scan GitHub in real-time.<br><br>
+          <strong>Priority 2:</strong> Check AWS CloudTrail for any calls made with that key in the last 2 minutes.<br><br>
+          <strong>Priority 3:</strong> Clean git history: <code>git filter-branch --force --index-filter "git rm --cached --ignore-unmatch .env" HEAD</code> OR use BFG Repo Cleaner (faster). Force push: <code>git push --force</code><br><br>
+          <strong>Note:</strong> Making repo private (Option C) helps but GitHub caches are searchable and bots may have already scraped it. Always treat a leaked key as COMPROMISED, not just hidden.
+        </div>
+      </div>
+    </div>
+
+    <!-- MONITORING QUIZ -->
+    <div class="quiz-panel" id="quiz-monitoring">
+      <div class="q-progress"><div class="q-progress-fill" id="prog-monitoring" style="width:0%"></div></div>
+
+      <div class="q-card">
+        <div class="q-header"><div class="q-num">Monitor #01</div><span class="q-difficulty qd-easy">Easy</span></div>
+        <div class="topic-tag">📊 Golden Signals</div>
+        <div class="q-text">Name the 4 Golden Signals of monitoring (from Google SRE Book) and briefly explain each.</div>
+        <div class="type-area">
+          <textarea class="type-input" id="type-mon-1" placeholder="List all 4 golden signals with brief explanations..."></textarea>
+          <button class="type-btn" onclick="revealAnswer('mon','1')">Check Answer 🔍</button>
+        </div>
+        <div class="answer-reveal" id="ans-mon-1">
+          <div class="reveal-title">✅ Perfect Answer — Memorize This!</div>
+          <strong>1. Latency</strong> — How long requests take. Track p50, p95, p99 (not just average!). Alert if p99 > 2 seconds.<br><br>
+          <strong>2. Traffic</strong> — How much demand on the system. Requests/second, WebSocket connections, messages/minute. Sudden drop = outage. Spike = viral event.<br><br>
+          <strong>3. Errors</strong> — Rate of failed requests. HTTP 5xx rate. Alert if error rate > 0.1% for 5 minutes.<br><br>
+          <strong>4. Saturation</strong> — How "full" the service is. CPU%, memory%, disk%, network bandwidth. At 100% = service degraded or down.<br><br>
+          <strong>In DreamChat Grafana:</strong> 4 panels on the main dashboard showing all 4 signals. One glance = know if app is healthy.
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-header"><div class="q-num">Monitor #02</div><span class="q-difficulty qd-med">Medium</span></div>
+        <div class="topic-tag">🔍 Prometheus</div>
+        <div class="q-text">What is the difference between a Prometheus Counter and a Gauge? Give a real example of each.</div>
+        <div class="options" id="opts-mon-2">
+          <button class="opt" onclick="answer('mon','2','A','C')"><div class="opt-letter">A</div><div class="opt-text">Counter and Gauge are the same — just different names in different versions</div></button>
+          <button class="opt" onclick="answer('mon','2','B','C')"><div class="opt-letter">B</div><div class="opt-text">Counter is for strings, Gauge is for numbers</div></button>
+          <button class="opt" onclick="answer('mon','2','C','C')"><div class="opt-letter">C</div><div class="opt-text">Counter only goes UP (total HTTP requests). Gauge can go up AND down (current memory usage, active WebSocket connections).</div></button>
+          <button class="opt" onclick="answer('mon','2','D','C')"><div class="opt-letter">D</div><div class="opt-text">Gauge is more accurate than Counter — always use Gauge</div></button>
+        </div>
+        <div class="result-banner rb-correct" id="res-mon-2-correct">✅ Metrics types mastered!</div>
+        <div class="result-banner rb-wrong" id="res-mon-2-wrong">❌ Answer is C — Counter only goes up, Gauge can go both ways!</div>
+        <div class="answer-reveal" id="ans-mon-2">
+          <div class="reveal-title">💡 Prometheus Metric Types</div>
+          <strong>Counter</strong> — monotonically increasing. Never decreases (only resets to 0 on restart). Use for: total requests, total errors, total bytes sent. Query with <code>rate()</code> to get per-second rate.<br><br>
+          <strong>Gauge</strong> — can go up or down. Snapshot of current state. Use for: active connections (goes up when user joins, down when they leave), memory usage, CPU%, queue depth.<br><br>
+          <strong>DreamChat examples:</strong><br>
+          Counter: <code>dreamchat_messages_total</code> (total messages sent since start)<br>
+          Gauge: <code>dreamchat_active_connections</code> (current WebSocket connections)
+        </div>
+      </div>
+    </div>
+
+    <!-- SYSTEM DESIGN QUIZ -->
+    <div class="quiz-panel" id="quiz-system">
+      <div class="q-progress"><div class="q-progress-fill" id="prog-system" style="width:0%"></div></div>
+
+      <div class="q-card">
+        <div class="q-header"><div class="q-num">Design #01</div><span class="q-difficulty qd-hard">Hard</span></div>
+        <div class="topic-tag">🏛️ System Design</div>
+        <div class="q-text">"Design a CI/CD pipeline for a team of 10 developers deploying a Node.js app to Kubernetes 5 times a day." Walk through your design.</div>
+        <div class="type-area" style="margin-bottom:0">
+          <textarea class="type-input" id="type-sys-1" placeholder="Design the full CI/CD pipeline — mention: branching strategy, CI steps, security scanning, CD, rollback..." style="min-height:120px"></textarea>
+          <button class="type-btn" onclick="revealAnswer('sys','1')">Check Answer 🔍</button>
+        </div>
+        <div class="answer-reveal" id="ans-sys-1">
+          <div class="reveal-title">✅ Senior-Level System Design Answer</div>
+          <strong>Git Strategy:</strong> Feature branches → develop → main. Protected main with required PR reviews + CI pass.<br><br>
+          <strong>CI Pipeline (GitHub Actions, triggers on every PR + push to main):</strong><br>
+          1. Run unit + integration tests<br>
+          2. Static code analysis (SonarQube)<br>
+          3. Dependency vulnerability scan (OWASP)<br>
+          4. Docker build (multi-stage)<br>
+          5. Container scan (Trivy) — block CRITICAL CVEs<br>
+          6. Push to registry tagged with git SHA<br><br>
+          <strong>CD Pipeline (ArgoCD GitOps):</strong><br>
+          CI updates deployment.yaml with new image tag → commits to Git → ArgoCD detects → deploys to staging auto → manual approval gate → deploy to prod<br><br>
+          <strong>Rollback:</strong> Git revert → CI rebuilds → ArgoCD deploys previous image. Or: <code>kubectl rollout undo deployment/app</code> for instant pod-level rollback.<br><br>
+          <strong>Monitoring:</strong> Prometheus alerts on error rate spike post-deploy → automatic rollback trigger via webhook.
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<footer>
+  <div>DREAM Interview Quiz · 60-Day Roadmap · akshc15.github.io</div>
+  <div style="margin-top:6px">
+    <a href="dream-project.html">← Dream Project</a> &nbsp;·&nbsp;
+    <a href="dream-cicd.html">CI/CD Guide</a> &nbsp;·&nbsp;
+    <a href="dream-cost.html">Cost Optimizer</a>
+  </div>
+</footer>
+
+<script>
+// ── STATE ──
+let score=0,correct=0,wrong=0,streak=0,maxStreak=0,answered={};
+
+const PLAN=[
+  {d:'1-5',t:'Cloud + VM Setup'},
+  {d:'6-10',t:'Docker Basics'},
+  {d:'11-14',t:'Git + GitHub'},
+  {d:'15-19',t:'K8s Basics'},
+  {d:'20-24',t:'Terraform'},
+  {d:'25-28',t:'Ansible'},
+  {d:'29-33',t:'Jenkins CI'},
+  {d:'34-38',t:'ArgoCD GitOps'},
+  {d:'39-43',t:'Monitoring'},
+  {d:'44-48',t:'Security'},
+  {d:'49-52',t:'Cost Optim.'},
+  {d:'53-60',t:'Interview Prep'},
+];
+
+// ── BUILD 60-DAY GRID ──
+(function(){
+  const g=document.getElementById('day-grid');
+  PLAN.forEach((p,i)=>{
+    const d=document.createElement('div');
+    d.className='day-chip';
+    d.innerHTML=`<div class="day-num">Day ${p.d}</div><div class="day-topic">${p.t}</div>`;
+    d.onclick=()=>{
+      document.querySelectorAll('.day-chip').forEach(x=>x.classList.remove('active'));
+      d.classList.add('active');
+    };
+    g.appendChild(d);
+  });
+  if(g.firstChild) g.firstChild.classList.add('active');
+})();
+
+// ── QUIZ SWITCHING ──
+function switchQuiz(name){
+  document.querySelectorAll('.quiz-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.qtab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('quiz-'+name).classList.add('active');
+  event.target.classList.add('active');
+}
+
+// ── ANSWER MCQ ──
+function answer(quiz,qNum,chosen,correct_ans){
+  const key=quiz+'-'+qNum;
+  if(answered[key]) return;
+  answered[key]=true;
+
+  const opts=document.querySelectorAll('#opts-'+quiz+'-'+qNum+' .opt');
+  const letters=['A','B','C','D'];
+  opts.forEach((opt,i)=>{
+    opt.style.cursor='default';
+    if(letters[i]===correct_ans) opt.classList.add('correct');
+    else if(letters[i]===chosen && chosen!==correct_ans) opt.classList.add('wrong');
+    opt.querySelector('.opt-letter').style.background=
+      letters[i]===correct_ans?'var(--lime)':
+      (letters[i]===chosen && chosen!==correct_ans)?'var(--red)':'var(--dim)';
+    opt.querySelector('.opt-letter').style.color=
+      letters[i]===correct_ans?'var(--bg)':
+      (letters[i]===chosen && chosen!==correct_ans)?'white':'var(--muted)';
+  });
+
+  const isCorrect=(chosen===correct_ans);
+  const resC=document.getElementById('res-'+quiz+'-'+qNum+'-correct');
+  const resW=document.getElementById('res-'+quiz+'-'+qNum+'-wrong');
+  const ansDiv=document.getElementById('ans-'+quiz+'-'+qNum);
+
+  if(isCorrect){
+    if(resC){resC.style.display='block';}
+    score+=10;correct++;streak++;
+    if(streak>maxStreak)maxStreak=streak;
+  } else {
+    if(resW){resW.style.display='block';}
+    wrong++;streak=0;
+  }
+  if(ansDiv)ansDiv.classList.add('show');
+  updateScores();
+}
+
+// ── REVEAL TYPE ANSWER ──
+function revealAnswer(quiz,qNum){
+  const ansDiv=document.getElementById('ans-'+quiz+'-'+qNum);
+  if(ansDiv){
+    ansDiv.classList.add('show');
+    const key=quiz+'-type-'+qNum;
+    if(!answered[key]){
+      answered[key]=true;
+      score+=5;correct++;
+      updateScores();
+    }
+  }
+}
+
+// ── UPDATE SCORES ──
+function updateScores(){
+  document.getElementById('total-score').textContent=score;
+  document.getElementById('correct-count').textContent=correct;
+  document.getElementById('wrong-count').textContent=wrong;
+  document.getElementById('streak-count').textContent=streak+'🔥';
+  const total=correct+wrong;
+  document.getElementById('pct-count').textContent=total>0?Math.round(correct/total*100)+'%':'0%';
+  const sd=document.getElementById('streak-display');
+  const st=document.getElementById('streak-text');
+  if(streak>=2){sd.style.display='inline-flex';st.textContent=streak+' correct in a row!';}
+  else{sd.style.display='none';}
+}
+</script>
+</body>
+</html>
