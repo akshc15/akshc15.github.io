@@ -1,0 +1,1208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Docker — DevPath</title>
+<link rel="stylesheet" href="../../css/main.css">
+<style>
+  .track-hero {
+    background: linear-gradient(135deg, #f0f7ff, #fafafa);
+    border-bottom: 1px solid #e8e8ed;
+    padding: 60px 24px 48px;
+  }
+  .layout {
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    max-width: 1080px;
+    margin: 0 auto;
+    min-height: calc(100vh - 52px);
+  }
+  .sidebar {
+    border-right: 1px solid #e8e8ed;
+    padding: 24px 0;
+    position: sticky;
+    top: 52px;
+    height: calc(100vh - 52px);
+    overflow-y: auto;
+    background: white;
+  }
+  .sidebar-title {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    color: #86868b;
+    padding: 0 20px 12px;
+  }
+  .sm {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 20px;
+    cursor: pointer;
+    transition: all .2s;
+    border-left: 2px solid transparent;
+    text-decoration: none;
+  }
+  .sm:hover { background: #f5f5f7; }
+  .sm.active {
+    background: #f0f7ff;
+    border-left-color: #0071e3;
+  }
+  .sm.done { border-left-color: #34c759; }
+  .sm-num {
+    font-size: 11px;
+    color: #86868b;
+    font-family: 'SF Mono', monospace;
+    min-width: 28px;
+  }
+  .sm-title {
+    font-size: 13px;
+    font-weight: 500;
+    color: #1d1d1f;
+    flex: 1;
+  }
+  .sm-badge {
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 100px;
+    font-weight: 500;
+  }
+  .sb-done {
+    color: #34c759;
+    background: rgba(52,199,89,0.1);
+  }
+  .sb-active {
+    color: #0071e3;
+    background: rgba(0,113,227,0.1);
+  }
+  .sb-locked {
+    color: #86868b;
+    background: #f5f5f7;
+  }
+  .content { padding: 40px; }
+  .mission-card {
+    display: none;
+    animation: fadeUp .3s both;
+  }
+  .mission-card.active { display: block; }
+  .mission-header {
+    margin-bottom: 32px;
+  }
+  .concept-box {
+    background: #f0f7ff;
+    border: 1px solid rgba(0,113,227,0.15);
+    border-radius: 14px;
+    padding: 24px;
+    margin-bottom: 24px;
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+  }
+  .concept-emoji { font-size: 36px; flex-shrink: 0; }
+  .concept-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: #1d1d1f;
+    margin-bottom: 6px;
+  }
+  .concept-desc {
+    font-size: 14px;
+    color: #6e6e73;
+    line-height: 1.7;
+  }
+  .concept-desc strong { color: #1d1d1f; }
+  .concept-desc code {
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    font-size: 12px;
+    background: rgba(0,113,227,0.08);
+    color: #0071e3;
+    padding: 1px 6px;
+    border-radius: 4px;
+  }
+  .run-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #0071e3;
+    background: rgba(0,113,227,0.08);
+    border: 1px solid rgba(0,113,227,0.2);
+    padding: 8px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all .2s;
+    margin-top: 10px;
+  }
+  .run-btn:hover {
+    background: rgba(0,113,227,0.14);
+    transform: translateY(-1px);
+  }
+  .verify-box {
+    background: rgba(52,199,89,0.05);
+    border: 1px solid rgba(52,199,89,0.2);
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-top: 10px;
+    display: none;
+  }
+  .verify-box.show { display: block; }
+  .verify-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: #34c759;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    margin-bottom: 5px;
+  }
+  .verify-desc {
+    font-size: 13px;
+    color: #6e6e73;
+    line-height: 1.6;
+  }
+  .verify-desc strong { color: #1d1d1f; }
+  .quiz-box {
+    background: #f5f5f7;
+    border-radius: 14px;
+    padding: 20px;
+    margin-top: 20px;
+  }
+  .quiz-q {
+    font-size: 15px;
+    font-weight: 600;
+    color: #1d1d1f;
+    margin-bottom: 14px;
+  }
+  .quiz-opts {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .quiz-opt {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: white;
+    border: 1px solid #e8e8ed;
+    border-radius: 10px;
+    padding: 12px 16px;
+    cursor: pointer;
+    font-size: 14px;
+    color: #6e6e73;
+    transition: all .2s;
+    text-align: left;
+    width: 100%;
+  }
+  .quiz-opt:hover {
+    border-color: rgba(0,113,227,0.3);
+    color: #1d1d1f;
+  }
+  .quiz-opt.correct {
+    border-color: rgba(52,199,89,0.4) !important;
+    background: rgba(52,199,89,0.05) !important;
+    color: #34c759 !important;
+  }
+  .quiz-opt.wrong {
+    border-color: rgba(255,59,48,0.4) !important;
+    background: rgba(255,59,48,0.05) !important;
+    color: #ff3b30 !important;
+  }
+  .quiz-letter {
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    background: #f5f5f7;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    flex-shrink: 0;
+    transition: all .2s;
+  }
+  .complete-btn {
+    width: 100%;
+    padding: 14px;
+    background: #0071e3;
+    color: white;
+    font-size: 15px;
+    font-weight: 600;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    margin-top: 24px;
+    transition: all .25s;
+    letter-spacing: -.01em;
+  }
+  .complete-btn:hover {
+    background: #0077ed;
+    transform: translateY(-1px);
+    box-shadow: 0 8px 20px rgba(0,113,227,0.25);
+  }
+  .complete-btn:disabled {
+    opacity: .4;
+    cursor: default;
+    transform: none;
+    box-shadow: none;
+  }
+  .mission-nav {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+    gap: 10px;
+  }
+  .mnav {
+    font-size: 13px;
+    font-weight: 600;
+    padding: 9px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    border: 1px solid #e8e8ed;
+    background: white;
+    color: #6e6e73;
+    transition: all .2s;
+  }
+  .mnav:hover { border-color: #0071e3; color: #0071e3; }
+  .mnav-next {
+    background: #0071e3;
+    border-color: #0071e3;
+    color: white;
+  }
+  .mnav-next:hover {
+    background: #0077ed;
+    box-shadow: 0 4px 12px rgba(0,113,227,0.25);
+  }
+  .err-block {
+    background: rgba(255,59,48,0.04);
+    border: 1px solid rgba(255,59,48,0.15);
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-bottom: 8px;
+    font-family: 'SF Mono','Fira Code',monospace;
+    font-size: 12px;
+    color: #ff3b30;
+  }
+  .fix-block {
+    background: rgba(52,199,89,0.04);
+    border: 1px solid rgba(52,199,89,0.15);
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-bottom: 16px;
+    font-size: 13px;
+    color: #6e6e73;
+    line-height: 1.6;
+  }
+  .fix-block strong { color: #1d1d1f; }
+  .fix-block code {
+    font-family: 'SF Mono','Fira Code',monospace;
+    font-size: 11px;
+    background: rgba(52,199,89,0.1);
+    color: #34c759;
+    padding: 1px 6px;
+    border-radius: 4px;
+  }
+  @media(max-width:768px) {
+    .layout { grid-template-columns: 1fr; }
+    .sidebar {
+      position: relative;
+      top: 0; height: auto;
+      border-right: none;
+      border-bottom: 1px solid #e8e8ed;
+    }
+    .content { padding: 24px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <a href="../../devpath.html" class="nav-brand">DevPath</a>
+  <div class="nav-links">
+    <a href="../../devpath.html#learn" class="active">Learn</a>
+    <a href="../../devpath.html#build">Build</a>
+    <a href="../../devpath.html#progress">Progress</a>
+  </div>
+  <div class="nav-right">
+    <div class="xp-pill">⚡ <span id="nav-xp">0</span> XP</div>
+    <div class="streak-pill">🔥 <span id="nav-streak">0</span></div>
+  </div>
+</nav>
+
+<!-- TRACK HERO -->
+<div class="track-hero">
+  <div style="max-width:1080px;margin:0 auto;">
+    <span class="label">Docker Track · 15 Missions</span>
+    <h1 style="font-size:clamp(32px,5vw,48px);margin-bottom:10px;">
+      Docker
+    </h1>
+    <p style="max-width:480px;margin-bottom:20px;">
+      Pack your app into a box that runs the same
+      everywhere. Learn images, containers, volumes,
+      networks and Compose from scratch.
+    </p>
+    <div style="display:flex;gap:20px;flex-wrap:wrap;">
+      <div>
+        <span style="font-size:24px;font-weight:700;color:#0071e3;">15</span>
+        <span style="font-size:13px;color:#86868b;margin-left:4px;">missions</span>
+      </div>
+      <div>
+        <span style="font-size:24px;font-weight:700;color:#0071e3;">+1,200</span>
+        <span style="font-size:13px;color:#86868b;margin-left:4px;">XP total</span>
+      </div>
+      <div>
+        <span style="font-size:24px;font-weight:700;color:#0071e3;">~8hrs</span>
+        <span style="font-size:13px;color:#86868b;margin-left:4px;">to complete</span>
+      </div>
+      <div>
+        <span style="font-size:24px;font-weight:700;color:#34c759;">₹0</span>
+        <span style="font-size:13px;color:#86868b;margin-left:4px;">cost</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-title">Missions</div>
+    <div class="sm active" onclick="show(1)" id="sm-1">
+      <span class="sm-num">01</span>
+      <span class="sm-title">Your First Container</span>
+      <span class="sm-badge sb-active">active</span>
+    </div>
+    <div class="sm" onclick="show(2)" id="sm-2">
+      <span class="sm-num">02</span>
+      <span class="sm-title">Write a Dockerfile</span>
+      <span class="sm-badge sb-locked">locked</span>
+    </div>
+    <div class="sm" onclick="show(3)" id="sm-3">
+      <span class="sm-num">03</span>
+      <span class="sm-title">Multi-Stage Builds</span>
+      <span class="sm-badge sb-locked">locked</span>
+    </div>
+    <div class="sm" onclick="show(4)" id="sm-4">
+      <span class="sm-num">04</span>
+      <span class="sm-title">Container Networking</span>
+      <span class="sm-badge sb-locked">locked</span>
+    </div>
+    <div class="sm" onclick="show(5)" id="sm-5">
+      <span class="sm-num">05</span>
+      <span class="sm-title">Volumes & Data</span>
+      <span class="sm-badge sb-locked">locked</span>
+    </div>
+    <div class="sm" onclick="show(6)" id="sm-6">
+      <span class="sm-num">06</span>
+      <span class="sm-title">Docker Compose</span>
+      <span class="sm-badge sb-locked">locked</span>
+    </div>
+    <div class="sm" onclick="show(7)" id="sm-7">
+      <span class="sm-num">07</span>
+      <span class="sm-title">Docker Security</span>
+      <span class="sm-badge sb-locked">locked</span>
+    </div>
+    <div class="sm" onclick="show(8)" id="sm-8">
+      <span class="sm-num">08</span>
+      <span class="sm-title">Push to Registry</span>
+      <span class="sm-badge sb-locked">locked</span>
+    </div>
+    <div class="sm" onclick="show(9)" id="sm-9">
+      <span class="sm-num">09</span>
+      <span class="sm-title">Debug Containers</span>
+      <span class="sm-badge sb-locked">locked</span>
+    </div>
+    <div class="sm" onclick="show(10)" id="sm-10">
+      <span class="sm-num">10</span>
+      <span class="sm-title">DreamChat Full Stack</span>
+      <span class="sm-badge sb-locked">locked</span>
+    </div>
+    <div class="sm" onclick="show(11)" id="sm-11">
+      <span class="sm-num">11</span>
+      <span class="sm-title">Build Optimization</span>
+      <span class="sm-badge sb-locked">locked</span>
+    </div>
+    <div class="sm" onclick="show(12)" id="sm-12">
+      <span class="sm-num">12</span>
+      <span class="sm-title">Container Monitoring</span>
+      <span class="sm-badge sb-locked">locked</span>
+    </div>
+    <div class="sm" onclick="show(13)" id="sm-13">
+      <span class="sm-num">13</span>
+      <span class="sm-title">Trivy Security Scan</span>
+      <span class="sm-badge sb-locked">locked</span>
+    </div>
+    <div class="sm" onclick="show(14)" id="sm-14">
+      <span class="sm-num">14</span>
+      <span class="sm-title">Production Patterns</span>
+      <span class="sm-badge sb-locked">locked</span>
+    </div>
+    <div class="sm" onclick="show(15)" id="sm-15">
+      <span class="sm-num">15</span>
+      <span class="sm-title">🏆 Boss Challenge</span>
+      <span class="sm-badge sb-locked">locked</span>
+    </div>
+  </aside>
+
+  <!-- CONTENT -->
+  <main class="content">
+
+    <!-- MISSION 1 -->
+    <div class="mission-card active" id="mc-1">
+      <div class="mission-header">
+        <div style="display:flex;align-items:center;
+          justify-content:space-between;gap:12px;margin-bottom:10px;">
+          <span class="badge badge-blue">Docker · Mission 01</span>
+          <span class="badge badge-amber">⚡ +50 XP</span>
+        </div>
+        <h2 style="font-size:26px;margin-bottom:8px;">
+          Your First Container
+        </h2>
+        <p>Run hello-world. See what Docker actually
+          does behind the scenes. Understand images
+          vs containers forever.</p>
+      </div>
+
+      <!-- CONCEPT -->
+      <div class="concept-box">
+        <div class="concept-emoji">🍕</div>
+        <div>
+          <div class="concept-title">
+            Think of it like a frozen pizza
+          </div>
+          <div class="concept-desc">
+            <strong>Docker Image</strong> = frozen pizza in a box.
+            Recipe + ingredients sealed together.
+            You can make 10 pizzas from 1 box.<br><br>
+            <strong>Docker Container</strong> = pizza in the oven,
+            running hot. When you run
+            <code>docker run</code>, Docker takes the
+            frozen image and starts it as a live container.<br><br>
+            <strong>Docker Hub</strong> = the supermarket.
+            Millions of free pre-made images —
+            nginx, node, ubuntu, mongodb.
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 1 -->
+      <div class="step-row" id="sr-1-1">
+        <div class="step-num" id="sn-1-1">1</div>
+        <div class="step-body">
+          <div class="step-title">
+            Run hello-world on your cloud VM
+          </div>
+          <div class="step-desc">
+            Open your cloud VM terminal in VS Code
+            and run this command:
+          </div>
+          <div class="terminal" style="margin-top:10px;">
+            <div class="terminal-bar">
+              <div class="t-dot t-red"></div>
+              <div class="t-dot t-yellow"></div>
+              <div class="t-dot t-green"></div>
+              <span class="t-label">cloud-vm ~ docker</span>
+            </div>
+            <div class="terminal-body">
+<span class="t-comment"># Pull and run hello-world</span><br>
+<span class="t-prompt">you@vm:~$</span>
+<span class="t-cmd"> docker run hello-world</span><br><br>
+<span class="t-comment"># Expected output:</span><br>
+<span class="t-out">Hello from Docker!</span><br>
+<span class="t-out">This message shows Docker is working correctly.</span>
+            </div>
+          </div>
+          <button class="run-btn"
+            onclick="completeStep('1-1',this)">
+            ✓ Done — I see "Hello from Docker!"
+          </button>
+          <div class="verify-box" id="verify-1-1">
+            <div class="verify-title">✅ What happened</div>
+            <div class="verify-desc">
+              Docker checked locally — no hello-world image found.
+              Pulled it from Docker Hub automatically.
+              Created a container, ran it, it printed the message,
+              then <strong>exited</strong>. That's it!
+              The image is now saved locally for next time.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 2 -->
+      <div class="step-row" id="sr-1-2">
+        <div class="step-num" id="sn-1-2">2</div>
+        <div class="step-body">
+          <div class="step-title">
+            Inspect what Docker created
+          </div>
+          <div class="step-desc">
+            These 3 commands are your
+            <strong>daily Docker toolkit</strong>:
+          </div>
+          <div class="terminal" style="margin-top:10px;">
+            <div class="terminal-bar">
+              <div class="t-dot t-red"></div>
+              <div class="t-dot t-yellow"></div>
+              <div class="t-dot t-green"></div>
+              <span class="t-label">daily toolkit</span>
+            </div>
+            <div class="terminal-body">
+<span class="t-comment"># See running containers</span><br>
+<span class="t-prompt">you@vm:~$</span>
+<span class="t-cmd"> docker ps</span><br>
+<span class="t-out">CONTAINER ID  IMAGE  STATUS  PORTS</span><br>
+<span class="t-out"># Empty — hello-world already exited</span><br><br>
+<span class="t-comment"># See ALL containers including stopped</span><br>
+<span class="t-prompt">you@vm:~$</span>
+<span class="t-cmd"> docker ps -a</span><br>
+<span class="t-out">abc123  hello-world  Exited(0)  2m ago</span><br><br>
+<span class="t-comment"># See all local images</span><br>
+<span class="t-prompt">you@vm:~$</span>
+<span class="t-cmd"> docker images</span><br>
+<span class="t-out">hello-world  latest  13.3kB</span>
+            </div>
+          </div>
+          <button class="run-btn"
+            onclick="completeStep('1-2',this)">
+            ✓ Done — I see the container and image
+          </button>
+          <div class="verify-box" id="verify-1-2">
+            <div class="verify-title">✅ What each means</div>
+            <div class="verify-desc">
+              <strong>Exited (0)</strong> = finished successfully.
+              Exit code 0 = success in Linux. Non-zero = error.
+              <strong>13.3kB</strong> = tiny image!
+              Compare: Ubuntu is 70MB, node is 900MB.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 3 -->
+      <div class="step-row" id="sr-1-3">
+        <div class="step-num" id="sn-1-3">3</div>
+        <div class="step-body">
+          <div class="step-title">
+            Run nginx — a real web server
+          </div>
+          <div class="step-desc">
+            Run a container that stays running.
+            nginx serves web pages to millions of users
+            at Netflix, GitHub, Cloudflare.
+          </div>
+          <div class="terminal" style="margin-top:10px;">
+            <div class="terminal-bar">
+              <div class="t-dot t-red"></div>
+              <div class="t-dot t-yellow"></div>
+              <div class="t-dot t-green"></div>
+              <span class="t-label">run nginx</span>
+            </div>
+            <div class="terminal-body">
+<span class="t-comment"># -d = run in background</span><br>
+<span class="t-comment"># -p 8080:80 = Mac port 8080 → container port 80</span><br>
+<span class="t-comment"># --name = friendly name</span><br>
+<span class="t-prompt">you@vm:~$</span>
+<span class="t-cmd"> docker run -d -p 8080:80 --name web nginx</span><br><br>
+<span class="t-comment"># Test it</span><br>
+<span class="t-prompt">you@vm:~$</span>
+<span class="t-cmd"> curl http://localhost:8080</span><br>
+<span class="t-out">Welcome to nginx! ✓</span><br><br>
+<span class="t-comment"># Clean up</span><br>
+<span class="t-prompt">you@vm:~$</span>
+<span class="t-cmd"> docker stop web && docker rm web</span>
+            </div>
+          </div>
+          <button class="run-btn"
+            onclick="completeStep('1-3',this)">
+            ✓ Done — nginx returned "Welcome to nginx!"
+          </button>
+          <div class="verify-box" id="verify-1-3">
+            <div class="verify-title">🎉 You ran your first real service!</div>
+            <div class="verify-desc">
+              nginx is running inside a container on your
+              cloud VM. You accessed it with curl.
+              <strong>1 command = running web server.</strong>
+              No apt-get install. No config files.
+              Just docker run.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- QUIZ -->
+      <div class="quiz-box">
+        <div class="quiz-q">
+          What is the difference between
+          <code style="font-family:monospace;background:rgba(0,113,227,.08);
+          color:#0071e3;padding:1px 6px;border-radius:4px;">
+            docker stop
+          </code>
+          and
+          <code style="font-family:monospace;background:rgba(0,113,227,.08);
+          color:#0071e3;padding:1px 6px;border-radius:4px;">
+            docker rm
+          </code>?
+        </div>
+        <div class="quiz-opts" id="q-m1">
+          <button class="quiz-opt"
+            onclick="answerQuiz(this,'A','B','q-m1')">
+            <div class="quiz-letter">A</div>
+            They do the same thing
+          </button>
+          <button class="quiz-opt"
+            onclick="answerQuiz(this,'B','B','q-m1')">
+            <div class="quiz-letter">B</div>
+            stop = gracefully stops a running container
+            (still exists). rm = permanently deletes it.
+          </button>
+          <button class="quiz-opt"
+            onclick="answerQuiz(this,'C','B','q-m1')">
+            <div class="quiz-letter">C</div>
+            stop = deletes container. rm = deletes image
+          </button>
+          <button class="quiz-opt"
+            onclick="answerQuiz(this,'D','B','q-m1')">
+            <div class="quiz-letter">D</div>
+            rm works on running containers only
+          </button>
+        </div>
+      </div>
+
+      <!-- ERRORS -->
+      <div class="info info-red" style="margin-top:24px;">
+        <span class="info-icon">🚨</span>
+        <div class="info-text">
+          <strong>Common errors you'll hit</strong>
+        </div>
+      </div>
+
+      <div class="err-block">
+        Got permission denied while trying to connect
+        to the Docker daemon
+      </div>
+      <div class="fix-block">
+        <strong>Fix:</strong>
+        <code>sudo usermod -aG docker $USER</code>
+        then log out and log back in to your VM.
+        Or run: <code>newgrp docker</code>
+      </div>
+
+      <div class="err-block">
+        docker: Error response: port is already allocated
+      </div>
+      <div class="fix-block">
+        <strong>Fix:</strong> Something else uses port 8080.
+        Use different port: <code>-p 8081:80</code>
+        Or find and kill: <code>lsof -i :8080</code>
+        then <code>kill -9 PID</code>
+      </div>
+
+      <!-- COMPLETE -->
+      <button class="complete-btn" id="cb-1"
+        onclick="completeMission(1, 50)"
+        data-mission="m1" data-steps="3"
+        id="mission-complete-btn"
+        disabled>
+        Complete Mission 01 — Claim 50 XP
+      </button>
+
+      <div class="mission-nav">
+        <span></span>
+        <button class="mnav mnav-next"
+          onclick="show(2)">
+          Mission 02 →
+        </button>
+      </div>
+    </div>
+
+    <!-- MISSION 2 -->
+    <div class="mission-card" id="mc-2">
+      <div class="mission-header">
+        <div style="display:flex;align-items:center;
+          justify-content:space-between;gap:12px;
+          margin-bottom:10px;">
+          <span class="badge badge-blue">
+            Docker · Mission 02
+          </span>
+          <span class="badge badge-amber">⚡ +80 XP</span>
+        </div>
+        <h2 style="font-size:26px;margin-bottom:8px;">
+          Write Your First Dockerfile
+        </h2>
+        <p>Package DreamChat backend into a Docker image.
+          Multi-stage build. Security best practices
+          from day one.</p>
+      </div>
+
+      <div class="concept-box">
+        <div class="concept-emoji">📋</div>
+        <div>
+          <div class="concept-title">
+            Dockerfile = Recipe for your image
+          </div>
+          <div class="concept-desc">
+            Each line creates a <strong>layer</strong>.
+            Layers are <strong>cached</strong> —
+            if you only change your code (not package.json),
+            Docker reuses the npm install layer.
+            Builds go from 45 seconds to 8 seconds.<br><br>
+            <strong>Order matters!</strong>
+            Put things that change least at top.
+            Things that change most at bottom.
+            This maximises cache hits every time.
+          </div>
+        </div>
+      </div>
+
+      <div class="step-row" id="sr-2-1">
+        <div class="step-num" id="sn-2-1">1</div>
+        <div class="step-body">
+          <div class="step-title">
+            Create the DreamChat backend
+          </div>
+          <div class="terminal" style="margin-top:10px;">
+            <div class="terminal-bar">
+              <div class="t-dot t-red"></div>
+              <div class="t-dot t-yellow"></div>
+              <div class="t-dot t-green"></div>
+              <span class="t-label">create project</span>
+            </div>
+            <div class="terminal-body">
+<span class="t-prompt">you@vm:~$</span>
+<span class="t-cmd"> mkdir -p ~/dream-chat/backend</span><br>
+<span class="t-prompt">you@vm:~$</span>
+<span class="t-cmd"> cd ~/dream-chat/backend</span><br><br>
+<span class="t-comment"># Create simple server</span><br>
+<span class="t-prompt">you@vm:~$</span>
+<span class="t-cmd"> cat > server.js << 'EOF'</span><br>
+<span class="t-out">const http = require('http');</span><br>
+<span class="t-out">const server = http.createServer((req, res) => {</span><br>
+<span class="t-out">  if (req.url === '/health') {</span><br>
+<span class="t-out">    res.end(JSON.stringify({status:'ok'}));</span><br>
+<span class="t-out">  } else { res.end('DreamChat 🚀'); }</span><br>
+<span class="t-out">});</span><br>
+<span class="t-out">server.listen(3001,()=>console.log('Running!'));</span><br>
+<span class="t-out">EOF</span><br><br>
+<span class="t-prompt">you@vm:~$</span>
+<span class="t-cmd"> npm init -y</span>
+            </div>
+          </div>
+          <button class="run-btn"
+            onclick="completeStep('2-1',this)">
+            ✓ Created server.js and package.json
+          </button>
+          <div class="verify-box" id="verify-2-1">
+            <div class="verify-title">✅ Good</div>
+            <div class="verify-desc">
+              You have server.js and package.json.
+              Notice the <strong>/health endpoint</strong> —
+              Kubernetes will use this to check if your
+              app is alive. Add it to every app you build.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step-row" id="sr-2-2">
+        <div class="step-num" id="sn-2-2">2</div>
+        <div class="step-body">
+          <div class="step-title">
+            Write the production Dockerfile
+          </div>
+          <div class="terminal" style="margin-top:10px;">
+            <div class="terminal-bar">
+              <div class="t-dot t-red"></div>
+              <div class="t-dot t-yellow"></div>
+              <div class="t-dot t-green"></div>
+              <span class="t-label">backend/Dockerfile</span>
+            </div>
+            <div class="terminal-body">
+<span class="t-prompt">you@vm:~$</span>
+<span class="t-cmd"> nano Dockerfile</span><br><br>
+<span class="t-comment"># Paste this:</span><br><br>
+<span class="t-out"># Stage 1: Install dependencies</span><br>
+<span class="t-out">FROM node:20-alpine AS builder</span><br>
+<span class="t-out">WORKDIR /app</span><br>
+<span class="t-out">COPY package*.json ./</span><br>
+<span class="t-out">RUN npm ci --only=production</span><br><br>
+<span class="t-out"># Stage 2: Runtime (tiny final image)</span><br>
+<span class="t-out">FROM node:20-alpine</span><br>
+<span class="t-out">RUN addgroup -S app && adduser -S app -G app</span><br>
+<span class="t-out">WORKDIR /app</span><br>
+<span class="t-out">COPY --from=builder /app/node_modules ./node_modules</span><br>
+<span class="t-out">COPY . .</span><br>
+<span class="t-out">USER app</span><br>
+<span class="t-out">EXPOSE 3001</span><br>
+<span class="t-out">CMD ["node", "server.js"]</span><br><br>
+<span class="t-comment"># Ctrl+X → Y → Enter to save</span>
+            </div>
+          </div>
+          <button class="run-btn"
+            onclick="completeStep('2-2',this)">
+            ✓ Dockerfile created and saved
+          </button>
+          <div class="verify-box" id="verify-2-2">
+            <div class="verify-title">✅ Why each line matters</div>
+            <div class="verify-desc">
+              <strong>node:20-alpine</strong> = 5MB base
+              (not 900MB ubuntu!).
+              <strong>npm ci</strong> = reproducible installs.
+              <strong>Multi-stage</strong> = build tools
+              NOT in final image.
+              <strong>USER app</strong> = never run as root.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step-row" id="sr-2-3">
+        <div class="step-num" id="sn-2-3">3</div>
+        <div class="step-body">
+          <div class="step-title">Build and run it</div>
+          <div class="terminal" style="margin-top:10px;">
+            <div class="terminal-bar">
+              <div class="t-dot t-red"></div>
+              <div class="t-dot t-yellow"></div>
+              <div class="t-dot t-green"></div>
+              <span class="t-label">build + run</span>
+            </div>
+            <div class="terminal-body">
+<span class="t-comment"># Build (. = current folder)</span><br>
+<span class="t-prompt">you@vm:~$</span>
+<span class="t-cmd"> docker build -t dream-backend:v1 .</span><br>
+<span class="t-out">Successfully built abc123</span><br>
+<span class="t-out">Successfully tagged dream-backend:v1</span><br><br>
+<span class="t-comment"># Check image size</span><br>
+<span class="t-prompt">you@vm:~$</span>
+<span class="t-cmd"> docker images dream-backend</span><br>
+<span class="t-out">dream-backend  v1  ~85MB ← tiny!</span><br><br>
+<span class="t-comment"># Run and test</span><br>
+<span class="t-prompt">you@vm:~$</span>
+<span class="t-cmd"> docker run -d -p 3001:3001 --name backend dream-backend:v1</span><br>
+<span class="t-prompt">you@vm:~$</span>
+<span class="t-cmd"> curl http://localhost:3001/health</span><br>
+<span class="t-out">{"status":"ok"} ✓</span>
+            </div>
+          </div>
+          <button class="run-btn"
+            onclick="completeStep('2-3',this)">
+            ✓ Health check returns JSON!
+          </button>
+          <div class="verify-box" id="verify-2-3">
+            <div class="verify-title">
+              🎉 You built a production Docker image!
+            </div>
+            <div class="verify-desc">
+              85MB image. Non-root user. Multi-stage build.
+              Health check endpoint.
+              This is better than 80% of Dockerfiles
+              in the wild. You just containerized an app
+              the professional way.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <button class="complete-btn"
+        onclick="completeMission(2, 80)"
+        data-mission="m2" data-steps="3"
+        id="mission-complete-btn"
+        disabled>
+        Complete Mission 02 — Claim 80 XP
+      </button>
+
+      <div class="mission-nav">
+        <button class="mnav" onclick="show(1)">
+          ← Mission 01
+        </button>
+        <button class="mnav mnav-next" onclick="show(3)">
+          Mission 03 →
+        </button>
+      </div>
+    </div>
+
+    <!-- MISSIONS 3-15 -->
+    <div class="mission-card" id="mc-3">
+      <div class="mission-header">
+        <span class="badge badge-blue">Docker · Mission 03</span>
+        <h2 style="font-size:26px;margin:10px 0 8px;">
+          Multi-Stage Builds
+        </h2>
+        <p>Reduce image from 900MB to 85MB.
+          Build tools stay out of production image.</p>
+      </div>
+      <div class="info info-blue">
+        <span class="info-icon">🔒</span>
+        <div class="info-text">
+          <strong>Complete Mission 02 to unlock.</strong>
+          Progress saves automatically.
+        </div>
+      </div>
+      <div class="mission-nav">
+        <button class="mnav" onclick="show(2)">← M02</button>
+        <button class="mnav mnav-next" onclick="show(4)">M04 →</button>
+      </div>
+    </div>
+
+    <div class="mission-card" id="mc-4">
+      <div class="mission-header">
+        <span class="badge badge-blue">Docker · Mission 04</span>
+        <h2 style="font-size:26px;margin:10px 0 8px;">Container Networking</h2>
+        <p>Why localhost doesn't work between containers. Bridge, host, custom networks.</p>
+      </div>
+      <div class="info info-blue">
+        <span class="info-icon">🔒</span>
+        <div class="info-text"><strong>Complete Mission 03 to unlock.</strong></div>
+      </div>
+      <div class="mission-nav">
+        <button class="mnav" onclick="show(3)">← M03</button>
+        <button class="mnav mnav-next" onclick="show(5)">M05 →</button>
+      </div>
+    </div>
+
+    <div class="mission-card" id="mc-5">
+      <div class="mission-header">
+        <span class="badge badge-blue">Docker · Mission 05</span>
+        <h2 style="font-size:26px;margin:10px 0 8px;">Volumes & Data</h2>
+        <p>Kill MongoDB — all data gone. Fix with volumes. Never lose data again.</p>
+      </div>
+      <div class="info info-blue">
+        <span class="info-icon">🔒</span>
+        <div class="info-text"><strong>Complete Mission 04 to unlock.</strong></div>
+      </div>
+      <div class="mission-nav">
+        <button class="mnav" onclick="show(4)">← M04</button>
+        <button class="mnav mnav-next" onclick="show(6)">M06 →</button>
+      </div>
+    </div>
+
+    <div class="mission-card" id="mc-6">
+      <div class="mission-header">
+        <span class="badge badge-blue">Docker · Mission 06</span>
+        <h2 style="font-size:26px;margin:10px 0 8px;">Docker Compose</h2>
+        <p>Deploy frontend + backend + MongoDB with one command.</p>
+      </div>
+      <div class="info info-blue">
+        <span class="info-icon">🔒</span>
+        <div class="info-text"><strong>Complete Mission 05 to unlock.</strong></div>
+      </div>
+      <div class="mission-nav">
+        <button class="mnav" onclick="show(5)">← M05</button>
+        <button class="mnav mnav-next" onclick="show(7)">M07 →</button>
+      </div>
+    </div>
+
+    <div class="mission-card" id="mc-7">
+      <div class="mission-header">
+        <span class="badge badge-blue">Docker · Mission 07</span>
+        <h2 style="font-size:26px;margin:10px 0 8px;">Docker Security</h2>
+        <p>Non-root users, read-only filesystem, secret management, .dockerignore.</p>
+      </div>
+      <div class="info info-blue">
+        <span class="info-icon">🔒</span>
+        <div class="info-text"><strong>Complete Mission 06 to unlock.</strong></div>
+      </div>
+      <div class="mission-nav">
+        <button class="mnav" onclick="show(6)">← M06</button>
+        <button class="mnav mnav-next" onclick="show(8)">M08 →</button>
+      </div>
+    </div>
+
+    <div class="mission-card" id="mc-8">
+      <div class="mission-header">
+        <span class="badge badge-blue">Docker · Mission 08</span>
+        <h2 style="font-size:26px;margin:10px 0 8px;">Push to Registry</h2>
+        <p>Tag your image. Push to GCR. Pull from Kubernetes.</p>
+      </div>
+      <div class="info info-blue">
+        <span class="info-icon">🔒</span>
+        <div class="info-text"><strong>Complete Mission 07 to unlock.</strong></div>
+      </div>
+      <div class="mission-nav">
+        <button class="mnav" onclick="show(7)">← M07</button>
+        <button class="mnav mnav-next" onclick="show(9)">M09 →</button>
+      </div>
+    </div>
+
+    <div class="mission-card" id="mc-9">
+      <div class="mission-header">
+        <span class="badge badge-blue">Docker · Mission 09</span>
+        <h2 style="font-size:26px;margin:10px 0 8px;">Debug Containers</h2>
+        <p>exec into containers, inspect, stats. Find and fix 5 common problems.</p>
+      </div>
+      <div class="info info-blue">
+        <span class="info-icon">🔒</span>
+        <div class="info-text"><strong>Complete Mission 08 to unlock.</strong></div>
+      </div>
+      <div class="mission-nav">
+        <button class="mnav" onclick="show(8)">← M08</button>
+        <button class="mnav mnav-next" onclick="show(10)">M10 →</button>
+      </div>
+    </div>
+
+    <div class="mission-card" id="mc-10">
+      <div class="mission-header">
+        <span class="badge badge-blue">Docker · Mission 10</span>
+        <h2 style="font-size:26px;margin:10px 0 8px;">DreamChat Full Stack</h2>
+        <p>Containerize ALL DreamChat services. Frontend + Backend + MongoDB together.</p>
+      </div>
+      <div class="info info-blue">
+        <span class="info-icon">🔒</span>
+        <div class="info-text"><strong>Complete Mission 09 to unlock.</strong></div>
+      </div>
+      <div class="mission-nav">
+        <button class="mnav" onclick="show(9)">← M09</button>
+        <button class="mnav mnav-next" onclick="show(11)">M11 →</button>
+      </div>
+    </div>
+
+    <div class="mission-card" id="mc-11">
+      <div class="mission-header">
+        <span class="badge badge-blue">Docker · Mission 11</span>
+        <h2 style="font-size:26px;margin:10px 0 8px;">Build Optimization</h2>
+        <p>.dockerignore, BuildKit, layer caching. Go from 45s builds to 8s builds.</p>
+      </div>
+      <div class="info info-blue">
+        <span class="info-icon">🔒</span>
+        <div class="info-text"><strong>Complete Mission 10 to unlock.</strong></div>
+      </div>
+      <div class="mission-nav">
+        <button class="mnav" onclick="show(10)">← M10</button>
+        <button class="mnav mnav-next" onclick="show(12)">M12 →</button>
+      </div>
+    </div>
+
+    <div class="mission-card" id="mc-12">
+      <div class="mission-header">
+        <span class="badge badge-blue">Docker · Mission 12</span>
+        <h2 style="font-size:26px;margin:10px 0 8px;">Container Monitoring</h2>
+        <p>docker stats, cAdvisor, resource limits. Know what your containers use.</p>
+      </div>
+      <div class="info info-blue">
+        <span class="info-icon">🔒</span>
+        <div class="info-text"><strong>Complete Mission 11 to unlock.</strong></div>
+      </div>
+      <div class="mission-nav">
+        <button class="mnav" onclick="show(11)">← M11</button>
+        <button class="mnav mnav-next" onclick="show(13)">M13 →</button>
+      </div>
+    </div>
+
+    <div class="mission-card" id="mc-13">
+      <div class="mission-header">
+        <span class="badge badge-blue">Docker · Mission 13</span>
+        <h2 style="font-size:26px;margin:10px 0 8px;">Trivy Security Scan</h2>
+        <p>Scan images for CVEs. Fix HIGH and CRITICAL vulnerabilities.</p>
+      </div>
+      <div class="info info-blue">
+        <span class="info-icon">🔒</span>
+        <div class="info-text"><strong>Complete Mission 12 to unlock.</strong></div>
+      </div>
+      <div class="mission-nav">
+        <button class="mnav" onclick="show(12)">← M12</button>
+        <button class="mnav mnav-next" onclick="show(14)">M14 →</button>
+      </div>
+    </div>
+
+    <div class="mission-card" id="mc-14">
+      <div class="mission-header">
+        <span class="badge badge-blue">Docker · Mission 14</span>
+        <h2 style="font-size:26px;margin:10px 0 8px;">Production Patterns</h2>
+        <p>Distroless images, OCI labels, SBOM. Enterprise-grade containerization.</p>
+      </div>
+      <div class="info info-blue">
+        <span class="info-icon">🔒</span>
+        <div class="info-text"><strong>Complete Mission 13 to unlock.</strong></div>
+      </div>
+      <div class="mission-nav">
+        <button class="mnav" onclick="show(13)">← M13</button>
+        <button class="mnav mnav-next" onclick="show(15)">M15 →</button>
+      </div>
+    </div>
+
+    <div class="mission-card" id="mc-15">
+      <div class="mission-header">
+        <span class="badge badge-amber">Docker · Mission 15</span>
+        <h2 style="font-size:26px;margin:10px 0 8px;">
+          🏆 Boss Challenge
+        </h2>
+        <p>Build and deploy a complete secure Docker setup
+          from memory. 45 minutes. No hints.</p>
+      </div>
+      <div class="info info-blue">
+        <span class="info-icon">🔒</span>
+        <div class="info-text">
+          <strong>Complete all 14 missions to unlock.</strong>
+        </div>
+      </div>
+      <div class="mission-nav">
+        <button class="mnav" onclick="show(14)">← M14</button>
+        <a href="../learn/kubernetes.html"
+          class="mnav mnav-next"
+          style="text-decoration:none;">
+          Start K8s Track →
+        </a>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script src="../../js/app.js"></script>
+<script>
+function show(n) {
+  document.querySelectorAll('.mission-card')
+    .forEach(c => c.classList.remove('active'));
+  document.querySelectorAll('.sm')
+    .forEach(s => s.classList.remove('active'));
+  const mc = document.getElementById('mc-' + n);
+  const sm = document.getElementById('sm-' + n);
+  if (mc) mc.classList.add('active');
+  if (sm) sm.classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function completeMission(n, xp) {
+  Progress.complete('docker', 'm' + n, xp);
+  const cb = document.getElementById('cb-' + n)
+    || document.querySelector(
+      '#mc-' + n + ' .complete-btn'
+    );
+  if (cb) {
+    cb.textContent = '✅ Mission ' +
+      String(n).padStart(2,'0') +
+      ' Complete! +' + xp + ' XP';
+    cb.style.background = '#34c759';
+  }
+  // Update sidebar
+  const sm = document.getElementById('sm-' + n);
+  if (sm) {
+    sm.querySelector('.sm-badge').textContent = 'done';
+    sm.querySelector('.sm-badge').className =
+      'sm-badge sb-done';
+    sm.classList.add('done');
+  }
+  setTimeout(() => show(n + 1), 1200);
+}
+
+// Restore done missions on load
+document.addEventListener('DOMContentLoaded', () => {
+  const data = Progress.get();
+  if (data.done?.docker) {
+    data.done.docker.forEach(id => {
+      const n = parseInt(id.replace('m', ''));
+      const sm = document.getElementById('sm-' + n);
+      if (sm) {
+        sm.querySelector('.sm-badge').textContent = 'done';
+        sm.querySelector('.sm-badge').className =
+          'sm-badge sb-done';
+        sm.classList.add('done');
+      }
+    });
+  }
+});
+</script>
+</body>
+</html>

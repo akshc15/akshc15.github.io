@@ -1,0 +1,1320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DevOps Projects Roadmap — akshc15</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=Fira+Code:wght@400;600&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:       #07080f;
+  --bg2:      #0d0f1a;
+  --panel:    #111420;
+  --border:   #1f2640;
+  --border2:  #2a3355;
+  --text:     #e8eaf6;
+  --muted:    #5c6490;
+  --dim:      #2e3660;
+
+  /* tier colors */
+  --rookie:   #34d399;
+  --rookie-d: #065f46;
+  --mid:      #60a5fa;
+  --mid-d:    #1e3a8a;
+  --senior:   #f59e0b;
+  --senior-d: #78350f;
+  --pro:      #e879f9;
+  --pro-d:    #6b21a8;
+
+  --display: 'Syne', sans-serif;
+  --mono:    'Fira Code', monospace;
+  --body:    'DM Sans', sans-serif;
+}
+
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:var(--body);
+  font-size:15px;
+  line-height:1.7;
+  overflow-x:hidden;
+}
+
+/* ─── GRID BG ─── */
+body::before{
+  content:'';
+  position:fixed;inset:0;
+  background-image:
+    linear-gradient(rgba(31,38,64,0.4) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(31,38,64,0.4) 1px,transparent 1px);
+  background-size:40px 40px;
+  pointer-events:none;z-index:0;
+}
+
+/* ─── NAV ─── */
+nav{
+  position:sticky;top:0;z-index:200;
+  background:rgba(7,8,15,0.92);
+  backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--border);
+  padding:0 32px;
+  display:flex;align-items:center;gap:0;
+  overflow-x:auto;
+}
+nav .logo{
+  font-family:var(--display);
+  font-weight:800;font-size:18px;
+  color:var(--text);
+  margin-right:30px;
+  white-space:nowrap;
+  padding:14px 0;
+  flex-shrink:0;
+}
+nav .logo span{color:var(--rookie);}
+nav a{
+  font-family:var(--mono);
+  font-size:11px;
+  letter-spacing:.05em;
+  text-transform:uppercase;
+  color:var(--muted);
+  text-decoration:none;
+  padding:16px 14px;
+  border-bottom:2px solid transparent;
+  transition:all .2s;
+  white-space:nowrap;
+}
+nav a:hover{color:var(--text);border-bottom-color:var(--rookie);}
+
+/* ─── HERO ─── */
+.hero{
+  position:relative;z-index:1;
+  min-height:92vh;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  text-align:center;
+  padding:60px 24px 40px;
+  overflow:hidden;
+}
+.hero-glow{
+  position:absolute;
+  top:50%;left:50%;
+  transform:translate(-50%,-50%);
+  width:700px;height:700px;
+  background:radial-gradient(circle,rgba(52,211,153,.07) 0%,transparent 65%);
+  pointer-events:none;
+}
+.hero-glow2{
+  position:absolute;
+  top:20%;right:5%;
+  width:400px;height:400px;
+  background:radial-gradient(circle,rgba(96,165,250,.05) 0%,transparent 65%);
+  pointer-events:none;
+}
+
+.eyebrow{
+  font-family:var(--mono);
+  font-size:11px;
+  letter-spacing:.15em;
+  text-transform:uppercase;
+  color:var(--rookie);
+  border:1px solid rgba(52,211,153,.3);
+  background:rgba(52,211,153,.06);
+  padding:5px 18px;
+  border-radius:100px;
+  margin-bottom:28px;
+  display:inline-flex;align-items:center;gap:8px;
+  animation:fadeUp .6s both;
+}
+.eyebrow::before{content:'●';animation:blink 1.4s infinite;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+
+.hero h1{
+  font-family:var(--display);
+  font-weight:800;
+  font-size:clamp(44px,8vw,88px);
+  line-height:.95;
+  letter-spacing:-.02em;
+  margin-bottom:20px;
+  animation:fadeUp .6s .1s both;
+}
+.hero h1 em{
+  font-style:normal;
+  background:linear-gradient(135deg,var(--rookie),var(--mid));
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+.hero-sub{
+  color:var(--muted);
+  font-size:17px;
+  max-width:580px;
+  margin-bottom:40px;
+  animation:fadeUp .6s .2s both;
+}
+
+.tier-pills{
+  display:flex;gap:10px;flex-wrap:wrap;justify-content:center;
+  margin-bottom:48px;
+  animation:fadeUp .6s .3s both;
+}
+.tier-pill{
+  display:flex;align-items:center;gap:6px;
+  font-family:var(--mono);font-size:12px;
+  padding:7px 18px;border-radius:8px;
+  border:1px solid;font-weight:600;
+  letter-spacing:.03em;
+}
+.tp-rookie{color:var(--rookie);border-color:rgba(52,211,153,.3);background:rgba(52,211,153,.07);}
+.tp-mid{color:var(--mid);border-color:rgba(96,165,250,.3);background:rgba(96,165,250,.07);}
+.tp-senior{color:var(--senior);border-color:rgba(245,158,11,.3);background:rgba(245,158,11,.07);}
+.tp-pro{color:var(--pro);border-color:rgba(232,121,249,.3);background:rgba(232,121,249,.07);}
+
+.stat-strip{
+  display:flex;gap:40px;flex-wrap:wrap;justify-content:center;
+  animation:fadeUp .6s .4s both;
+}
+.stat-item{text-align:center;}
+.stat-n{
+  font-family:var(--display);
+  font-size:42px;font-weight:800;
+  background:linear-gradient(135deg,var(--text),var(--muted));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;
+  line-height:1;
+}
+.stat-l{
+  font-family:var(--mono);font-size:10px;
+  text-transform:uppercase;letter-spacing:.1em;
+  color:var(--muted);margin-top:4px;
+}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+
+/* ─── SECTION ─── */
+.section{
+  position:relative;z-index:1;
+  padding:64px 0;
+  border-top:1px solid var(--border);
+}
+.container{max-width:1140px;margin:0 auto;padding:0 28px;}
+
+.sec-header{
+  display:flex;align-items:flex-end;gap:20px;
+  margin-bottom:40px;
+}
+.sec-num{
+  font-family:var(--mono);
+  font-size:11px;letter-spacing:.12em;
+  text-transform:uppercase;
+  color:var(--dim);
+  padding-bottom:4px;
+}
+.sec-title{
+  font-family:var(--display);
+  font-size:clamp(24px,4vw,38px);
+  font-weight:800;letter-spacing:-.01em;
+  line-height:1;
+}
+.sec-desc{color:var(--muted);margin-top:8px;font-size:14px;}
+
+/* ─── TIER HEADER ─── */
+.tier-header{
+  display:flex;align-items:center;gap:16px;
+  margin-bottom:28px;margin-top:48px;
+  padding-bottom:16px;
+  border-bottom:1px solid var(--border);
+}
+.tier-badge{
+  font-family:var(--mono);font-size:11px;
+  letter-spacing:.08em;text-transform:uppercase;
+  padding:5px 14px;border-radius:6px;
+  font-weight:600;border:1px solid;
+  flex-shrink:0;
+}
+.tb-rookie{color:var(--rookie);border-color:rgba(52,211,153,.4);background:rgba(52,211,153,.08);}
+.tb-mid{color:var(--mid);border-color:rgba(96,165,250,.4);background:rgba(96,165,250,.08);}
+.tb-senior{color:var(--senior);border-color:rgba(245,158,11,.4);background:rgba(245,158,11,.08);}
+.tb-pro{color:var(--pro);border-color:rgba(232,121,249,.4);background:rgba(232,121,249,.08);}
+
+.tier-title{
+  font-family:var(--display);
+  font-size:22px;font-weight:800;
+}
+.tier-sub{color:var(--muted);font-size:13px;margin-top:2px;}
+
+/* ─── PROJECT CARD ─── */
+.projects-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(320px,1fr));
+  gap:16px;
+}
+
+.proj-card{
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:24px;
+  position:relative;
+  overflow:hidden;
+  transition:all .25s;
+  cursor:default;
+}
+.proj-card::before{
+  content:'';
+  position:absolute;top:0;left:0;right:0;height:2px;
+  border-radius:14px 14px 0 0;
+}
+.proj-card.rookie::before{background:var(--rookie);}
+.proj-card.mid::before{background:var(--mid);}
+.proj-card.senior::before{background:var(--senior);}
+.proj-card.pro::before{background:var(--pro);}
+.proj-card:hover{
+  transform:translateY(-4px);
+  border-color:var(--border2);
+  box-shadow:0 20px 60px rgba(0,0,0,.4);
+}
+
+.proj-header{
+  display:flex;align-items:flex-start;
+  justify-content:space-between;gap:12px;
+  margin-bottom:12px;
+}
+.proj-icon{
+  width:44px;height:44px;border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:22px;flex-shrink:0;
+}
+.pi-rookie{background:rgba(52,211,153,.12);}
+.pi-mid{background:rgba(96,165,250,.12);}
+.pi-senior{background:rgba(245,158,11,.12);}
+.pi-pro{background:rgba(232,121,249,.12);}
+
+.proj-num{
+  font-family:var(--mono);font-size:11px;
+  color:var(--dim);letter-spacing:.05em;
+}
+
+.proj-title{
+  font-family:var(--display);
+  font-size:18px;font-weight:700;
+  margin-bottom:6px;line-height:1.2;
+}
+.proj-desc{
+  color:var(--muted);font-size:13px;
+  line-height:1.6;margin-bottom:14px;
+}
+
+.tech-tags{
+  display:flex;flex-wrap:wrap;gap:6px;
+  margin-bottom:16px;
+}
+.tag{
+  font-family:var(--mono);font-size:10px;
+  padding:3px 10px;border-radius:5px;
+  border:1px solid var(--border2);
+  color:var(--muted);
+  letter-spacing:.03em;
+}
+
+.proj-meta{
+  display:flex;align-items:center;
+  justify-content:space-between;
+  padding-top:14px;
+  border-top:1px solid var(--border);
+}
+.meta-time{
+  font-family:var(--mono);font-size:11px;
+  color:var(--dim);
+  display:flex;align-items:center;gap:5px;
+}
+.meta-diff{
+  font-family:var(--mono);font-size:11px;
+  padding:3px 10px;border-radius:5px;
+}
+.md-rookie{color:var(--rookie);background:rgba(52,211,153,.08);}
+.md-mid{color:var(--mid);background:rgba(96,165,250,.08);}
+.md-senior{color:var(--senior);background:rgba(245,158,11,.08);}
+.md-pro{color:var(--pro);background:rgba(232,121,249,.08);}
+
+/* ─── STEP GUIDE ─── */
+.step-guide{
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:14px;
+  overflow:hidden;
+  margin-top:16px;
+}
+.step-guide-header{
+  padding:18px 24px;
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:12px;
+  cursor:pointer;
+  user-select:none;
+  transition:background .2s;
+}
+.step-guide-header:hover{background:rgba(255,255,255,.02);}
+.sgh-title{
+  font-family:var(--display);
+  font-size:16px;font-weight:700;flex:1;
+}
+.sgh-toggle{
+  font-family:var(--mono);font-size:13px;
+  color:var(--muted);transition:transform .3s;
+}
+.step-guide-body{
+  display:none;
+  padding:24px;
+}
+.step-guide-body.open{display:block;}
+
+.steps-list{
+  display:flex;flex-direction:column;gap:0;
+}
+.step-item{
+  display:grid;
+  grid-template-columns:32px 1fr;
+  gap:0 16px;
+  position:relative;
+}
+.step-item:not(:last-child) .step-line{
+  position:absolute;
+  left:15px;top:36px;bottom:0;
+  width:2px;
+  background:linear-gradient(to bottom,var(--border2),transparent);
+}
+.step-dot{
+  width:32px;height:32px;
+  border-radius:50%;
+  background:var(--bg2);
+  border:2px solid var(--border2);
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--mono);font-size:11px;
+  font-weight:700;
+  color:var(--rookie);
+  flex-shrink:0;margin-top:2px;
+}
+.step-body{
+  padding-bottom:24px;
+}
+.step-title{
+  font-weight:700;font-size:14px;
+  margin-bottom:4px;
+}
+.step-desc{
+  color:var(--muted);font-size:13px;
+  line-height:1.65;
+}
+.step-desc strong{color:var(--text);}
+
+/* ─── CODE ─── */
+.code{
+  background:#060810;
+  border:1px solid var(--border);
+  border-radius:8px;
+  padding:14px 18px;
+  font-family:var(--mono);
+  font-size:12px;
+  color:#94a3b8;
+  margin:10px 0;
+  overflow-x:auto;
+  line-height:1.7;
+}
+.code .c{color:#374151;}
+.code .k{color:#818cf8;}
+.code .s{color:var(--rookie);}
+.code .f{color:var(--senior);}
+.code .cmd{color:var(--mid);}
+
+/* ─── CLICK GUIDE ─── */
+.click-step{
+  display:flex;align-items:flex-start;gap:12px;
+  background:rgba(255,255,255,.02);
+  border:1px solid var(--border);
+  border-radius:8px;
+  padding:14px 16px;
+  margin:8px 0;
+}
+.click-num{
+  width:26px;height:26px;border-radius:50%;
+  background:var(--mid);
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--mono);font-size:11px;
+  font-weight:700;color:var(--bg);
+  flex-shrink:0;margin-top:1px;
+}
+.click-text{
+  font-size:13px;color:var(--muted);
+  line-height:1.6;
+}
+.click-text strong{color:var(--text);}
+.click-text code{
+  font-family:var(--mono);font-size:11px;
+  background:rgba(96,165,250,.1);
+  color:var(--mid);
+  padding:1px 6px;border-radius:4px;
+}
+.click-arrow{
+  display:inline-flex;align-items:center;gap:4px;
+  font-family:var(--mono);font-size:11px;
+  color:var(--senior);
+  background:rgba(245,158,11,.08);
+  border:1px solid rgba(245,158,11,.2);
+  padding:2px 8px;border-radius:4px;
+  margin:0 3px;
+}
+
+/* ─── DIAGRAM ─── */
+.diagram{
+  background:var(--bg2);
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:24px;
+  margin:16px 0;
+  overflow-x:auto;
+}
+.dia-row{
+  display:flex;align-items:center;
+  justify-content:center;
+  gap:4px;flex-wrap:wrap;
+  margin-bottom:8px;
+}
+.dia-box{
+  background:var(--panel);
+  border:1px solid var(--border2);
+  border-radius:8px;
+  padding:8px 14px;
+  font-family:var(--mono);font-size:11px;
+  text-align:center;
+  min-width:80px;
+}
+.dia-box .di{font-size:16px;display:block;margin-bottom:3px;}
+.dia-box .dl{color:var(--muted);font-size:10px;}
+.dia-arr{color:var(--muted);font-size:18px;padding:0 2px;}
+
+/* ─── INFO BOX ─── */
+.info{
+  display:flex;gap:12px;
+  border-radius:10px;
+  padding:14px 16px;
+  margin:12px 0;
+  font-size:13px;
+  line-height:1.6;
+}
+.info.tip{background:rgba(52,211,153,.06);border:1px solid rgba(52,211,153,.2);}
+.info.warn{background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.2);}
+.info.note{background:rgba(96,165,250,.06);border:1px solid rgba(96,165,250,.2);}
+.info-icon{font-size:18px;flex-shrink:0;margin-top:1px;}
+.info-text{color:var(--muted);}
+.info-text strong{color:var(--text);}
+
+/* ─── GITHUB UPDATE SECTION ─── */
+.github-guide{
+  background:linear-gradient(135deg,rgba(52,211,153,.05),rgba(96,165,250,.05));
+  border:1px solid var(--border2);
+  border-radius:16px;
+  padding:32px;
+  margin-top:32px;
+}
+.gh-title{
+  font-family:var(--display);
+  font-size:28px;font-weight:800;
+  margin-bottom:8px;
+}
+.gh-sub{color:var(--muted);margin-bottom:28px;font-size:14px;}
+
+/* ─── SKILL ROADMAP ─── */
+.roadmap-track{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(240px,1fr));
+  gap:12px;
+  margin-top:20px;
+}
+.road-item{
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:18px 20px;
+}
+.road-tool{
+  font-family:var(--display);
+  font-size:18px;font-weight:700;
+  margin-bottom:4px;
+}
+.road-level{
+  display:flex;gap:4px;margin-bottom:8px;
+}
+.road-dot{
+  width:8px;height:8px;border-radius:50%;
+  background:var(--border2);
+}
+.road-dot.fill-rookie{background:var(--rookie);}
+.road-dot.fill-mid{background:var(--mid);}
+.road-dot.fill-senior{background:var(--senior);}
+.road-dot.fill-pro{background:var(--pro);}
+.road-topics{
+  font-size:12px;color:var(--muted);
+  line-height:1.7;
+}
+
+/* ─── SCROLLBAR ─── */
+::-webkit-scrollbar{width:5px;height:5px;}
+::-webkit-scrollbar-track{background:var(--bg);}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px;}
+
+/* ─── FOOTER ─── */
+footer{
+  position:relative;z-index:1;
+  border-top:1px solid var(--border);
+  padding:30px 28px;
+  text-align:center;
+  font-family:var(--mono);font-size:12px;
+  color:var(--muted);
+}
+footer a{color:var(--rookie);text-decoration:none;}
+
+h3{font-size:16px;font-weight:700;margin-bottom:10px;}
+h4{font-family:var(--mono);font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:8px;}
+p{color:var(--muted);margin-bottom:10px;font-size:14px;}
+ul{color:var(--muted);padding-left:18px;margin-bottom:10px;}
+ul li{margin-bottom:3px;font-size:13px;}
+ul li strong{color:var(--text);}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">akshc15<span>.github.io</span></div>
+  <a href="index.html">Home</a>
+  <a href="devops-mastery-guide.html">Master Guide</a>
+  <a href="devops-cartoon.html">Cartoon</a>
+  <a href="#roadmap">Skill Map</a>
+  <a href="#rookie">🟢 Rookie</a>
+  <a href="#mid">🔵 Mid</a>
+  <a href="#senior">🟡 Senior</a>
+  <a href="#pro">🟣 Pro</a>
+  <a href="#github-update">Update Site</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-glow"></div>
+  <div class="hero-glow2"></div>
+  <div class="eyebrow">M4 Mac · DevOps Projects Roadmap · 2026</div>
+  <h1>20 Projects.<br><em>Zero to Hero.</em></h1>
+  <p class="hero-sub">Spoon-fed, click-by-click project guides across Linux, Docker, Kubernetes, Terraform, Ansible, CI/CD, Git, and Monitoring. Each project builds on the last.</p>
+  <div class="tier-pills">
+    <div class="tier-pill tp-rookie">🟢 Rookie — Projects 1–5</div>
+    <div class="tier-pill tp-mid">🔵 Mid-Level — Projects 6–11</div>
+    <div class="tier-pill tp-senior">🟡 Senior — Projects 12–16</div>
+    <div class="tier-pill tp-pro">🟣 Pro/Interview — Projects 17–20</div>
+  </div>
+  <div class="stat-strip">
+    <div class="stat-item"><div class="stat-n">20</div><div class="stat-l">Projects</div></div>
+    <div class="stat-item"><div class="stat-n">10+</div><div class="stat-l">Tools</div></div>
+    <div class="stat-item"><div class="stat-n">100%</div><div class="stat-l">Free to Run</div></div>
+    <div class="stat-item"><div class="stat-n">∞</div><div class="stat-l">Interview Ready</div></div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- SKILL ROADMAP -->
+<!-- ═══════════════════════════════════════════════ -->
+<section class="section" id="roadmap">
+  <div class="container">
+    <div class="sec-header">
+      <div>
+        <div class="sec-num">// 00 — skill roadmap</div>
+        <div class="sec-title">What You'll Master & When</div>
+        <div class="sec-desc">Each tool covered in depth across multiple projects — from first touch to expert level</div>
+      </div>
+    </div>
+    <div class="roadmap-track">
+      <div class="road-item">
+        <div class="road-tool">Linux</div>
+        <div class="road-level">
+          <div class="road-dot fill-rookie"></div><div class="road-dot fill-rookie"></div>
+          <div class="road-dot fill-mid"></div><div class="road-dot fill-mid"></div>
+          <div class="road-dot fill-senior"></div>
+        </div>
+        <div class="road-topics">File system · Permissions · Bash scripting · Systemd · Networking · SSH · Cron · Package mgmt</div>
+      </div>
+      <div class="road-item">
+        <div class="road-tool">Git + GitHub</div>
+        <div class="road-level">
+          <div class="road-dot fill-rookie"></div><div class="road-dot fill-rookie"></div>
+          <div class="road-dot fill-mid"></div><div class="road-dot fill-mid"></div>
+          <div class="road-dot fill-senior"></div>
+        </div>
+        <div class="road-topics">Branching · PRs · Merge conflicts · Git flow · Actions · Secrets · Webhooks · GitHub Pages</div>
+      </div>
+      <div class="road-item">
+        <div class="road-tool">Docker</div>
+        <div class="road-level">
+          <div class="road-dot fill-rookie"></div><div class="road-dot fill-mid"></div>
+          <div class="road-dot fill-mid"></div><div class="road-dot fill-senior"></div>
+          <div class="road-dot fill-pro"></div>
+        </div>
+        <div class="road-topics">Dockerfile · Images · Volumes · Networks · Compose · Multi-stage builds · Security scanning</div>
+      </div>
+      <div class="road-item">
+        <div class="road-tool">Kubernetes</div>
+        <div class="road-level">
+          <div class="road-dot fill-mid"></div><div class="road-dot fill-mid"></div>
+          <div class="road-dot fill-senior"></div><div class="road-dot fill-senior"></div>
+          <div class="road-dot fill-pro"></div>
+        </div>
+        <div class="road-topics">Pods · Deployments · Services · Ingress · HPA · RBAC · Helm · PV/PVC · NetworkPolicy</div>
+      </div>
+      <div class="road-item">
+        <div class="road-tool">Terraform</div>
+        <div class="road-level">
+          <div class="road-dot fill-mid"></div><div class="road-dot fill-mid"></div>
+          <div class="road-dot fill-senior"></div><div class="road-dot fill-senior"></div>
+          <div class="road-dot fill-pro"></div>
+        </div>
+        <div class="road-topics">HCL · State · Modules · Workspaces · Remote backend · AWS VPC · EKS · Multi-cloud</div>
+      </div>
+      <div class="road-item">
+        <div class="road-tool">Ansible</div>
+        <div class="road-level">
+          <div class="road-dot fill-mid"></div><div class="road-dot fill-mid"></div>
+          <div class="road-dot fill-senior"></div><div class="road-dot fill-senior"></div>
+          <div class="road-dot"></div>
+        </div>
+        <div class="road-topics">Inventory · Playbooks · Roles · Vault · Dynamic inventory · AWX · Idempotency patterns</div>
+      </div>
+      <div class="road-item">
+        <div class="road-tool">CI/CD</div>
+        <div class="road-level">
+          <div class="road-dot fill-rookie"></div><div class="road-dot fill-mid"></div>
+          <div class="road-dot fill-mid"></div><div class="road-dot fill-senior"></div>
+          <div class="road-dot fill-pro"></div>
+        </div>
+        <div class="road-topics">GitHub Actions · Jenkins · Pipelines as code · Webhooks · Environments · ArgoCD GitOps</div>
+      </div>
+      <div class="road-item">
+        <div class="road-tool">Monitoring</div>
+        <div class="road-level">
+          <div class="road-dot fill-mid"></div><div class="road-dot fill-mid"></div>
+          <div class="road-dot fill-senior"></div><div class="road-dot fill-senior"></div>
+          <div class="road-dot fill-pro"></div>
+        </div>
+        <div class="road-topics">Prometheus · Grafana · AlertManager · Loki · Node exporter · Custom dashboards · SLOs</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- ROOKIE TIER -->
+<!-- ═══════════════════════════════════════════════ -->
+<section class="section" id="rookie">
+  <div class="container">
+    <div class="sec-header">
+      <div>
+        <div class="sec-num">// 01 — beginner tier</div>
+        <div class="sec-title" style="color:var(--rookie)">Rookie Projects</div>
+        <div class="sec-desc">Zero prerequisite. Just Linux knowledge. Each takes 1–3 hours. Free on your M4 Mac or free AWS tier.</div>
+      </div>
+    </div>
+
+    <!-- PROJECT 1 -->
+    <div class="tier-header">
+      <div class="tier-badge tb-rookie">🟢 Project 01</div>
+      <div>
+        <div class="tier-title">Dockerize a Static Website</div>
+        <div class="tier-sub">Master: Docker basics · Dockerfile · nginx · image build · run · port mapping</div>
+      </div>
+    </div>
+
+    <div class="projects-grid">
+      <div class="proj-card rookie">
+        <div class="proj-header">
+          <div class="proj-icon pi-rookie">🐳</div>
+          <div class="proj-num">#01</div>
+        </div>
+        <div class="proj-title">Your First Dockerized Website</div>
+        <div class="proj-desc">Take a simple HTML/CSS site (or use a free template), write a Dockerfile, build the image, and serve it with nginx inside a container on your M4 Mac. Understand images vs containers vs volumes.</div>
+        <div class="tech-tags">
+          <span class="tag">Docker</span><span class="tag">nginx</span><span class="tag">HTML/CSS</span>
+        </div>
+        <div class="proj-meta">
+          <div class="meta-time">⏱ 1–2 hours</div>
+          <div class="meta-diff md-rookie">Beginner</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="step-guide">
+      <div class="step-guide-header" onclick="toggleGuide(this)">
+        <div class="sgh-title">📋 Step-by-Step Guide — Click to Expand</div>
+        <div class="sgh-toggle">▼</div>
+      </div>
+      <div class="step-guide-body">
+        <div class="info note"><span class="info-icon">💡</span><div class="info-text"><strong>What you need:</strong> Docker Desktop installed on M4 Mac. If not: go to <strong>docker.com/products/docker-desktop</strong> → Download for Mac (Apple Silicon) → install → open it.</div></div>
+
+        <div class="steps-list">
+          <div class="step-item">
+            <div><div class="step-dot">1</div><div class="step-line"></div></div>
+            <div class="step-body">
+              <div class="step-title">Create your project folder</div>
+              <div class="step-desc">Open Terminal on your M4 Mac and run:</div>
+              <div class="code"><span class="cmd">mkdir</span> my-docker-site && <span class="cmd">cd</span> my-docker-site<br><span class="cmd">mkdir</span> html<br><span class="cmd">nano</span> html/index.html</div>
+              <div class="step-desc">In nano, type a simple HTML page, then press <strong>Ctrl+X → Y → Enter</strong> to save.</div>
+            </div>
+          </div>
+          <div class="step-item">
+            <div><div class="step-dot">2</div><div class="step-line"></div></div>
+            <div class="step-body">
+              <div class="step-title">Write the Dockerfile</div>
+              <div class="step-desc">In the <code>my-docker-site</code> folder, create a file called <strong>Dockerfile</strong> (no extension):</div>
+              <div class="code"><span class="c"># Base image — nginx web server on Alpine Linux (tiny, 5MB)</span><br><span class="k">FROM</span> <span class="s">nginx:alpine</span><br><br><span class="c"># Copy our HTML files into nginx's web root</span><br><span class="k">COPY</span> html/ /usr/share/nginx/html/<br><br><span class="c"># Expose port 80 (nginx default)</span><br><span class="k">EXPOSE</span> 80</div>
+            </div>
+          </div>
+          <div class="step-item">
+            <div><div class="step-dot">3</div><div class="step-line"></div></div>
+            <div class="step-body">
+              <div class="step-title">Build the Docker image</div>
+              <div class="code"><span class="c"># Build image, tag it "mysite:v1"</span><br><span class="cmd">docker build</span> <span class="f">-t</span> mysite:v1 .<br><br><span class="c"># Verify image was created</span><br><span class="cmd">docker images</span></div>
+              <div class="step-desc">You should see <strong>mysite</strong> in the list with tag <strong>v1</strong>.</div>
+            </div>
+          </div>
+          <div class="step-item">
+            <div><div class="step-dot">4</div><div class="step-line"></div></div>
+            <div class="step-body">
+              <div class="step-title">Run the container</div>
+              <div class="code"><span class="cmd">docker run</span> <span class="f">-d</span> <span class="f">-p</span> <span class="s">8080:80</span> <span class="f">--name</span> my-website mysite:v1<br><br><span class="c"># -d = run in background (detached)</span><br><span class="c"># -p 8080:80 = map Mac port 8080 → container port 80</span><br><span class="c"># --name = give it a friendly name</span></div>
+              <div class="step-desc">Open browser → <strong>http://localhost:8080</strong> → you see your site! 🎉</div>
+            </div>
+          </div>
+          <div class="step-item">
+            <div><div class="step-dot">5</div></div>
+            <div class="step-body">
+              <div class="step-title">Explore & learn essential Docker commands</div>
+              <div class="code"><span class="cmd">docker ps</span>              <span class="c"># list running containers</span><br><span class="cmd">docker ps -a</span>           <span class="c"># all containers (including stopped)</span><br><span class="cmd">docker logs</span> my-website  <span class="c"># see nginx access logs</span><br><span class="cmd">docker exec -it</span> my-website sh  <span class="c"># get a shell INSIDE the container</span><br><span class="cmd">docker stop</span> my-website   <span class="c"># stop it</span><br><span class="cmd">docker rm</span> my-website     <span class="c"># delete container</span><br><span class="cmd">docker rmi</span> mysite:v1     <span class="c"># delete image</span></div>
+              <div class="info tip"><span class="info-icon">🏆</span><div class="info-text"><strong>Interview win:</strong> "I Dockerized a static site using nginx:alpine — kept image size under 10MB using multi-stage build best practices. Container ran with non-root user for security."</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROJECT 2 -->
+    <div class="tier-header">
+      <div class="tier-badge tb-rookie">🟢 Project 02</div>
+      <div>
+        <div class="tier-title">Git + GitHub: Full Workflow</div>
+        <div class="tier-sub">Master: branching · PRs · merge conflicts · .gitignore · git flow</div>
+      </div>
+    </div>
+    <div class="projects-grid">
+      <div class="proj-card rookie">
+        <div class="proj-header"><div class="proj-icon pi-rookie">🐙</div><div class="proj-num">#02</div></div>
+        <div class="proj-title">Git Branching & Collaboration Lab</div>
+        <div class="proj-desc">Create a repo, simulate a team (2 branches), create a merge conflict intentionally, resolve it, open a PR, review it, merge — the full professional workflow in one solo exercise.</div>
+        <div class="tech-tags"><span class="tag">Git</span><span class="tag">GitHub</span><span class="tag">CLI</span></div>
+        <div class="proj-meta"><div class="meta-time">⏱ 2 hours</div><div class="meta-diff md-rookie">Beginner</div></div>
+      </div>
+    </div>
+    <div class="step-guide">
+      <div class="step-guide-header" onclick="toggleGuide(this)">
+        <div class="sgh-title">📋 Step-by-Step Guide — Click to Expand</div>
+        <div class="sgh-toggle">▼</div>
+      </div>
+      <div class="step-guide-body">
+        <div class="steps-list">
+          <div class="step-item">
+            <div><div class="step-dot">1</div><div class="step-line"></div></div>
+            <div class="step-body">
+              <div class="step-title">Create repo on GitHub</div>
+              <div class="step-desc">Go to <strong>github.com</strong> → top right <span class="click-arrow">+</span> → <span class="click-arrow">New repository</span> → name: <code>git-lab</code> → check <strong>Add README</strong> → <span class="click-arrow">Create repository</span>. Then clone it:</div>
+              <div class="code"><span class="cmd">git clone</span> https://github.com/akshc15/git-lab.git<br><span class="cmd">cd</span> git-lab</div>
+            </div>
+          </div>
+          <div class="step-item">
+            <div><div class="step-dot">2</div><div class="step-line"></div></div>
+            <div class="step-body">
+              <div class="step-title">Create two feature branches</div>
+              <div class="code"><span class="c"># Branch 1 — feature A</span><br><span class="cmd">git checkout -b</span> feature/add-login<br><span class="cmd">echo</span> <span class="s">"Login page here"</span> > login.txt<br><span class="cmd">git add</span> . && <span class="cmd">git commit -m</span> <span class="s">"Add login page"</span><br><span class="cmd">git push origin</span> feature/add-login<br><br><span class="c"># Branch 2 — feature B (from main)</span><br><span class="cmd">git checkout</span> main<br><span class="cmd">git checkout -b</span> feature/add-dashboard<br><span class="cmd">echo</span> <span class="s">"Dashboard here"</span> > dashboard.txt<br><span class="cmd">git add</span> . && <span class="cmd">git commit -m</span> <span class="s">"Add dashboard"</span><br><span class="cmd">git push origin</span> feature/add-dashboard</div>
+            </div>
+          </div>
+          <div class="step-item">
+            <div><div class="step-dot">3</div><div class="step-line"></div></div>
+            <div class="step-body">
+              <div class="step-title">Create a Pull Request on GitHub</div>
+              <div class="step-desc">Go to <strong>github.com/akshc15/git-lab</strong> → you'll see a yellow banner <strong>"Compare & pull request"</strong> → click it → add a description → click <span class="click-arrow">Create pull request</span> → then click <span class="click-arrow">Merge pull request</span> → <span class="click-arrow">Confirm merge</span>. Do this for both branches.</div>
+            </div>
+          </div>
+          <div class="step-item">
+            <div><div class="step-dot">4</div></div>
+            <div class="step-body">
+              <div class="step-title">Create & resolve a merge conflict (on purpose!)</div>
+              <div class="code"><span class="c"># Both branches edit the SAME line in README — conflict!</span><br><span class="cmd">git checkout -b</span> conflict-branch-a<br><span class="cmd">echo</span> <span class="s">"Version A"</span> > README.md && <span class="cmd">git commit -am</span> <span class="s">"A's version"</span><br><span class="cmd">git push origin</span> conflict-branch-a<br><br><span class="cmd">git checkout</span> main<br><span class="cmd">git checkout -b</span> conflict-branch-b<br><span class="cmd">echo</span> <span class="s">"Version B"</span> > README.md && <span class="cmd">git commit -am</span> <span class="s">"B's version"</span><br><span class="cmd">git merge</span> conflict-branch-a<br><span class="c"># Now you'll see the conflict markers in README.md</span><br><span class="c"># Edit the file, remove markers, keep what you want</span><br><span class="cmd">git add</span> README.md && <span class="cmd">git commit -m</span> <span class="s">"Resolved conflict"</span></div>
+              <div class="info tip"><span class="info-icon">🏆</span><div class="info-text"><strong>Interview win:</strong> "I'm comfortable with git rebase, cherry-pick, and resolving 3-way merge conflicts. I've worked with git-flow branching strategy — feature branches, hotfixes, and release branches."</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROJECT 3 -->
+    <div class="tier-header">
+      <div class="tier-badge tb-rookie">🟢 Project 03</div>
+      <div>
+        <div class="tier-title">GitHub Actions CI Pipeline</div>
+        <div class="tier-sub">Master: YAML workflows · jobs · steps · secrets · auto-deploy to GitHub Pages</div>
+      </div>
+    </div>
+    <div class="projects-grid">
+      <div class="proj-card rookie">
+        <div class="proj-header"><div class="proj-icon pi-rookie">⚡</div><div class="proj-num">#03</div></div>
+        <div class="proj-title">Auto-Deploy Site with GitHub Actions</div>
+        <div class="proj-desc">Write a GitHub Actions workflow that automatically builds and deploys your website to GitHub Pages every time you push to main. Your first real CI/CD pipeline — zero servers needed, 100% free.</div>
+        <div class="tech-tags"><span class="tag">GitHub Actions</span><span class="tag">YAML</span><span class="tag">CI/CD</span><span class="tag">GitHub Pages</span></div>
+        <div class="proj-meta"><div class="meta-time">⏱ 2 hours</div><div class="meta-diff md-rookie">Beginner</div></div>
+      </div>
+    </div>
+    <div class="step-guide">
+      <div class="step-guide-header" onclick="toggleGuide(this)">
+        <div class="sgh-title">📋 Step-by-Step Guide — Click to Expand</div>
+        <div class="sgh-toggle">▼</div>
+      </div>
+      <div class="step-guide-body">
+        <div class="steps-list">
+          <div class="step-item">
+            <div><div class="step-dot">1</div><div class="step-line"></div></div>
+            <div class="step-body">
+              <div class="step-title">Create the workflow file</div>
+              <div class="step-desc">In your repo, create this path: <code>.github/workflows/deploy.yml</code></div>
+              <div class="code"><span class="c"># Every push to main triggers this workflow</span><br>on:<br>&nbsp;&nbsp;push:<br>&nbsp;&nbsp;&nbsp;&nbsp;branches: [main]<br><br>jobs:<br>&nbsp;&nbsp;deploy:<br>&nbsp;&nbsp;&nbsp;&nbsp;runs-on: ubuntu-latest   <span class="c"># free GitHub runner</span><br>&nbsp;&nbsp;&nbsp;&nbsp;steps:<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="k">uses</span>: actions/checkout@v4<br><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="k">name</span>: Deploy to GitHub Pages<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="k">uses</span>: peaceiris/actions-gh-pages@v3<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="k">with</span>:<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;github_token: ${{ secrets.GITHUB_TOKEN }}<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;publish_dir: ./  <span class="c"># deploy from root</span></div>
+            </div>
+          </div>
+          <div class="step-item">
+            <div><div class="step-dot">2</div><div class="step-line"></div></div>
+            <div class="step-body">
+              <div class="step-title">Watch it run on GitHub</div>
+              <div class="step-desc">Push your workflow file → go to your repo → click <span class="click-arrow">Actions</span> tab → you'll see your workflow running in real-time. Green checkmark = success. Click on the job to see each step's output. This is your pipeline dashboard.</div>
+            </div>
+          </div>
+          <div class="step-item">
+            <div><div class="step-dot">3</div></div>
+            <div class="step-body">
+              <div class="step-title">Add a build step (level up)</div>
+              <div class="step-desc">Extend the workflow to also lint your HTML before deploying — this is the "CI" part (catch errors before deploy):</div>
+              <div class="code">- <span class="k">name</span>: Lint HTML<br>&nbsp;&nbsp;<span class="k">run</span>: |<br>&nbsp;&nbsp;&nbsp;&nbsp;npx htmlhint *.html || true<br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="c"># "|| true" so pipeline doesn't fail on warnings</span></div>
+              <div class="info tip"><span class="info-icon">🏆</span><div class="info-text"><strong>Interview win:</strong> "I built CI/CD with GitHub Actions — triggered on push, runs linting and tests, then deploys automatically. I understand jobs, steps, runners, secrets, and workflow artifacts."</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROJECT 4 -->
+    <div class="tier-header">
+      <div class="tier-badge tb-rookie">🟢 Project 04</div>
+      <div>
+        <div class="tier-title">Linux Server Setup + Bash Automation</div>
+        <div class="tier-sub">Master: AWS EC2 · SSH · Bash scripting · Cron · Systemd · Log management</div>
+      </div>
+    </div>
+    <div class="projects-grid">
+      <div class="proj-card rookie">
+        <div class="proj-header"><div class="proj-icon pi-rookie">🐧</div><div class="proj-num">#04</div></div>
+        <div class="proj-title">Automated Linux Server Setup Script</div>
+        <div class="proj-desc">Spin up a free EC2 t2.micro on AWS, SSH in, write a Bash script that auto-installs + configures nginx, sets up a cron job, creates a systemd service, configures firewall (ufw), and logs server stats. Your first "Infrastructure as Script".</div>
+        <div class="tech-tags"><span class="tag">Linux</span><span class="tag">Bash</span><span class="tag">AWS EC2</span><span class="tag">nginx</span><span class="tag">systemd</span></div>
+        <div class="proj-meta"><div class="meta-time">⏱ 3 hours</div><div class="meta-diff md-rookie">Beginner</div></div>
+      </div>
+    </div>
+    <div class="step-guide">
+      <div class="step-guide-header" onclick="toggleGuide(this)">
+        <div class="sgh-title">📋 Step-by-Step Guide — Click to Expand</div>
+        <div class="sgh-toggle">▼</div>
+      </div>
+      <div class="step-guide-body">
+        <div class="steps-list">
+          <div class="step-item">
+            <div><div class="step-dot">1</div><div class="step-line"></div></div>
+            <div class="step-body">
+              <div class="step-title">Launch a free EC2 instance on AWS</div>
+              <div class="step-desc">Login to <strong>AWS Console</strong> → search <strong>EC2</strong> → click <span class="click-arrow">Launch Instance</span>:</div>
+              <div class="click-step"><div class="click-num">1</div><div class="click-text">Name: <code>linux-lab-server</code></div></div>
+              <div class="click-step"><div class="click-num">2</div><div class="click-text">AMI: <strong>Ubuntu Server 22.04 LTS</strong> — click <span class="click-arrow">Select</span></div></div>
+              <div class="click-step"><div class="click-num">3</div><div class="click-text">Instance type: <strong>t2.micro</strong> (free tier eligible — look for the green "Free tier" label)</div></div>
+              <div class="click-step"><div class="click-num">4</div><div class="click-text">Key pair: click <span class="click-arrow">Create new key pair</span> → name: <code>linux-lab-key</code> → RSA → .pem → <span class="click-arrow">Create</span>. File downloads automatically.</div></div>
+              <div class="click-step"><div class="click-num">5</div><div class="click-text">Network settings: check <strong>Allow SSH from My IP</strong> and <strong>Allow HTTP traffic</strong></div></div>
+              <div class="click-step"><div class="click-num">6</div><div class="click-text">Click <span class="click-arrow">Launch instance</span> → wait 1 min → click <span class="click-arrow">View all instances</span> → note the <strong>Public IPv4 address</strong></div></div>
+            </div>
+          </div>
+          <div class="step-item">
+            <div><div class="step-dot">2</div><div class="step-line"></div></div>
+            <div class="step-body">
+              <div class="step-title">SSH into your server from M4 Mac</div>
+              <div class="code"><span class="c"># Secure the key file first</span><br><span class="cmd">chmod</span> 400 ~/Downloads/linux-lab-key.pem<br><br><span class="c"># SSH in (replace IP with your EC2 public IP)</span><br><span class="cmd">ssh</span> <span class="f">-i</span> ~/Downloads/linux-lab-key.pem ubuntu@<span class="s">YOUR-EC2-IP</span><br><br><span class="c"># You're now inside your Linux server! Prompt changes to:</span><br><span class="c"># ubuntu@ip-172-xx-xx-xx:~$</span></div>
+            </div>
+          </div>
+          <div class="step-item">
+            <div><div class="step-dot">3</div><div class="step-line"></div></div>
+            <div class="step-body">
+              <div class="step-title">Write the setup bash script</div>
+              <div class="code"><span class="cmd">nano</span> setup.sh</div>
+              <div class="step-desc">Paste this script:</div>
+              <div class="code">#!/bin/bash<br><span class="c"># === SERVER SETUP AUTOMATION SCRIPT ===</span><br>set -e  <span class="c"># Exit on any error</span><br><br><span class="cmd">echo</span> <span class="s">"[1/5] Updating system..."</span><br>sudo apt update -y && sudo apt upgrade -y<br><br><span class="cmd">echo</span> <span class="s">"[2/5] Installing nginx..."</span><br>sudo apt install nginx -y<br>sudo systemctl enable nginx<br>sudo systemctl start nginx<br><br><span class="cmd">echo</span> <span class="s">"[3/5] Configuring firewall..."</span><br>sudo ufw allow OpenSSH<br>sudo ufw allow 'Nginx HTTP'<br>sudo ufw --force enable<br><br><span class="cmd">echo</span> <span class="s">"[4/5] Creating server stats script..."</span><br>cat > /home/ubuntu/stats.sh << 'EOF'<br>#!/bin/bash<br>echo "=== Server Stats $(date) ===" >> /home/ubuntu/stats.log<br>echo "CPU: $(top -bn1 | grep 'Cpu(s)' | awk '{print $2}')%" >> /home/ubuntu/stats.log<br>echo "Memory: $(free -h | grep Mem | awk '{print $3"/"$2}')" >> /home/ubuntu/stats.log<br>echo "Disk: $(df -h / | tail -1 | awk '{print $5}')" >> /home/ubuntu/stats.log<br>EOF<br>chmod +x /home/ubuntu/stats.sh<br><br><span class="cmd">echo</span> <span class="s">"[5/5] Adding cron job (runs every 5 min)..."</span><br>(crontab -l 2>/dev/null; echo "*/5 * * * * /home/ubuntu/stats.sh") | crontab -<br><br><span class="cmd">echo</span> <span class="s">"✅ Setup complete! Visit: http://$(curl -s ifconfig.me)"</span></div>
+              <div class="code"><span class="cmd">chmod</span> +x setup.sh && <span class="cmd">./</span>setup.sh</div>
+            </div>
+          </div>
+          <div class="step-item">
+            <div><div class="step-dot">4</div></div>
+            <div class="step-body">
+              <div class="step-title">Verify everything works</div>
+              <div class="code"><span class="c"># Check nginx status</span><br><span class="cmd">systemctl status</span> nginx<br><br><span class="c"># View server in browser</span><br><span class="c"># Open: http://YOUR-EC2-IP  → nginx default page</span><br><br><span class="c"># Check cron is running</span><br><span class="cmd">crontab -l</span><br><br><span class="c"># After 5+ min, check stats log</span><br><span class="cmd">cat</span> ~/stats.log</div>
+              <div class="info warn"><span class="info-icon">💸</span><div class="info-text"><strong>Save cost:</strong> When done practicing, stop (don't terminate) the instance: AWS Console → EC2 → select instance → <span class="click-arrow">Instance state</span> → <span class="click-arrow">Stop instance</span>. t2.micro stopped = free.</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROJECT 5 -->
+    <div class="tier-header">
+      <div class="tier-badge tb-rookie">🟢 Project 05</div>
+      <div>
+        <div class="tier-title">Docker Compose: Multi-Container App</div>
+        <div class="tier-sub">Master: docker-compose.yml · networks · volumes · environment vars · dependencies</div>
+      </div>
+    </div>
+    <div class="projects-grid">
+      <div class="proj-card rookie">
+        <div class="proj-header"><div class="proj-icon pi-rookie">📦</div><div class="proj-num">#05</div></div>
+        <div class="proj-title">WordPress + MySQL with Docker Compose</div>
+        <div class="proj-desc">Deploy a full WordPress site with MySQL database using a single docker-compose.yml file. Learn how containers communicate on private networks, how volumes persist data, and how to manage secrets via environment variables. All on your M4 Mac — free, no cloud needed.</div>
+        <div class="tech-tags"><span class="tag">Docker Compose</span><span class="tag">MySQL</span><span class="tag">WordPress</span><span class="tag">Volumes</span><span class="tag">Networks</span></div>
+        <div class="proj-meta"><div class="meta-time">⏱ 2 hours</div><div class="meta-diff md-rookie">Beginner</div></div>
+      </div>
+    </div>
+    <div class="step-guide">
+      <div class="step-guide-header" onclick="toggleGuide(this)">
+        <div class="sgh-title">📋 Step-by-Step Guide — Click to Expand</div>
+        <div class="sgh-toggle">▼</div>
+      </div>
+      <div class="step-guide-body">
+        <div class="code"><span class="c"># Create project folder</span><br><span class="cmd">mkdir</span> wp-compose && <span class="cmd">cd</span> wp-compose<br><span class="cmd">nano</span> docker-compose.yml</div>
+        <div class="code">version: '3.8'<br><br>services:<br>&nbsp;&nbsp;<span class="k">db</span>:<br>&nbsp;&nbsp;&nbsp;&nbsp;image: mysql:8.0<br>&nbsp;&nbsp;&nbsp;&nbsp;restart: always<br>&nbsp;&nbsp;&nbsp;&nbsp;environment:<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;MYSQL_DATABASE: wordpress<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;MYSQL_USER: wpuser<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;MYSQL_PASSWORD: <span class="s">strongpassword123</span><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;MYSQL_ROOT_PASSWORD: <span class="s">rootpassword123</span><br>&nbsp;&nbsp;&nbsp;&nbsp;volumes:<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- db_data:/var/lib/mysql  <span class="c"># persistent data!</span><br>&nbsp;&nbsp;&nbsp;&nbsp;networks:<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- wp-network<br><br>&nbsp;&nbsp;<span class="k">wordpress</span>:<br>&nbsp;&nbsp;&nbsp;&nbsp;image: wordpress:latest<br>&nbsp;&nbsp;&nbsp;&nbsp;depends_on: [db]   <span class="c"># start after db</span><br>&nbsp;&nbsp;&nbsp;&nbsp;ports:<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- "8080:80"<br>&nbsp;&nbsp;&nbsp;&nbsp;environment:<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WORDPRESS_DB_HOST: db:3306<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WORDPRESS_DB_USER: wpuser<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WORDPRESS_DB_PASSWORD: <span class="s">strongpassword123</span><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WORDPRESS_DB_NAME: wordpress<br>&nbsp;&nbsp;&nbsp;&nbsp;networks:<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- wp-network<br><br>volumes:<br>&nbsp;&nbsp;db_data:  <span class="c"># named volume — persists between restarts</span><br><br>networks:<br>&nbsp;&nbsp;wp-network:  <span class="c"># private network — only these 2 containers talk</span></div>
+        <div class="code"><span class="cmd">docker compose up -d</span>     <span class="c"># start everything</span><br><span class="cmd">docker compose ps</span>         <span class="c"># see running services</span><br><span class="cmd">docker compose logs -f</span>    <span class="c"># follow logs from all containers</span><br><span class="c"># Open browser: http://localhost:8080  → WordPress setup!</span><br><br><span class="cmd">docker compose down</span>       <span class="c"># stop and remove containers</span><br><span class="cmd">docker compose down -v</span>    <span class="c"># also remove volumes (delete data)</span></div>
+      </div>
+    </div>
+
+  </div><!-- /container -->
+</section>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- MID TIER -->
+<!-- ═══════════════════════════════════════════════ -->
+<section class="section" id="mid">
+  <div class="container">
+    <div class="sec-header">
+      <div>
+        <div class="sec-num">// 02 — intermediate tier</div>
+        <div class="sec-title" style="color:var(--mid)">Mid-Level Projects</div>
+        <div class="sec-desc">Requires completing Rookie tier. AWS free tier + some paid resources (~$2–5/day). Projects 6–11.</div>
+      </div>
+    </div>
+
+    <div class="projects-grid">
+      <div class="proj-card mid">
+        <div class="proj-header"><div class="proj-icon pi-mid">☸️</div><div class="proj-num">#06</div></div>
+        <div class="proj-title">Local Kubernetes with minikube</div>
+        <div class="proj-desc">Install minikube on your M4 Mac. Deploy your Dockerized app to a local K8s cluster. Write your first Deployment, Service, and ConfigMap YAML. Practice kubectl — zero cloud cost.</div>
+        <div class="tech-tags"><span class="tag">Kubernetes</span><span class="tag">minikube</span><span class="tag">kubectl</span><span class="tag">YAML</span></div>
+        <div class="proj-meta"><div class="meta-time">⏱ 3 hours</div><div class="meta-diff md-mid">Intermediate</div></div>
+      </div>
+      <div class="proj-card mid">
+        <div class="proj-header"><div class="proj-icon pi-mid">📜</div><div class="proj-num">#07</div></div>
+        <div class="proj-title">Ansible Server Configuration</div>
+        <div class="proj-desc">Install Ansible on M4 Mac. Provision 2 EC2 instances with Terraform. Write Ansible playbooks to configure nginx, create users, install packages, manage files — all without SSHing manually.</div>
+        <div class="tech-tags"><span class="tag">Ansible</span><span class="tag">Playbooks</span><span class="tag">EC2</span><span class="tag">Terraform</span></div>
+        <div class="proj-meta"><div class="meta-time">⏱ 4 hours</div><div class="meta-diff md-mid">Intermediate</div></div>
+      </div>
+      <div class="proj-card mid">
+        <div class="proj-header"><div class="proj-icon pi-mid">🏗️</div><div class="proj-num">#08</div></div>
+        <div class="proj-title">Terraform AWS VPC + EC2</div>
+        <div class="proj-desc">Write Terraform code from scratch to create a full AWS VPC (subnets, route tables, internet gateway, security groups) and launch EC2 instances inside it. Store state in S3 with DynamoDB locking.</div>
+        <div class="tech-tags"><span class="tag">Terraform</span><span class="tag">AWS VPC</span><span class="tag">EC2</span><span class="tag">S3 Backend</span></div>
+        <div class="proj-meta"><div class="meta-time">⏱ 4 hours</div><div class="meta-diff md-mid">Intermediate</div></div>
+      </div>
+      <div class="proj-card mid">
+        <div class="proj-header"><div class="proj-icon pi-mid">⚙️</div><div class="proj-num">#09</div></div>
+        <div class="proj-title">Jenkins + Docker CI Pipeline</div>
+        <div class="proj-desc">Run Jenkins in Docker on your Mac (docker-compose). Create a pipeline that pulls code from GitHub, builds a Docker image, runs tests inside the container, then pushes to Docker Hub. Your first real CI pipeline.</div>
+        <div class="tech-tags"><span class="tag">Jenkins</span><span class="tag">Docker</span><span class="tag">GitHub</span><span class="tag">Webhooks</span><span class="tag">Docker Hub</span></div>
+        <div class="proj-meta"><div class="meta-time">⏱ 5 hours</div><div class="meta-diff md-mid">Intermediate</div></div>
+      </div>
+      <div class="proj-card mid">
+        <div class="proj-header"><div class="proj-icon pi-mid">📊</div><div class="proj-num">#10</div></div>
+        <div class="proj-title">Prometheus + Grafana Monitoring Stack</div>
+        <div class="proj-desc">Deploy Prometheus + Grafana + Node Exporter with Docker Compose on a local server. Monitor CPU, memory, disk, and network. Create 3 custom Grafana dashboards. Set up an AlertManager rule that "emails" you (webhooks) when CPU > 80%.</div>
+        <div class="tech-tags"><span class="tag">Prometheus</span><span class="tag">Grafana</span><span class="tag">AlertManager</span><span class="tag">Node Exporter</span></div>
+        <div class="proj-meta"><div class="meta-time">⏱ 4 hours</div><div class="meta-diff md-mid">Intermediate</div></div>
+      </div>
+      <div class="proj-card mid">
+        <div class="proj-header"><div class="proj-icon pi-mid">🔐</div><div class="proj-num">#11</div></div>
+        <div class="proj-title">Docker Multi-Stage Build + Security</div>
+        <div class="proj-desc">Rewrite a Dockerfile using multi-stage builds to reduce image size by 80%. Add non-root user, read-only filesystem, and scan with Trivy. Compare before/after image sizes and CVE count. Best practice documentation.</div>
+        <div class="tech-tags"><span class="tag">Docker</span><span class="tag">Multi-stage</span><span class="tag">Trivy</span><span class="tag">Security</span></div>
+        <div class="proj-meta"><div class="meta-time">⏱ 3 hours</div><div class="meta-diff md-mid">Intermediate</div></div>
+      </div>
+    </div>
+
+    <!-- DETAILED GUIDE FOR PROJECT 7 (ANSIBLE) -->
+    <div class="tier-header">
+      <div class="tier-badge tb-mid">🔵 Detailed Guide — Project 07</div>
+      <div>
+        <div class="tier-title">Ansible: Complete Walkthrough</div>
+        <div class="tier-sub">Most confusing tool for beginners — extra detail here</div>
+      </div>
+    </div>
+    <div class="step-guide">
+      <div class="step-guide-header" onclick="toggleGuide(this)">
+        <div class="sgh-title">📋 Ansible Step-by-Step — Click to Expand</div>
+        <div class="sgh-toggle">▼</div>
+      </div>
+      <div class="step-guide-body">
+        <div class="info note"><span class="info-icon">🧠</span><div class="info-text"><strong>Mental model:</strong> Ansible reads a YAML "playbook" (your instructions), SSHs into target servers, and runs tasks. No agent needed on servers. You control it from your M4 Mac. It's <strong>idempotent</strong> — run it 10 times, same result.</div></div>
+        <div class="steps-list">
+          <div class="step-item">
+            <div><div class="step-dot">1</div><div class="step-line"></div></div>
+            <div class="step-body">
+              <div class="step-title">Install Ansible on M4 Mac</div>
+              <div class="code"><span class="cmd">brew install</span> ansible<br><span class="cmd">ansible --version</span>   <span class="c"># verify</span></div>
+            </div>
+          </div>
+          <div class="step-item">
+            <div><div class="step-dot">2</div><div class="step-line"></div></div>
+            <div class="step-body">
+              <div class="step-title">Create inventory file (tells Ansible WHERE your servers are)</div>
+              <div class="code"><span class="cmd">mkdir</span> ansible-lab && <span class="cmd">cd</span> ansible-lab<br><span class="cmd">nano</span> inventory.ini</div>
+              <div class="code">[webservers]<br>server1 ansible_host=<span class="s">YOUR-EC2-IP-1</span> ansible_user=ubuntu ansible_ssh_private_key_file=~/.ssh/linux-lab-key.pem<br>server2 ansible_host=<span class="s">YOUR-EC2-IP-2</span> ansible_user=ubuntu ansible_ssh_private_key_file=~/.ssh/linux-lab-key.pem</div>
+              <div class="code"><span class="c"># Test connectivity to all servers</span><br><span class="cmd">ansible</span> webservers <span class="f">-i</span> inventory.ini <span class="f">-m</span> ping</div>
+            </div>
+          </div>
+          <div class="step-item">
+            <div><div class="step-dot">3</div><div class="step-line"></div></div>
+            <div class="step-body">
+              <div class="step-title">Write your first playbook</div>
+              <div class="code"><span class="cmd">nano</span> setup-webserver.yml</div>
+              <div class="code">---<br>- <span class="k">name</span>: Configure Web Servers<br>&nbsp;&nbsp;<span class="k">hosts</span>: webservers<br>&nbsp;&nbsp;<span class="k">become</span>: yes  <span class="c"># sudo</span><br><br>&nbsp;&nbsp;<span class="k">tasks</span>:<br>&nbsp;&nbsp;&nbsp;&nbsp;- <span class="k">name</span>: Update apt cache<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="k">apt</span>: update_cache=yes<br><br>&nbsp;&nbsp;&nbsp;&nbsp;- <span class="k">name</span>: Install nginx<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="k">apt</span>:<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name: nginx<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;state: present  <span class="c"># idempotent: install if not there</span><br><br>&nbsp;&nbsp;&nbsp;&nbsp;- <span class="k">name</span>: Start and enable nginx<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="k">service</span>:<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name: nginx<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;state: started<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;enabled: yes<br><br>&nbsp;&nbsp;&nbsp;&nbsp;- <span class="k">name</span>: Create custom index page<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="k">copy</span>:<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;content: "&lt;h1&gt;Managed by Ansible!&lt;/h1&gt;"<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dest: /var/www/html/index.html</div>
+              <div class="code"><span class="c"># Run the playbook!</span><br><span class="cmd">ansible-playbook</span> <span class="f">-i</span> inventory.ini setup-webserver.yml<br><br><span class="c"># -v, -vv, -vvv for more verbosity when debugging</span></div>
+              <div class="info tip"><span class="info-icon">🏆</span><div class="info-text"><strong>Interview win:</strong> "I've written Ansible roles with handlers, templates (Jinja2), and Ansible Vault for secrets. I've used dynamic inventory with AWS EC2 plugin so I never have to manually update host IPs."</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- SENIOR TIER -->
+<!-- ═══════════════════════════════════════════════ -->
+<section class="section" id="senior">
+  <div class="container">
+    <div class="sec-header">
+      <div>
+        <div class="sec-num">// 03 — senior tier</div>
+        <div class="sec-title" style="color:var(--senior)">Senior-Level Projects</div>
+        <div class="sec-desc">Real cloud infra. ~$5–15/day when running. Always terraform destroy after sessions. Projects 12–16.</div>
+      </div>
+    </div>
+    <div class="projects-grid">
+      <div class="proj-card senior">
+        <div class="proj-header"><div class="proj-icon pi-senior">☸️</div><div class="proj-num">#12</div></div>
+        <div class="proj-title">Production EKS Cluster with Terraform</div>
+        <div class="proj-desc">Provision a full production-grade EKS cluster using Terraform modules. Multi-AZ node groups, managed node groups, IRSA (IAM Roles for Service Accounts), cluster autoscaler, AWS LB Controller. Best practice VPC layout.</div>
+        <div class="tech-tags"><span class="tag">EKS</span><span class="tag">Terraform Modules</span><span class="tag">IRSA</span><span class="tag">Cluster Autoscaler</span><span class="tag">VPC</span></div>
+        <div class="proj-meta"><div class="meta-time">⏱ 6 hours</div><div class="meta-diff md-senior">Senior</div></div>
+      </div>
+      <div class="proj-card senior">
+        <div class="proj-header"><div class="proj-icon pi-senior">🌊</div><div class="proj-num">#13</div></div>
+        <div class="proj-title">Full GitOps with ArgoCD + Helm</div>
+        <div class="proj-desc">Deploy a microservices app (3 services) to EKS using ArgoCD. Package each service as a Helm chart with values files per environment (dev/staging/prod). ArgoCD ApplicationSets for multi-env management. Full GitOps — zero manual kubectl.</div>
+        <div class="tech-tags"><span class="tag">ArgoCD</span><span class="tag">Helm Charts</span><span class="tag">GitOps</span><span class="tag">ApplicationSets</span><span class="tag">Multi-env</span></div>
+        <div class="proj-meta"><div class="meta-time">⏱ 8 hours</div><div class="meta-diff md-senior">Senior</div></div>
+      </div>
+      <div class="proj-card senior">
+        <div class="proj-header"><div class="proj-icon pi-senior">📜</div><div class="proj-num">#14</div></div>
+        <div class="proj-title">Ansible Roles + AWX (Ansible Tower)</div>
+        <div class="proj-desc">Refactor your Ansible playbooks into reusable Roles (vars, handlers, templates). Install AWX (free Ansible Tower) in Docker. Run playbooks from the AWX UI with RBAC, scheduled jobs, and inventory syncing from AWS.</div>
+        <div class="tech-tags"><span class="tag">Ansible Roles</span><span class="tag">AWX</span><span class="tag">Jinja2</span><span class="tag">Vault</span><span class="tag">Dynamic Inventory</span></div>
+        <div class="proj-meta"><div class="meta-time">⏱ 6 hours</div><div class="meta-diff md-senior">Senior</div></div>
+      </div>
+      <div class="proj-card senior">
+        <div class="proj-header"><div class="proj-icon pi-senior">📈</div><div class="proj-num">#15</div></div>
+        <div class="proj-title">Full Observability Stack on K8s</div>
+        <div class="proj-desc">Deploy kube-prometheus-stack + Loki (log aggregation) + Tempo (distributed tracing) via Helm. Create SLO dashboards. Set up PagerDuty-style alerting via AlertManager. Instrument a Node.js app with custom Prometheus metrics.</div>
+        <div class="tech-tags"><span class="tag">Prometheus</span><span class="tag">Grafana</span><span class="tag">Loki</span><span class="tag">Tempo</span><span class="tag">Custom Metrics</span><span class="tag">SLOs</span></div>
+        <div class="proj-meta"><div class="meta-time">⏱ 6 hours</div><div class="meta-diff md-senior">Senior</div></div>
+      </div>
+      <div class="proj-card senior">
+        <div class="proj-header"><div class="proj-icon pi-senior">🔐</div><div class="proj-num">#16</div></div>
+        <div class="proj-title">Kubernetes RBAC + Network Policies</div>
+        <div class="proj-desc">Implement full K8s RBAC — create Roles, ClusterRoles, ServiceAccounts. Lock down pod-to-pod communication with NetworkPolicies (default deny all, allow specific). Add PodSecurityAdmission. Real production security hardening.</div>
+        <div class="tech-tags"><span class="tag">K8s RBAC</span><span class="tag">NetworkPolicy</span><span class="tag">ServiceAccounts</span><span class="tag">PodSecurity</span></div>
+        <div class="proj-meta"><div class="meta-time">⏱ 5 hours</div><div class="meta-diff md-senior">Senior</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- PRO / INTERVIEW TIER -->
+<!-- ═══════════════════════════════════════════════ -->
+<section class="section" id="pro">
+  <div class="container">
+    <div class="sec-header">
+      <div>
+        <div class="sec-num">// 04 — pro / interview tier</div>
+        <div class="sec-title" style="color:var(--pro)">Pro-Level Projects</div>
+        <div class="sec-desc">Portfolio-grade. Talk about these in any senior DevOps interview. Projects 17–20.</div>
+      </div>
+    </div>
+    <div class="projects-grid">
+      <div class="proj-card pro">
+        <div class="proj-header"><div class="proj-icon pi-pro">🚀</div><div class="proj-num">#17</div></div>
+        <div class="proj-title">End-to-End DevSecOps Pipeline</div>
+        <div class="proj-desc">The big one you already started! Full Three-Tier app on EKS with Jenkins CI, SonarQube, OWASP, Trivy, ECR, ArgoCD, Prometheus. Add: blue-green deployments, automated rollback on failed health checks, Slack notifications per stage.</div>
+        <div class="tech-tags"><span class="tag">EKS</span><span class="tag">Jenkins</span><span class="tag">ArgoCD</span><span class="tag">SonarQube</span><span class="tag">Blue-Green</span><span class="tag">Slack</span></div>
+        <div class="proj-meta"><div class="meta-time">⏱ 2 days</div><div class="meta-diff md-pro">Pro</div></div>
+      </div>
+      <div class="proj-card pro">
+        <div class="proj-header"><div class="proj-icon pi-pro">🌍</div><div class="proj-num">#18</div></div>
+        <div class="proj-title">Terraform Multi-Environment IaC</div>
+        <div class="proj-desc">Use Terraform workspaces + modules to manage dev/staging/prod environments from a single codebase. Add Atlantis (Terraform CI) — PRs auto-run terraform plan, merge = terraform apply. Full infrastructure GitOps.</div>
+        <div class="tech-tags"><span class="tag">Terraform Workspaces</span><span class="tag">Modules</span><span class="tag">Atlantis</span><span class="tag">IaC GitOps</span><span class="tag">Multi-env</span></div>
+        <div class="proj-meta"><div class="meta-time">⏱ 1 day</div><div class="meta-diff md-pro">Pro</div></div>
+      </div>
+      <div class="proj-card pro">
+        <div class="proj-header"><div class="proj-icon pi-pro">⚡</div><div class="proj-num">#19</div></div>
+        <div class="proj-title">Kubernetes HPA + Chaos Engineering</div>
+        <div class="proj-desc">Configure HPA (Horizontal Pod Autoscaler) with custom metrics. Use k6 to load test. Watch pods auto-scale. Then introduce controlled chaos with Chaos Mesh — kill random pods, inject network latency — verify your app survives.</div>
+        <div class="tech-tags"><span class="tag">HPA</span><span class="tag">KEDA</span><span class="tag">k6 Load Testing</span><span class="tag">Chaos Mesh</span><span class="tag">Resilience</span></div>
+        <div class="proj-meta"><div class="meta-time">⏱ 1 day</div><div class="meta-diff md-pro">Pro</div></div>
+      </div>
+      <div class="proj-card pro">
+        <div class="proj-header"><div class="proj-icon pi-pro">🏆</div><div class="proj-num">#20</div></div>
+        <div class="proj-title">Platform Engineering: Internal Dev Platform</div>
+        <div class="proj-desc">Build a simple Internal Developer Platform using Backstage (open source). Integrate your entire toolchain — Jenkins, ArgoCD, AWS resources, Grafana dashboards — into one unified portal. This is what 10x engineers build at FAANG.</div>
+        <div class="tech-tags"><span class="tag">Backstage</span><span class="tag">Platform Eng</span><span class="tag">Service Catalog</span><span class="tag">Golden Paths</span></div>
+        <div class="proj-meta"><div class="meta-time">⏱ 2 days</div><div class="meta-diff md-pro">Pro</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- GITHUB UPDATE GUIDE -->
+<!-- ═══════════════════════════════════════════════ -->
+<section class="section" id="github-update">
+  <div class="container">
+    <div class="sec-header">
+      <div>
+        <div class="sec-num">// 05 — update your site</div>
+        <div class="sec-title">Add This Page to akshc15.github.io</div>
+        <div class="sec-desc">Exact click-by-click steps to upload this projects.html and update your site's homepage</div>
+      </div>
+    </div>
+
+    <div class="github-guide">
+      <div class="gh-title">🐙 Upload to GitHub — 3 Methods</div>
+      <div class="gh-sub">Pick whichever feels easiest. Method 1 is fastest.</div>
+
+      <h3 style="color:var(--mid);margin-bottom:16px">Method 1: Drag & Drop on GitHub Website (Easiest)</h3>
+      <div class="click-step"><div class="click-num">1</div><div class="click-text">Go to <strong>github.com/akshc15/akshc15.github.io</strong> in your browser</div></div>
+      <div class="click-step"><div class="click-num">2</div><div class="click-text">Click <span class="click-arrow">Add file</span> button (near the top right of file list) → click <span class="click-arrow">Upload files</span></div></div>
+      <div class="click-step"><div class="click-num">3</div><div class="click-text">Drag and drop <strong>projects.html</strong> from your Mac Finder into the upload box (also drag the other 3 files if you haven't already)</div></div>
+      <div class="click-step"><div class="click-num">4</div><div class="click-text">Scroll down to <strong>"Commit changes"</strong> section → type a message like <code>Add projects roadmap page</code> → click <span class="click-arrow">Commit changes</span></div></div>
+      <div class="click-step"><div class="click-num">5</div><div class="click-text">Wait 2 minutes → visit <strong>https://akshc15.github.io/projects.html</strong> — it's live! 🎉</div></div>
+
+      <div style="height:1px;background:var(--border);margin:28px 0;"></div>
+
+      <h3 style="color:var(--mid);margin-bottom:16px">Method 2: Terminal on M4 Mac (Pro way — learn this!)</h3>
+      <div class="code"><span class="c"># 1. Clone your repo (if not already done)</span><br><span class="cmd">git clone</span> https://github.com/akshc15/akshc15.github.io.git<br><span class="cmd">cd</span> akshc15.github.io<br><br><span class="c"># 2. Copy your new file into the repo folder</span><br><span class="c">#    (drag projects.html to this folder in Finder, or use cp)</span><br><span class="cmd">cp</span> ~/Downloads/projects.html .<br><br><span class="c"># 3. Stage the file</span><br><span class="cmd">git add</span> projects.html<br><br><span class="c"># 4. Commit with a message</span><br><span class="cmd">git commit -m</span> <span class="s">"Add DevOps projects roadmap page"</span><br><br><span class="c"># 5. Push to GitHub</span><br><span class="cmd">git push origin</span> main<br><br><span class="c"># Done! GitHub Pages auto-deploys in ~2 min</span></div>
+
+      <div style="height:1px;background:var(--border);margin:28px 0;"></div>
+
+      <h3 style="color:var(--mid);margin-bottom:16px">Update index.html to Add a Link to Projects Page</h3>
+      <div class="info note"><span class="info-icon">💡</span><div class="info-text"><strong>Your index.html already links to projects.html!</strong> The index.html I created for you already has a card for this projects page. You just need to add a third card to it, or keep it as-is and upload the new projects.html file.</div></div>
+
+      <h3 style="color:var(--senior);margin-bottom:16px;margin-top:24px">Add a New Card to index.html (optional upgrade)</h3>
+      <div class="step-desc" style="color:var(--muted);margin-bottom:12px">Open your <strong>index.html</strong> in any text editor (TextEdit, VS Code, or even Notes on Mac). Find the <code>&lt;div class="cards"&gt;</code> section and add this card inside it:</div>
+      <div class="code">&lt;a href=<span class="s">"projects.html"</span> class=<span class="s">"card"</span> style=<span class="s">"border-color:rgba(245,158,11,.3)"</span>&gt;<br>&nbsp;&nbsp;&lt;span class=<span class="s">"card-icon"</span>&gt;🗺️&lt;/span&gt;<br>&nbsp;&nbsp;&lt;div class=<span class="s">"card-title"</span> style=<span class="s">"color:#f59e0b"</span>&gt;PROJECTS ROADMAP&lt;/div&gt;<br>&nbsp;&nbsp;&lt;p class=<span class="s">"card-desc"</span>&gt;20 spoon-fed projects from Rookie to Pro — Docker, K8s, Terraform, Ansible, CI/CD &amp; monitoring.&lt;/p&gt;<br>&nbsp;&nbsp;&lt;div class=<span class="s">"card-btn"</span> style=<span class="s">"color:#f59e0b"</span>&gt;Start Building →&lt;/div&gt;<br>&lt;/a&gt;</div>
+
+      <div style="height:1px;background:var(--border);margin:28px 0;"></div>
+
+      <h3 style="color:var(--rookie);margin-bottom:16px">Your Final Site Structure</h3>
+      <div class="diagram">
+        <div class="dia-row">
+          <div class="dia-box" style="background:rgba(52,211,153,.08);border-color:rgba(52,211,153,.3)">
+            <div class="di">🌐</div>
+            <strong>akshc15.github.io</strong>
+            <div class="dl">index.html (homepage)</div>
+          </div>
+        </div>
+        <div class="dia-row" style="margin-top:8px">
+          <div class="dia-arr">↙</div>
+          <div class="dia-arr">↓</div>
+          <div class="dia-arr">↘</div>
+        </div>
+        <div class="dia-row" style="gap:12px">
+          <div class="dia-box"><div class="di">📖</div>devops-mastery-guide.html<div class="dl">Step-by-step guide</div></div>
+          <div class="dia-box"><div class="di">🎬</div>devops-cartoon.html<div class="dl">Animated story</div></div>
+          <div class="dia-box" style="border-color:rgba(245,158,11,.4)"><div class="di">🗺️</div>projects.html<div class="dl">This roadmap!</div></div>
+        </div>
+      </div>
+      <div class="info tip"><span class="info-icon">🏆</span><div class="info-text"><strong>Pro tip for interviews:</strong> Share <strong>akshc15.github.io</strong> in your resume/LinkedIn bio. It shows you: (a) know GitHub Pages, (b) have a structured learning plan, (c) actually built things. This alone puts you ahead of 90% of candidates.</div></div>
+    </div>
+
+  </div>
+</section>
+
+<footer>
+  <div>akshc15.github.io — DevOps Zero to Hero · 20 Projects · All Tools · Interview Ready</div>
+  <div style="margin-top:6px">Hosted free on <a href="https://pages.github.com">GitHub Pages</a> · Built with M4 Mac · 2026</div>
+</footer>
+
+<script>
+function toggleGuide(header) {
+  const body = header.nextElementSibling;
+  const toggle = header.querySelector('.sgh-toggle');
+  const isOpen = body.classList.contains('open');
+  body.classList.toggle('open', !isOpen);
+  toggle.textContent = isOpen ? '▼' : '▲';
+  toggle.style.transform = isOpen ? 'rotate(0deg)' : 'rotate(0deg)';
+}
+
+// Animate cards on scroll
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach((e, i) => {
+    if (e.isIntersecting) {
+      setTimeout(() => {
+        e.target.style.opacity = '1';
+        e.target.style.transform = 'translateY(0)';
+      }, i * 80);
+      observer.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.proj-card').forEach(card => {
+  card.style.opacity = '0';
+  card.style.transform = 'translateY(24px)';
+  card.style.transition = 'opacity .4s ease, transform .4s ease';
+  observer.observe(card);
+});
+</script>
+</body>
+</html>

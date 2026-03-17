@@ -1,0 +1,1605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DREAM Project — Chat App DevOps End-to-End</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Exo+2:wght@300;400;600;700&family=Fira+Code:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#07080d;--bg2:#0c0e18;--bg3:#111525;
+  --cyan:#00f5ff;--lime:#39ff14;--amber:#ffb300;
+  --red:#ff3b5c;--purple:#c084fc;--pink:#f472b6;
+  --text:#e2eaff;--muted:#4a5580;--dim:#1e2540;
+  --orb:'Orbitron',sans-serif;
+  --exo:'Exo 2',sans-serif;
+  --code:'Fira Code',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:var(--exo);overflow-x:hidden;}
+
+/* SCANLINE EFFECT */
+body::after{
+  content:'';position:fixed;inset:0;
+  background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,245,255,0.01) 2px,rgba(0,245,255,0.01) 4px);
+  pointer-events:none;z-index:9999;
+}
+
+/* GRID BG */
+body::before{
+  content:'';position:fixed;inset:0;
+  background-image:linear-gradient(rgba(0,245,255,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(0,245,255,0.03) 1px,transparent 1px);
+  background-size:50px 50px;pointer-events:none;z-index:0;
+}
+
+/* NAV */
+.nav{
+  position:sticky;top:0;z-index:200;
+  background:rgba(7,8,13,0.95);backdrop-filter:blur(20px);
+  border-bottom:1px solid rgba(0,245,255,0.15);
+  padding:0 28px;display:flex;align-items:center;gap:0;overflow-x:auto;
+}
+.nav-brand{
+  font-family:var(--orb);font-size:16px;
+  color:var(--cyan);margin-right:24px;
+  text-shadow:0 0 20px rgba(0,245,255,0.5);
+  white-space:nowrap;padding:14px 0;flex-shrink:0;
+}
+.nav a{
+  font-family:var(--code);font-size:11px;letter-spacing:.06em;
+  color:var(--muted);text-decoration:none;
+  padding:16px 12px;border-bottom:2px solid transparent;
+  transition:all .2s;white-space:nowrap;
+}
+.nav a:hover{color:var(--cyan);border-bottom-color:var(--cyan);}
+
+/* HERO */
+.hero{
+  position:relative;z-index:1;
+  min-height:100vh;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  text-align:center;padding:80px 24px 60px;
+  overflow:hidden;
+}
+.hero-bg{
+  position:absolute;inset:0;
+  background:radial-gradient(ellipse at 50% 50%,rgba(0,245,255,0.07) 0%,transparent 60%);
+  pointer-events:none;
+}
+
+/* DREAM LOGO */
+.dream-logo{
+  font-family:var(--orb);
+  font-size:clamp(60px,15vw,160px);
+  font-weight:900;
+  line-height:1;
+  letter-spacing:.05em;
+  background:linear-gradient(135deg,var(--cyan) 0%,var(--purple) 50%,var(--lime) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;
+  filter:drop-shadow(0 0 40px rgba(0,245,255,0.3));
+  animation:dreamPulse 3s ease-in-out infinite alternate;
+  margin-bottom:8px;
+}
+@keyframes dreamPulse{
+  from{filter:drop-shadow(0 0 20px rgba(0,245,255,0.3));}
+  to{filter:drop-shadow(0 0 60px rgba(0,245,255,0.6)) drop-shadow(0 0 100px rgba(192,132,252,0.3));}
+}
+.hero-sub-title{
+  font-family:var(--orb);
+  font-size:clamp(14px,2.5vw,22px);
+  letter-spacing:.2em;
+  color:rgba(226,234,255,0.5);
+  margin-bottom:30px;
+}
+
+/* CHAT APP PREVIEW */
+.chat-preview{
+  background:var(--bg3);
+  border:1px solid rgba(0,245,255,0.2);
+  border-radius:16px;
+  padding:16px;
+  max-width:340px;
+  margin:0 auto 32px;
+  box-shadow:0 0 40px rgba(0,245,255,0.1);
+  animation:float 4s ease-in-out infinite;
+}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+.chat-bar{
+  display:flex;align-items:center;gap:8px;
+  margin-bottom:14px;padding-bottom:10px;
+  border-bottom:1px solid var(--dim);
+}
+.chat-dot{width:10px;height:10px;border-radius:50%;}
+.chat-dot.r{background:var(--red);}
+.chat-dot.a{background:var(--amber);}
+.chat-dot.g{background:var(--lime);}
+.chat-title{font-family:var(--code);font-size:11px;color:var(--muted);margin-left:6px;}
+.msg{
+  display:flex;gap:8px;margin-bottom:8px;
+  animation:msgIn .4s both;
+}
+@keyframes msgIn{from{opacity:0;transform:translateX(-10px)}to{opacity:1;transform:translateX(0)}}
+.msg.right{flex-direction:row-reverse;}
+.msg-avatar{
+  width:28px;height:28px;border-radius:50%;
+  flex-shrink:0;display:flex;align-items:center;justify-content:center;
+  font-size:12px;font-weight:700;
+}
+.msg-bubble{
+  background:var(--dim);border-radius:12px;
+  padding:8px 12px;font-size:12px;color:var(--text);
+  max-width:180px;
+}
+.msg.right .msg-bubble{background:rgba(0,245,255,0.15);border:1px solid rgba(0,245,255,0.2);}
+
+/* TECH STACK PILLS */
+.stack-pills{
+  display:flex;flex-wrap:wrap;gap:8px;justify-content:center;
+  margin-bottom:28px;
+}
+.spill{
+  font-family:var(--code);font-size:11px;
+  padding:5px 14px;border-radius:6px;
+  border:1px solid;letter-spacing:.04em;
+  transition:all .2s;cursor:default;
+}
+.spill:hover{transform:translateY(-2px);}
+.sp-cyan{color:var(--cyan);border-color:rgba(0,245,255,0.3);background:rgba(0,245,255,0.06);}
+.sp-lime{color:var(--lime);border-color:rgba(57,255,20,0.3);background:rgba(57,255,20,0.06);}
+.sp-amber{color:var(--amber);border-color:rgba(255,179,0,0.3);background:rgba(255,179,0,0.06);}
+.sp-purple{color:var(--purple);border-color:rgba(192,132,252,0.3);background:rgba(192,132,252,0.06);}
+.sp-pink{color:var(--pink);border-color:rgba(244,114,182,0.3);background:rgba(244,114,182,0.06);}
+
+/* PHASE STRIP */
+.phase-strip{
+  display:flex;gap:8px;flex-wrap:wrap;justify-content:center;
+  margin-bottom:20px;
+}
+.phase-chip{
+  font-family:var(--orb);font-size:11px;letter-spacing:.08em;
+  padding:6px 16px;border-radius:6px;
+  border:1px solid rgba(0,245,255,0.3);
+  color:var(--cyan);background:rgba(0,245,255,0.06);
+}
+
+/* SECTIONS */
+section{position:relative;z-index:1;padding:60px 0;border-top:1px solid var(--dim);}
+.container{max-width:1100px;margin:0 auto;padding:0 28px;}
+
+.sec-label{
+  font-family:var(--code);font-size:11px;letter-spacing:.15em;
+  text-transform:uppercase;color:var(--cyan);
+  background:rgba(0,245,255,0.06);border:1px solid rgba(0,245,255,0.2);
+  padding:4px 14px;border-radius:100px;
+  display:inline-block;margin-bottom:16px;
+}
+.sec-title{
+  font-family:var(--orb);
+  font-size:clamp(26px,4vw,44px);
+  font-weight:700;letter-spacing:.03em;
+  margin-bottom:10px;line-height:1.1;
+}
+.sec-desc{color:var(--muted);font-size:15px;max-width:640px;line-height:1.7;}
+
+/* PHASE HEADER */
+.phase-header{
+  display:flex;align-items:center;gap:16px;
+  margin:44px 0 24px;padding:18px 24px;
+  border-radius:12px;border-left:4px solid var(--cyan);
+  background:rgba(0,245,255,0.04);
+}
+.ph-num{
+  font-family:var(--orb);font-size:36px;font-weight:900;
+  color:rgba(0,245,255,0.2);line-height:1;min-width:60px;
+}
+.ph-title{font-family:var(--orb);font-size:20px;letter-spacing:.05em;}
+.ph-desc{color:var(--muted);font-size:13px;margin-top:3px;}
+
+/* STEPS */
+.steps{display:flex;flex-direction:column;gap:0;}
+.step-item{
+  display:grid;grid-template-columns:52px 1fr;
+  gap:0 16px;position:relative;
+}
+.step-item:not(:last-child) .step-vline{
+  position:absolute;left:25px;top:44px;bottom:0;width:2px;
+  background:linear-gradient(to bottom,var(--cyan),transparent);opacity:.3;
+}
+.step-dot{
+  width:50px;height:50px;border-radius:50%;
+  background:var(--bg2);border:2px solid var(--cyan);
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--orb);font-size:13px;font-weight:700;
+  color:var(--cyan);flex-shrink:0;margin-top:6px;
+  box-shadow:0 0 15px rgba(0,245,255,0.2);
+  position:relative;z-index:1;
+}
+.step-content{
+  background:var(--bg3);border:1px solid var(--dim);
+  border-radius:12px;padding:20px 24px;
+  margin-bottom:12px;transition:all .25s;
+}
+.step-content:hover{border-color:rgba(0,245,255,0.3);box-shadow:0 0 20px rgba(0,245,255,0.05);}
+.step-title{font-weight:700;font-size:15px;margin-bottom:6px;color:var(--text);}
+.step-desc{color:var(--muted);font-size:13px;line-height:1.7;}
+.step-desc strong{color:var(--text);}
+
+/* TERMINAL */
+.term{
+  background:#03040a;border:1px solid rgba(0,245,255,0.2);
+  border-radius:10px;overflow:hidden;margin:12px 0;
+  box-shadow:0 0 20px rgba(0,245,255,0.05);
+}
+.term-bar{
+  background:#080c14;padding:10px 16px;
+  display:flex;align-items:center;gap:8px;
+  border-bottom:1px solid rgba(0,245,255,0.1);
+}
+.td{width:11px;height:11px;border-radius:50%;}
+.td-r{background:#ff5f57;}.td-y{background:#febc2e;}.td-g{background:#28c840;}
+.t-label{font-family:var(--code);font-size:11px;color:var(--muted);margin-left:6px;}
+.term-body{
+  padding:16px 20px;font-family:var(--code);
+  font-size:12.5px;line-height:1.9;overflow-x:auto;
+}
+.tc{color:#2d3a55;}.tk{color:var(--purple);}
+.ts{color:var(--lime);}.tf{color:var(--amber);}
+.tcmd{color:var(--cyan);}.terr{color:var(--red);}
+.tfix{color:var(--lime);}.tout{color:rgba(226,234,255,0.5);}
+
+/* CLICK STEPS */
+.csteps{display:flex;flex-direction:column;gap:8px;margin:14px 0;}
+.cstep{
+  display:flex;gap:12px;align-items:flex-start;
+  background:rgba(255,255,255,0.02);
+  border:1px solid var(--dim);border-radius:10px;
+  padding:14px 16px;transition:all .2s;
+}
+.cstep:hover{border-color:rgba(0,245,255,0.25);background:rgba(0,245,255,0.03);}
+.cstep-num{
+  width:28px;height:28px;border-radius:50%;
+  background:var(--cyan);color:var(--bg);
+  font-family:var(--orb);font-size:12px;font-weight:700;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;margin-top:1px;
+}
+.cstep-body{flex:1;}
+.cstep-title{font-weight:700;font-size:13px;margin-bottom:3px;}
+.cstep-desc{color:var(--muted);font-size:12px;line-height:1.6;}
+.cstep-desc strong{color:var(--text);}
+.btn-tag{
+  display:inline-flex;align-items:center;
+  font-family:var(--code);font-size:10px;
+  padding:2px 9px;border-radius:5px;
+  margin:0 2px;vertical-align:middle;
+}
+.bt-cyan{background:rgba(0,245,255,0.12);border:1px solid rgba(0,245,255,0.3);color:var(--cyan);}
+.bt-lime{background:rgba(57,255,20,0.1);border:1px solid rgba(57,255,20,0.3);color:var(--lime);}
+.bt-amber{background:rgba(255,179,0,0.1);border:1px solid rgba(255,179,0,0.3);color:var(--amber);}
+
+/* ERROR / FIX */
+.err-block{
+  background:rgba(255,59,92,0.06);border:1px solid rgba(255,59,92,0.25);
+  border-radius:10px;padding:14px 16px;margin:10px 0;
+}
+.err-label{
+  font-family:var(--code);font-size:11px;letter-spacing:.08em;
+  color:var(--red);margin-bottom:6px;display:flex;align-items:center;gap:6px;
+}
+.fix-block{
+  background:rgba(57,255,20,0.04);border:1px solid rgba(57,255,20,0.2);
+  border-radius:10px;padding:14px 16px;margin:10px 0;
+}
+.fix-label{
+  font-family:var(--code);font-size:11px;letter-spacing:.08em;
+  color:var(--lime);margin-bottom:6px;display:flex;align-items:center;gap:6px;
+}
+.err-text,.fix-text{font-family:var(--code);font-size:12px;color:var(--muted);line-height:1.7;}
+.err-text strong,.fix-text strong{color:var(--text);}
+
+/* INFO BOXES */
+.info-box{
+  display:flex;gap:12px;border-radius:10px;
+  padding:14px 16px;margin:12px 0;font-size:13px;line-height:1.6;
+}
+.ib-cyan{background:rgba(0,245,255,0.05);border:1px solid rgba(0,245,255,0.2);}
+.ib-amber{background:rgba(255,179,0,0.05);border:1px solid rgba(255,179,0,0.2);}
+.ib-lime{background:rgba(57,255,20,0.04);border:1px solid rgba(57,255,20,0.18);}
+.ib-red{background:rgba(255,59,92,0.05);border:1px solid rgba(255,59,92,0.2);}
+.ib-icon{font-size:18px;flex-shrink:0;margin-top:1px;}
+.ib-text{color:var(--muted);}
+.ib-text strong{color:var(--text);}
+
+/* CLOUD COST TABLE */
+.cost-table{
+  width:100%;border-collapse:collapse;
+  background:var(--bg3);border-radius:12px;overflow:hidden;
+  border:1px solid var(--dim);margin:16px 0;
+}
+.cost-table th{
+  background:rgba(0,245,255,0.08);
+  font-family:var(--code);font-size:11px;
+  letter-spacing:.08em;text-transform:uppercase;
+  color:var(--cyan);padding:12px 16px;text-align:left;
+  border-bottom:1px solid var(--dim);
+}
+.cost-table td{
+  padding:11px 16px;font-size:13px;
+  border-bottom:1px solid rgba(30,37,64,0.5);
+  color:var(--muted);
+}
+.cost-table td strong{color:var(--text);}
+.cost-table tr:hover td{background:rgba(0,245,255,0.02);}
+.tag-free{color:var(--lime);font-family:var(--code);font-size:11px;}
+.tag-paid{color:var(--amber);font-family:var(--code);font-size:11px;}
+
+/* ARCH DIAGRAM */
+.arch{
+  background:var(--bg2);border:1px solid var(--dim);
+  border-radius:14px;padding:28px;margin:20px 0;overflow-x:auto;
+}
+.arch-row{display:flex;align-items:center;justify-content:center;gap:6px;flex-wrap:wrap;margin:6px 0;}
+.arch-box{
+  background:var(--bg3);border:1px solid var(--dim);
+  border-radius:8px;padding:10px 14px;
+  font-family:var(--code);font-size:11px;text-align:center;min-width:85px;
+}
+.arch-box .ab-icon{font-size:18px;display:block;margin-bottom:3px;}
+.arch-box .ab-label{color:var(--muted);font-size:9px;display:block;margin-top:2px;}
+.arch-arr{color:var(--muted);font-size:16px;padding:0 3px;}
+
+/* FILE TREE */
+.file-tree{
+  background:#03040a;border:1px solid var(--dim);
+  border-radius:10px;padding:16px 20px;
+  font-family:var(--code);font-size:12px;
+  line-height:1.9;margin:12px 0;
+}
+.ft-dir{color:var(--cyan);}
+.ft-file{color:var(--muted);}
+.ft-comment{color:#1e2540;}
+
+/* TWO COL */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+@media(max-width:640px){.two-col{grid-template-columns:1fr;}}
+
+/* scrollbar */
+::-webkit-scrollbar{width:4px;height:4px;}
+::-webkit-scrollbar-track{background:var(--bg);}
+::-webkit-scrollbar-thumb{background:var(--dim);border-radius:3px;}
+
+footer{
+  position:relative;z-index:1;
+  background:var(--bg2);border-top:1px solid var(--dim);
+  padding:28px;text-align:center;
+  font-family:var(--code);font-size:12px;color:var(--muted);
+}
+footer a{color:var(--cyan);text-decoration:none;}
+
+h3{font-family:var(--orb);font-size:18px;font-weight:700;margin-bottom:12px;letter-spacing:.03em;}
+h4{font-family:var(--code);font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:8px;}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-brand">DREAM</div>
+  <a href="#overview">Overview</a>
+  <a href="#architecture">Architecture</a>
+  <a href="#phase0">Phase 0: Cloud</a>
+  <a href="#phase1">Phase 1: App</a>
+  <a href="#phase2">Phase 2: Docker</a>
+  <a href="#phase3">Phase 3: K8s</a>
+  <a href="#phase4">Phase 4: IaC</a>
+  <a href="#phase5">Phase 5: CI/CD</a>
+  <a href="#phase6">Phase 6: Monitor</a>
+  <a href="#phase7">Phase 7: Live</a>
+  <a href="#errors">Error Bible</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="dream-logo">DREAM</div>
+  <div class="hero-sub-title">END-TO-END DEVOPS PROJECT · 2026</div>
+
+  <!-- Chat App Preview -->
+  <div class="chat-preview">
+    <div class="chat-bar">
+      <div class="chat-dot r"></div><div class="chat-dot a"></div><div class="chat-dot g"></div>
+      <span class="chat-title">💬 DreamChat — v1.0.0 · LIVE on K8s</span>
+    </div>
+    <div class="msg" style="animation-delay:.1s">
+      <div class="msg-avatar" style="background:rgba(0,245,255,0.2);color:var(--cyan)">AK</div>
+      <div class="msg-bubble">Just deployed to EKS! 🚀</div>
+    </div>
+    <div class="msg right" style="animation-delay:.3s">
+      <div class="msg-avatar" style="background:rgba(57,255,20,0.2);color:var(--lime)">DV</div>
+      <div class="msg-bubble">CI/CD pipeline is 🔥</div>
+    </div>
+    <div class="msg" style="animation-delay:.5s">
+      <div class="msg-avatar" style="background:rgba(192,132,252,0.2);color:var(--purple)">BO</div>
+      <div class="msg-bubble">Prometheus shows 0 errors ✅</div>
+    </div>
+  </div>
+
+  <div class="stack-pills">
+    <span class="spill sp-cyan">React + WebSocket</span>
+    <span class="spill sp-lime">Node.js + Socket.io</span>
+    <span class="spill sp-amber">MongoDB Atlas</span>
+    <span class="spill sp-purple">AWS + Azure + GCP</span>
+    <span class="spill sp-pink">Kubernetes (EKS)</span>
+    <span class="spill sp-cyan">Terraform + Ansible</span>
+    <span class="spill sp-lime">Jenkins + ArgoCD</span>
+    <span class="spill sp-amber">Prometheus + Grafana</span>
+  </div>
+
+  <div class="phase-strip">
+    <div class="phase-chip">Phase 0: Cloud Setup</div>
+    <div class="phase-chip">Phase 1: App Code</div>
+    <div class="phase-chip">Phase 2: Docker</div>
+    <div class="phase-chip">Phase 3: K8s</div>
+    <div class="phase-chip">Phase 4: Terraform</div>
+    <div class="phase-chip">Phase 5: CI/CD</div>
+    <div class="phase-chip">Phase 6: Monitor</div>
+    <div class="phase-chip">Phase 7: LIVE 🚀</div>
+  </div>
+</section>
+
+<!-- ══════════════════════ OVERVIEW ══════════════════════ -->
+<section id="overview">
+  <div class="container">
+    <div class="sec-label">// what we're building</div>
+    <h2 class="sec-title">DreamChat — Real-Time Chat App</h2>
+    <p class="sec-desc">A production-grade real-time chat application deployed using every major DevOps tool. This is what a Senior DevOps engineer builds to showcase in interviews.</p>
+
+    <div class="info-box ib-cyan" style="margin-top:24px">
+      <span class="ib-icon">💡</span>
+      <div class="ib-text"><strong>Why a Chat App?</strong> WebSocket connections make it a perfect DevOps challenge — it tests load balancing (sticky sessions), persistent connections, horizontal scaling, real-time monitoring, and database connections. Everything that trips up junior engineers.</div>
+    </div>
+
+    <!-- ARCHITECTURE DIAGRAM -->
+    <div class="arch" id="architecture">
+      <div style="font-family:var(--code);font-size:11px;color:var(--muted);text-align:center;margin-bottom:20px;text-transform:uppercase;letter-spacing:.1em">// DreamChat Full Architecture</div>
+      <div class="arch-row">
+        <div class="arch-box"><span class="ab-icon">💻</span>User Browser<span class="ab-label">React + WS</span></div>
+        <div class="arch-arr">→</div>
+        <div class="arch-box" style="border-color:rgba(0,245,255,.3)"><span class="ab-icon">🌐</span>AWS ALB<span class="ab-label">Load Balancer</span></div>
+        <div class="arch-arr">→</div>
+        <div class="arch-box" style="border-color:rgba(57,255,20,.3)"><span class="ab-icon">☸️</span>EKS Ingress<span class="ab-label">nginx controller</span></div>
+      </div>
+      <div style="text-align:center;color:var(--muted);margin:4px 0">↓</div>
+      <div class="arch-row">
+        <div class="arch-box" style="border-color:rgba(192,132,252,.3)"><span class="ab-icon">⚛️</span>Frontend Pods<span class="ab-label">React × 2</span></div>
+        <div class="arch-arr">⇄</div>
+        <div class="arch-box" style="border-color:rgba(244,114,182,.3)"><span class="ab-icon">🟢</span>Backend Pods<span class="ab-label">Node+Socket × 3</span></div>
+        <div class="arch-arr">→</div>
+        <div class="arch-box" style="border-color:rgba(255,179,0,.3)"><span class="ab-icon">🍃</span>MongoDB Atlas<span class="ab-label">Free M0 cluster</span></div>
+      </div>
+      <div style="text-align:center;color:var(--muted);margin:4px 0">↓ Metrics</div>
+      <div class="arch-row">
+        <div class="arch-box"><span class="ab-icon">📈</span>Prometheus<span class="ab-label">Metrics</span></div>
+        <div class="arch-arr">→</div>
+        <div class="arch-box"><span class="ab-icon">📊</span>Grafana<span class="ab-label">Dashboards</span></div>
+        <div class="arch-arr">+</div>
+        <div class="arch-box"><span class="ab-icon">🌊</span>ArgoCD<span class="ab-label">GitOps CD</span></div>
+        <div class="arch-arr">+</div>
+        <div class="arch-box"><span class="ab-icon">🤖</span>Jenkins<span class="ab-label">CI Pipeline</span></div>
+      </div>
+    </div>
+
+    <!-- CLOUD COST COMPARISON -->
+    <h3 style="margin-top:32px">☁️ Cloud Cost Comparison — All 3 Clouds</h3>
+    <table class="cost-table">
+      <thead>
+        <tr><th>Resource</th><th>AWS</th><th>Azure</th><th>GCP</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>VM / Compute</strong></td>
+          <td>t2.micro <span class="tag-free">FREE 750hr/mo</span></td>
+          <td>B1s <span class="tag-free">FREE 750hr/mo</span></td>
+          <td>e2-micro <span class="tag-free">FREE forever</span></td>
+        </tr>
+        <tr>
+          <td><strong>K8s Cluster</strong></td>
+          <td>EKS $0.10/hr <span class="tag-paid">~$2.40/day</span></td>
+          <td>AKS <span class="tag-free">Control plane FREE</span></td>
+          <td>GKE <span class="tag-free">1 cluster FREE</span></td>
+        </tr>
+        <tr>
+          <td><strong>Container Registry</strong></td>
+          <td>ECR $0.10/GB <span class="tag-paid">~$0.01/day</span></td>
+          <td>ACR Basic <span class="tag-paid">$0.167/day</span></td>
+          <td>GCR <span class="tag-free">FREE 0.5GB</span></td>
+        </tr>
+        <tr>
+          <td><strong>Load Balancer</strong></td>
+          <td><span class="tag-paid">$0.025/hr</span></td>
+          <td><span class="tag-paid">$0.025/hr</span></td>
+          <td><span class="tag-paid">$0.025/hr</span></td>
+        </tr>
+        <tr>
+          <td><strong>Database</strong></td>
+          <td>MongoDB Atlas M0 <span class="tag-free">FREE forever</span></td>
+          <td>MongoDB Atlas M0 <span class="tag-free">FREE forever</span></td>
+          <td>MongoDB Atlas M0 <span class="tag-free">FREE forever</span></td>
+        </tr>
+        <tr>
+          <td><strong>Storage (20GB)</strong></td>
+          <td><span class="tag-free">FREE (free tier)</span></td>
+          <td><span class="tag-free">FREE (free tier)</span></td>
+          <td><span class="tag-free">FREE (free tier)</span></td>
+        </tr>
+        <tr style="background:rgba(57,255,20,0.03)">
+          <td><strong>💰 TOTAL/DAY (K8s on)</strong></td>
+          <td><span class="tag-paid">~$2.50–3/day</span></td>
+          <td><span class="tag-lime" style="color:var(--lime);font-family:var(--code);font-size:11px">~$0.60/day ⭐ CHEAPEST</span></td>
+          <td><span class="tag-paid">~$0.70/day</span></td>
+        </tr>
+        <tr style="background:rgba(0,245,255,0.03)">
+          <td><strong>🏆 WINNER FOR LEARNING</strong></td>
+          <td>Best for interviews (most asked)</td>
+          <td>Cheapest + free K8s control plane</td>
+          <td>$300 free credit + free e2-micro</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="info-box ib-amber">
+      <span class="ib-icon">💡</span>
+      <div class="ib-text"><strong>Cost Strategy:</strong> Use <strong>GCP $300 credit</strong> first (lasts ~3 months of full K8s usage). Then switch to <strong>Azure AKS</strong> (free K8s control plane). Only use AWS when interviewing at AWS-heavy companies. Total cost for 60-day journey: <strong>~$0</strong> if you use GCP credit + destroy clusters when not learning.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════ PHASE 0: CLOUD ══════════════════════ -->
+<section id="phase0">
+  <div class="container">
+    <div class="sec-label">// phase 0</div>
+    <h2 class="sec-title" style="color:var(--cyan)">Cloud Account + VM Setup</h2>
+    <p class="sec-desc">Create your cloud workspace. Everything runs in the cloud — zero Mac storage.</p>
+
+    <div class="phase-header">
+      <div class="ph-num">00</div>
+      <div><div class="ph-title">GCP — Start Here (Free $300 Credit)</div><div class="ph-desc">Best for beginners — most generous free tier, starts immediately</div></div>
+    </div>
+
+    <div class="steps">
+      <div class="step-item">
+        <div><div class="step-dot">1</div><div class="step-vline"></div></div>
+        <div class="step-content">
+          <div class="step-title">Create GCP Account + Claim $300 Credit</div>
+          <div class="step-desc">Go to <strong>cloud.google.com/free</strong> → <strong class="bt-cyan">Get started for free</strong> → Sign in with Google → Country: India → Accept terms → Add card (verification only, <strong>not charged</strong>) → <strong class="bt-lime">Start free trial</strong>. You get $300 credit valid for 90 days. That's enough for this entire project!</div>
+        </div>
+      </div>
+      <div class="step-item">
+        <div><div class="step-dot">2</div><div class="step-vline"></div></div>
+        <div class="step-content">
+          <div class="step-title">Create Your Dev VM (GCP Compute Engine)</div>
+          <div class="csteps">
+            <div class="cstep"><div class="cstep-num">→</div><div class="cstep-body"><div class="cstep-title">Navigate to Compute Engine</div><div class="cstep-desc">console.cloud.google.com → hamburger menu ☰ → <strong>Compute Engine</strong> → <strong>VM Instances</strong> → <span class="btn-tag bt-cyan">CREATE INSTANCE</span></div></div></div>
+            <div class="cstep"><div class="cstep-num">→</div><div class="cstep-body"><div class="cstep-title">Configure VM</div><div class="cstep-desc">Name: <code style="background:rgba(255,255,255,.06);padding:1px 5px;border-radius:3px;font-family:var(--code)">dream-dev-vm</code> · Region: <strong>us-central1</strong> (cheapest) · Machine: <strong>e2-standard-2</strong> (2 vCPU, 8GB — good for Docker+K8s)</div></div></div>
+            <div class="cstep"><div class="cstep-num">→</div><div class="cstep-body"><div class="cstep-title">Boot disk</div><div class="cstep-desc">Click <span class="btn-tag bt-amber">CHANGE</span> → OS: <strong>Ubuntu 22.04 LTS</strong> → Size: <strong>50 GB</strong> (Standard disk) → <span class="btn-tag bt-lime">SELECT</span></div></div></div>
+            <div class="cstep"><div class="cstep-num">→</div><div class="cstep-body"><div class="cstep-title">Firewall rules</div><div class="cstep-desc">Check both ✅ <strong>Allow HTTP traffic</strong> and ✅ <strong>Allow HTTPS traffic</strong></div></div></div>
+            <div class="cstep"><div class="cstep-num">→</div><div class="cstep-body"><div class="cstep-title">Create + note IP</div><div class="cstep-desc">Click <span class="btn-tag bt-lime">CREATE</span> → wait 60 seconds → note the <strong>External IP</strong> in the VM list (e.g. 34.123.45.67)</div></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="step-item">
+        <div><div class="step-dot">3</div><div class="step-vline"></div></div>
+        <div class="step-content">
+          <div class="step-title">Connect VS Code on M4 Mac → Cloud VM</div>
+          <div class="term">
+            <div class="term-bar"><div class="td td-r"></div><div class="td td-y"></div><div class="td td-g"></div><div class="t-label">M4 Mac Terminal — one-time SSH setup</div></div>
+            <div class="term-body">
+<span class="tc"># Generate SSH key on your Mac</span><br>
+<span class="tcmd">ssh-keygen</span> <span class="tf">-t ed25519</span> <span class="tf">-C</span> <span class="ts">"dream-project-key"</span> <span class="tf">-f</span> ~/.ssh/dream-key<br>
+<span class="tc"># Press Enter twice (no passphrase)</span><br><br>
+<span class="tc"># Copy your PUBLIC key</span><br>
+<span class="tcmd">cat</span> ~/.ssh/dream-key.pub<br>
+<span class="tc"># Copy the output starting with "ssh-ed25519 AAAA..."</span><br><br>
+<span class="tc"># Add to GCP: Console → Compute Engine → Metadata → SSH KEYS → ADD ITEM → paste → Save</span><br><br>
+<span class="tc"># Add SSH config shortcut</span><br>
+<span class="tcmd">nano</span> ~/.ssh/config<br>
+<span class="ts">Host dream-vm</span><br>
+<span class="ts">&nbsp;&nbsp;HostName YOUR-GCP-IP</span><br>
+<span class="ts">&nbsp;&nbsp;User YOUR-GCP-USERNAME</span><br>
+<span class="ts">&nbsp;&nbsp;IdentityFile ~/.ssh/dream-key</span><br><br>
+<span class="tc"># Test connection</span><br>
+<span class="tcmd">ssh</span> dream-vm<br>
+<span class="tout"># yourname@dream-dev-vm:~$  ← you're IN the cloud!</span>
+            </div>
+          </div>
+          <div class="step-desc" style="margin-top:8px">In VS Code on Mac: <strong>Cmd+Shift+P</strong> → <strong>Remote-SSH: Connect to Host</strong> → select <strong>dream-vm</strong> → new window opens running ON the cloud. Bottom-left shows <strong>SSH: dream-vm</strong> in green.</div>
+        </div>
+      </div>
+      <div class="step-item">
+        <div><div class="step-dot">4</div></div>
+        <div class="step-content">
+          <div class="step-title">Install All Tools on Cloud VM — One Script</div>
+          <div class="term">
+            <div class="term-bar"><div class="td td-r"></div><div class="td td-y"></div><div class="td td-g"></div><div class="t-label">Cloud VM Terminal (VS Code) — run once</div></div>
+            <div class="term-body">
+<span class="ts">#!/bin/bash</span><br>
+<span class="tc"># DREAM PROJECT — Master Setup Script</span><br>
+<span class="tcmd">set -e</span><br><br>
+<span class="tcmd">echo</span> <span class="ts">"[1/8] Updating system..."</span><br>
+<span class="tcmd">sudo apt update -y && sudo apt upgrade -y</span><br><br>
+<span class="tcmd">echo</span> <span class="ts">"[2/8] Installing Docker..."</span><br>
+<span class="tcmd">curl -fsSL https://get.docker.com | sudo sh</span><br>
+<span class="tcmd">sudo usermod -aG docker $USER</span><br><br>
+<span class="tcmd">echo</span> <span class="ts">"[3/8] Installing kubectl..."</span><br>
+<span class="tcmd">curl -LO "https://dl.k8s.io/release/$(curl -sL https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"</span><br>
+<span class="tcmd">sudo install -m 0755 kubectl /usr/local/bin/kubectl</span><br><br>
+<span class="tcmd">echo</span> <span class="ts">"[4/8] Installing Terraform..."</span><br>
+<span class="tcmd">sudo snap install terraform --classic</span><br><br>
+<span class="tcmd">echo</span> <span class="ts">"[5/8] Installing Ansible..."</span><br>
+<span class="tcmd">sudo apt install ansible python3-pip -y</span><br><br>
+<span class="tcmd">echo</span> <span class="ts">"[6/8] Installing Helm..."</span><br>
+<span class="tcmd">curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash</span><br><br>
+<span class="tcmd">echo</span> <span class="ts">"[7/8] Installing Node.js 20 + Git..."</span><br>
+<span class="tcmd">curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -</span><br>
+<span class="tcmd">sudo apt install nodejs git -y</span><br><br>
+<span class="tcmd">echo</span> <span class="ts">"[8/8] Installing GCloud CLI..."</span><br>
+<span class="tcmd">sudo snap install google-cloud-cli --classic</span><br><br>
+<span class="tout">✅ All tools installed! Log out and back in for Docker group to take effect.</span>
+            </div>
+          </div>
+          <div class="term" style="margin-top:8px">
+            <div class="term-bar"><div class="td td-r"></div><div class="td td-y"></div><div class="td td-g"></div><div class="t-label">Verify everything installed correctly</div></div>
+            <div class="term-body">
+<span class="tcmd">docker</span> <span class="tf">--version</span>    <span class="tout"># Docker version 25.x</span><br>
+<span class="tcmd">kubectl</span> <span class="tf">version --client</span>  <span class="tout"># v1.29.x</span><br>
+<span class="tcmd">terraform</span> <span class="tf">--version</span>   <span class="tout"># Terraform v1.7.x</span><br>
+<span class="tcmd">ansible</span> <span class="tf">--version</span>     <span class="tout"># ansible [core 2.x]</span><br>
+<span class="tcmd">helm</span> <span class="tf">version</span>          <span class="tout"># version.BuildInfo{Version:"v3.x"}</span><br>
+<span class="tcmd">node</span> <span class="tf">--version</span>        <span class="tout"># v20.x.x</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════ PHASE 1: APP CODE ══════════════════════ -->
+<section id="phase1">
+  <div class="container">
+    <div class="sec-label">// phase 1</div>
+    <h2 class="sec-title" style="color:var(--lime)">Build the Chat App</h2>
+    <p class="sec-desc">Build DreamChat — React frontend + Node.js/Socket.io backend + MongoDB. All on your cloud VM.</p>
+
+    <div class="phase-header" style="border-left-color:var(--lime)">
+      <div class="ph-num" style="color:rgba(57,255,20,0.2)">01</div>
+      <div><div class="ph-title">DreamChat App Structure</div><div class="ph-desc">Full-stack real-time chat · WebSocket · MongoDB Atlas free tier</div></div>
+    </div>
+
+    <div class="file-tree">
+<span class="ft-dir">dream-chat/</span><br>
+<span class="ft-dir">├── frontend/</span>          <span class="ft-comment"># React app</span><br>
+<span class="ft-dir">│   ├── src/</span><br>
+<span class="ft-file">│   │   ├── App.jsx</span>    <span class="ft-comment"># Main chat component</span><br>
+<span class="ft-file">│   │   ├── Chat.jsx</span>   <span class="ft-comment"># Chat window</span><br>
+<span class="ft-file">│   │   └── index.js</span><br>
+<span class="ft-file">│   ├── Dockerfile</span>     <span class="ft-comment"># Container recipe</span><br>
+<span class="ft-file">│   └── package.json</span><br>
+<span class="ft-dir">├── backend/</span>           <span class="ft-comment"># Node.js + Socket.io</span><br>
+<span class="ft-file">│   ├── server.js</span>      <span class="ft-comment"># Express + WebSocket server</span><br>
+<span class="ft-file">│   ├── Dockerfile</span><br>
+<span class="ft-file">│   └── package.json</span><br>
+<span class="ft-dir">├── k8s/</span>               <span class="ft-comment"># Kubernetes manifests</span><br>
+<span class="ft-file">│   ├── frontend-deployment.yaml</span><br>
+<span class="ft-file">│   ├── backend-deployment.yaml</span><br>
+<span class="ft-file">│   ├── ingress.yaml</span><br>
+<span class="ft-file">│   └── namespace.yaml</span><br>
+<span class="ft-dir">├── terraform/</span>         <span class="ft-comment"># Infrastructure as Code</span><br>
+<span class="ft-file">│   ├── main.tf</span><br>
+<span class="ft-file">│   ├── variables.tf</span><br>
+<span class="ft-file">│   └── outputs.tf</span><br>
+<span class="ft-dir">├── ansible/</span>           <span class="ft-comment"># Config automation</span><br>
+<span class="ft-file">│   └── setup-vm.yml</span><br>
+<span class="ft-dir">├── .github/workflows/</span> <span class="ft-comment"># CI/CD pipelines</span><br>
+<span class="ft-file">│   └── deploy.yml</span><br>
+<span class="ft-file">├── Jenkinsfile</span>        <span class="ft-comment"># Jenkins pipeline</span><br>
+<span class="ft-file">├── docker-compose.yml</span> <span class="ft-comment"># Local dev</span><br>
+<span class="ft-file">└── README.md</span>
+    </div>
+
+    <div class="steps">
+      <div class="step-item">
+        <div><div class="step-dot">1</div><div class="step-vline"></div></div>
+        <div class="step-content">
+          <div class="step-title">Create Project + Initialize Git</div>
+          <div class="term">
+            <div class="term-bar"><div class="td td-r"></div><div class="td td-y"></div><div class="td td-g"></div><div class="t-label">Cloud VM Terminal</div></div>
+            <div class="term-body">
+<span class="tc"># Create project folder</span><br>
+<span class="tcmd">mkdir</span> dream-chat && <span class="tcmd">cd</span> dream-chat<br><br>
+<span class="tc"># Initialize Git</span><br>
+<span class="tcmd">git init</span><br>
+<span class="tcmd">git config</span> <span class="tf">--global</span> user.name <span class="ts">"Your Name"</span><br>
+<span class="tcmd">git config</span> <span class="tf">--global</span> user.email <span class="ts">"your@email.com"</span><br><br>
+<span class="tc"># Create folders</span><br>
+<span class="tcmd">mkdir</span> -p frontend/src backend k8s terraform ansible .github/workflows<br><br>
+<span class="tc"># Create .gitignore</span><br>
+<span class="tcmd">cat</span> > .gitignore << 'EOF'<br>
+node_modules/<br>
+.env<br>
+*.tfstate<br>
+*.tfstate.backup<br>
+.terraform/<br>
+dist/<br>
+build/<br>
+EOF
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step-item">
+        <div><div class="step-dot">2</div><div class="step-vline"></div></div>
+        <div class="step-content">
+          <div class="step-title">Backend — Node.js + Socket.io Server</div>
+          <div class="term">
+            <div class="term-bar"><div class="td td-r"></div><div class="td td-y"></div><div class="td td-g"></div><div class="t-label">backend/server.js</div></div>
+            <div class="term-body">
+<span class="tk">const</span> express = require(<span class="ts">'express'</span>);<br>
+<span class="tk">const</span> http = require(<span class="ts">'http'</span>);<br>
+<span class="tk">const</span> { Server } = require(<span class="ts">'socket.io'</span>);<br>
+<span class="tk">const</span> mongoose = require(<span class="ts">'mongoose'</span>);<br>
+<span class="tk">require</span>(<span class="ts">'dotenv'</span>).config();<br><br>
+<span class="tk">const</span> app = express();<br>
+<span class="tk">const</span> server = http.createServer(app);<br>
+<span class="tk">const</span> io = <span class="tk">new</span> Server(server, {<br>
+&nbsp;&nbsp;cors: { origin: <span class="ts">"*"</span>, methods: [<span class="ts">"GET"</span>, <span class="ts">"POST"</span>] }<br>
+});<br><br>
+<span class="tc">// MongoDB Message Schema</span><br>
+<span class="tk">const</span> MessageSchema = <span class="tk">new</span> mongoose.Schema({<br>
+&nbsp;&nbsp;username: String,<br>
+&nbsp;&nbsp;message: String,<br>
+&nbsp;&nbsp;timestamp: { type: Date, default: Date.now }<br>
+});<br>
+<span class="tk">const</span> Message = mongoose.model(<span class="ts">'Message'</span>, MessageSchema);<br><br>
+<span class="tc">// Connect to MongoDB Atlas (free M0)</span><br>
+mongoose.connect(process.env.MONGO_URI);<br><br>
+<span class="tc">// Health check endpoint (Prometheus scrapes this)</span><br>
+app.get(<span class="ts">'/health'</span>, (req, res) => res.json({ status: <span class="ts">'ok'</span>, uptime: process.uptime() }));<br><br>
+<span class="tc">// WebSocket events</span><br>
+io.on(<span class="ts">'connection'</span>, (socket) => {<br>
+&nbsp;&nbsp;console.log(<span class="ts">'User connected:'</span>, socket.id);<br><br>
+&nbsp;&nbsp;socket.on(<span class="ts">'sendMessage'</span>, <span class="tk">async</span> (data) => {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="tk">const</span> msg = <span class="tk">await</span> Message.create(data);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;io.emit(<span class="ts">'newMessage'</span>, msg);  <span class="tc">// broadcast to ALL users</span><br>
+&nbsp;&nbsp;});<br><br>
+&nbsp;&nbsp;socket.on(<span class="ts">'disconnect'</span>, () => console.log(<span class="ts">'User left'</span>));<br>
+});<br><br>
+server.listen(process.env.PORT || <span class="tf">3001</span>, () => {<br>
+&nbsp;&nbsp;console.log(<span class="ts">`🚀 DreamChat server on port 3001`</span>);<br>
+});
+            </div>
+          </div>
+          <div class="term" style="margin-top:8px">
+            <div class="term-bar"><div class="td td-r"></div><div class="td td-y"></div><div class="td td-g"></div><div class="t-label">Install backend dependencies</div></div>
+            <div class="term-body">
+<span class="tcmd">cd</span> backend<br>
+<span class="tcmd">npm init -y</span><br>
+<span class="tcmd">npm install</span> express socket.io mongoose dotenv<br>
+<span class="tcmd">npm install</span> <span class="tf">--save-dev</span> nodemon<br>
+<span class="tc"># Test it locally: node server.js</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step-item">
+        <div><div class="step-dot">3</div><div class="step-vline"></div></div>
+        <div class="step-content">
+          <div class="step-title">MongoDB Atlas — Free Cloud Database</div>
+          <div class="csteps">
+            <div class="cstep"><div class="cstep-num">1</div><div class="cstep-body"><div class="cstep-title">Create free MongoDB Atlas cluster</div><div class="cstep-desc">Go to <strong>mongodb.com/atlas</strong> → <span class="btn-tag bt-lime">Try Free</span> → Sign up → Create Organization → New Project: <code>dream-chat</code> → Build a Cluster → Choose <strong>M0 FREE</strong> (forever free!) → Provider: AWS → Region: nearest → <span class="btn-tag bt-lime">Create Deployment</span></div></div></div>
+            <div class="cstep"><div class="cstep-num">2</div><div class="cstep-body"><div class="cstep-title">Create database user</div><div class="cstep-desc">Atlas Dashboard → <strong>Database Access</strong> → <span class="btn-tag bt-cyan">Add New Database User</span> → Username: <code>dreamchat-user</code> → Auto-generate password → copy it → Role: <strong>Atlas Admin</strong> → <span class="btn-tag bt-lime">Add User</span></div></div></div>
+            <div class="cstep"><div class="cstep-num">3</div><div class="cstep-body"><div class="cstep-title">Allow network access</div><div class="cstep-desc">Atlas → <strong>Network Access</strong> → <span class="btn-tag bt-cyan">Add IP Address</span> → click <span class="btn-tag bt-amber">Allow Access from Anywhere</span> (0.0.0.0/0) → <span class="btn-tag bt-lime">Confirm</span></div></div></div>
+            <div class="cstep"><div class="cstep-num">4</div><div class="cstep-body"><div class="cstep-title">Get connection string</div><div class="cstep-desc">Atlas → <strong>Clusters</strong> → <span class="btn-tag bt-cyan">Connect</span> → <strong>Drivers</strong> → copy the URI like: <code>mongodb+srv://dreamchat-user:PASSWORD@cluster0.xxxxx.mongodb.net/dreamchat</code></div></div></div>
+          </div>
+          <div class="term">
+            <div class="term-bar"><div class="td td-r"></div><div class="td td-y"></div><div class="td td-g"></div><div class="t-label">backend/.env — NEVER commit this file!</div></div>
+            <div class="term-body">
+MONGO_URI=mongodb+srv://dreamchat-user:YOUR_PASSWORD@cluster0.xxxxx.mongodb.net/dreamchat<br>
+PORT=3001<br>
+NODE_ENV=production
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step-item">
+        <div><div class="step-dot">4</div></div>
+        <div class="step-content">
+          <div class="step-title">Frontend — React Chat App</div>
+          <div class="term">
+            <div class="term-bar"><div class="td td-r"></div><div class="td td-y"></div><div class="td td-g"></div><div class="t-label">Create React app + install Socket.io client</div></div>
+            <div class="term-body">
+<span class="tcmd">cd</span> ../frontend<br>
+<span class="tcmd">npx create-react-app</span> . <span class="tf">--template</span> cra-template<br>
+<span class="tcmd">npm install</span> socket.io-client axios<br><br>
+<span class="tc"># Replace src/App.js with this chat component:</span>
+            </div>
+          </div>
+          <div class="term">
+            <div class="term-bar"><div class="td td-r"></div><div class="td td-y"></div><div class="td td-g"></div><div class="t-label">frontend/src/App.js — DreamChat UI</div></div>
+            <div class="term-body">
+<span class="tk">import</span> { useState, useEffect, useRef } <span class="tk">from</span> <span class="ts">'react'</span>;<br>
+<span class="tk">import</span> io <span class="tk">from</span> <span class="ts">'socket.io-client'</span>;<br><br>
+<span class="tk">const</span> BACKEND = process.env.REACT_APP_BACKEND_URL || <span class="ts">'http://localhost:3001'</span>;<br>
+<span class="tk">const</span> socket = io(BACKEND);<br><br>
+<span class="tk">function</span> App() {<br>
+&nbsp;&nbsp;<span class="tk">const</span> [messages, setMessages] = useState([]);<br>
+&nbsp;&nbsp;<span class="tk">const</span> [input, setInput] = useState(<span class="ts">''</span>);<br>
+&nbsp;&nbsp;<span class="tk">const</span> [username] = useState(<span class="ts">`User${Math.floor(Math.random()*1000)}`</span>);<br>
+&nbsp;&nbsp;<span class="tk">const</span> endRef = useRef(<span class="tk">null</span>);<br><br>
+&nbsp;&nbsp;useEffect(() => {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;socket.on(<span class="ts">'newMessage'</span>, (msg) => {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;setMessages(prev => [...prev, msg]);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endRef.current?.scrollIntoView({ behavior: <span class="ts">'smooth'</span> });<br>
+&nbsp;&nbsp;&nbsp;&nbsp;});<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="tk">return</span> () => socket.off(<span class="ts">'newMessage'</span>);<br>
+&nbsp;&nbsp;}, []);<br><br>
+&nbsp;&nbsp;<span class="tk">const</span> sendMessage = () => {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="tk">if</span> (!input.trim()) <span class="tk">return</span>;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;socket.emit(<span class="ts">'sendMessage'</span>, { username, message: input });<br>
+&nbsp;&nbsp;&nbsp;&nbsp;setInput(<span class="ts">''</span>);<br>
+&nbsp;&nbsp;};<br><br>
+&nbsp;&nbsp;<span class="tk">return</span> (<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;div className=<span class="ts">"chat-app"</span>&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;h1&gt;💬 DreamChat&lt;/h1&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;div className=<span class="ts">"messages"</span>&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{messages.map((m, i) => (<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;div key={i} className={m.username === username ? <span class="ts">'me'</span> : <span class="ts">'other'</span>}&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;strong&gt;{m.username}&lt;/strong&gt;: {m.message}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/div&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;))}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;div ref={endRef} /&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/div&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;input value={input} onChange={e => setInput(e.target.value)}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;onKeyPress={e => e.key === <span class="ts">'Enter'</span> && sendMessage()} /&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;button onClick={sendMessage}&gt;Send&lt;/button&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;/div&gt;<br>
+&nbsp;&nbsp;);<br>
+}<br>
+<span class="tk">export default</span> App;
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════ PHASE 2: DOCKER ══════════════════════ -->
+<section id="phase2">
+  <div class="container">
+    <div class="sec-label">// phase 2</div>
+    <h2 class="sec-title" style="color:var(--amber)">Dockerize DreamChat</h2>
+
+    <div class="phase-header" style="border-left-color:var(--amber)">
+      <div class="ph-num" style="color:rgba(255,179,0,0.2)">02</div>
+      <div><div class="ph-title">Docker — Package Everything</div><div class="ph-desc">Multi-stage builds · Security best practices · docker-compose for local dev</div></div>
+    </div>
+
+    <div class="two-col">
+      <div>
+        <h4>Backend Dockerfile</h4>
+        <div class="term">
+          <div class="term-bar"><div class="td td-r"></div><div class="td td-y"></div><div class="td td-g"></div><div class="t-label">backend/Dockerfile</div></div>
+          <div class="term-body">
+<span class="tc"># Stage 1: Build</span><br>
+<span class="tk">FROM</span> node:20-alpine <span class="tk">AS</span> builder<br>
+<span class="tk">WORKDIR</span> /app<br>
+<span class="tk">COPY</span> package*.json ./<br>
+<span class="tk">RUN</span> npm ci --only=production<br><br>
+<span class="tc"># Stage 2: Runtime (smallest possible)</span><br>
+<span class="tk">FROM</span> node:20-alpine<br>
+<span class="tc"># Security: run as non-root user</span><br>
+<span class="tk">RUN</span> addgroup -S appgroup && adduser -S appuser -G appgroup<br>
+<span class="tk">WORKDIR</span> /app<br>
+<span class="tk">COPY</span> --from=builder /app/node_modules ./node_modules<br>
+<span class="tk">COPY</span> . .<br>
+<span class="tc"># Switch to non-root</span><br>
+<span class="tk">USER</span> appuser<br>
+<span class="tk">EXPOSE</span> 3001<br>
+<span class="tc"># Health check for K8s</span><br>
+<span class="tk">HEALTHCHECK</span> --interval=30s --timeout=3s \<br>
+&nbsp;&nbsp;<span class="tk">CMD</span> wget -q http://localhost:3001/health || exit 1<br>
+<span class="tk">CMD</span> ["node", "server.js"]
+          </div>
+        </div>
+      </div>
+      <div>
+        <h4>Frontend Dockerfile</h4>
+        <div class="term">
+          <div class="term-bar"><div class="td td-r"></div><div class="td td-y"></div><div class="td td-g"></div><div class="t-label">frontend/Dockerfile</div></div>
+          <div class="term-body">
+<span class="tc"># Stage 1: Build React app</span><br>
+<span class="tk">FROM</span> node:20-alpine <span class="tk">AS</span> builder<br>
+<span class="tk">WORKDIR</span> /app<br>
+<span class="tk">COPY</span> package*.json ./<br>
+<span class="tk">RUN</span> npm ci<br>
+<span class="tk">COPY</span> . .<br>
+<span class="tc"># Inject backend URL at build time</span><br>
+<span class="tk">ARG</span> REACT_APP_BACKEND_URL<br>
+<span class="tk">ENV</span> REACT_APP_BACKEND_URL=$REACT_APP_BACKEND_URL<br>
+<span class="tk">RUN</span> npm run build<br><br>
+<span class="tc"># Stage 2: Serve with nginx (tiny!)</span><br>
+<span class="tk">FROM</span> nginx:alpine<br>
+<span class="tc"># Security: remove default config</span><br>
+<span class="tk">RUN</span> rm /etc/nginx/conf.d/default.conf<br>
+<span class="tk">COPY</span> nginx.conf /etc/nginx/conf.d/<br>
+<span class="tk">COPY</span> --from=builder /app/build /usr/share/nginx/html<br>
+<span class="tk">EXPOSE</span> 80<br>
+<span class="tk">CMD</span> ["nginx", "-g", "daemon off;"]
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <h4 style="margin-top:20px">Docker Compose — Local Development</h4>
+    <div class="term">
+      <div class="term-bar"><div class="td td-r"></div><div class="td td-y"></div><div class="td td-g"></div><div class="t-label">docker-compose.yml — run entire app locally</div></div>
+      <div class="term-body">
+version: <span class="ts">'3.8'</span><br>
+services:<br>
+&nbsp;&nbsp;<span class="tk">backend</span>:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;build: ./backend<br>
+&nbsp;&nbsp;&nbsp;&nbsp;ports: [<span class="ts">"3001:3001"</span>]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;env_file: ./backend/.env<br>
+&nbsp;&nbsp;&nbsp;&nbsp;restart: unless-stopped<br>
+&nbsp;&nbsp;&nbsp;&nbsp;healthcheck:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;test: [<span class="ts">"CMD"</span>, <span class="ts">"wget"</span>, <span class="ts">"-q"</span>, <span class="ts">"http://localhost:3001/health"</span>]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;interval: 30s<br><br>
+&nbsp;&nbsp;<span class="tk">frontend</span>:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;build:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;context: ./frontend<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;REACT_APP_BACKEND_URL: http://localhost:3001<br>
+&nbsp;&nbsp;&nbsp;&nbsp;ports: [<span class="ts">"3000:80"</span>]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;depends_on: [backend]<br>
+      </div>
+    </div>
+
+    <div class="term">
+      <div class="term-bar"><div class="td td-r"></div><div class="td td-y"></div><div class="td td-g"></div><div class="t-label">Build + run locally to test</div></div>
+      <div class="term-body">
+<span class="tcmd">docker compose up --build</span><br>
+<span class="tout"># Frontend: http://YOUR-VM-IP:3000</span><br>
+<span class="tout"># Backend: http://YOUR-VM-IP:3001/health</span><br><br>
+<span class="tc"># Scan for vulnerabilities BEFORE pushing</span><br>
+<span class="tcmd">docker run</span> <span class="tf">--rm</span> -v /var/run/docker.sock:/var/run/docker.sock \<br>
+&nbsp;&nbsp;aquasec/trivy image dream-chat-backend:latest<br><br>
+<span class="tc"># Check image sizes (should be small!)</span><br>
+<span class="tcmd">docker images</span> | grep dream<br>
+<span class="tout"># dream-chat-backend  ~85MB  ← good (alpine)</span><br>
+<span class="tout"># dream-chat-frontend ~25MB  ← excellent</span>
+      </div>
+    </div>
+
+    <!-- COMMON DOCKER ERRORS -->
+    <h3 style="color:var(--red);margin-top:28px">🚨 Common Docker Errors + Fixes</h3>
+    <div class="err-block">
+      <div class="err-label">⛔ ERROR</div>
+      <div class="err-text">Got permission denied while trying to connect to Docker daemon socket at unix:///var/run/docker.sock</div>
+    </div>
+    <div class="fix-block">
+      <div class="fix-label">✅ FIX</div>
+      <div class="fix-text"><strong>Your user isn't in the docker group yet.</strong><br>
+      <code>sudo usermod -aG docker $USER</code><br>
+      Then log out completely and log back in. Or: <code>newgrp docker</code> to apply immediately without logout.</div>
+    </div>
+
+    <div class="err-block">
+      <div class="err-label">⛔ ERROR</div>
+      <div class="err-text">ERROR [frontend 5/6] RUN npm run build → Failed: react-scripts: not found</div>
+    </div>
+    <div class="fix-block">
+      <div class="fix-label">✅ FIX</div>
+      <div class="fix-text"><strong>You used <code>npm ci --only=production</code> which skips devDependencies (where react-scripts lives).</strong><br>
+      In your frontend Dockerfile, use <code>RUN npm ci</code> (no --only=production) in the build stage. Only use --only=production in the RUNTIME stage copy.</div>
+    </div>
+
+    <div class="err-block">
+      <div class="err-label">⛔ ERROR</div>
+      <div class="err-text">WebSocket connection failed: ws://localhost:3001/socket.io — net::ERR_CONNECTION_REFUSED</div>
+    </div>
+    <div class="fix-block">
+      <div class="fix-label">✅ FIX</div>
+      <div class="fix-text"><strong>Frontend is trying to connect to localhost but backend is in a different container.</strong><br>
+      Set env var: <code>REACT_APP_BACKEND_URL=http://backend:3001</code> in docker-compose (use service name, not localhost). For production K8s, use the backend Service DNS name.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════ PHASE 3: KUBERNETES ══════════════════════ -->
+<section id="phase3">
+  <div class="container">
+    <div class="sec-label">// phase 3</div>
+    <h2 class="sec-title" style="color:var(--purple)">Deploy to Kubernetes</h2>
+
+    <div class="phase-header" style="border-left-color:var(--purple)">
+      <div class="ph-num" style="color:rgba(192,132,252,0.2)">03</div>
+      <div><div class="ph-title">GKE — Google Kubernetes Engine (Free 1 cluster)</div><div class="ph-desc">Production K8s cluster · 2 nodes · Autopilot mode · HPA · Ingress</div></div>
+    </div>
+
+    <div class="steps">
+      <div class="step-item">
+        <div><div class="step-dot">1</div><div class="step-vline"></div></div>
+        <div class="step-content">
+          <div class="step-title">Create GKE Cluster</div>
+          <div class="term">
+            <div class="term-bar"><div class="td td-r"></div><div class="td td-y"></div><div class="td td-g"></div><div class="t-label">Cloud VM Terminal</div></div>
+            <div class="term-body">
+<span class="tc"># Authenticate with GCP</span><br>
+<span class="tcmd">gcloud auth login</span><br>
+<span class="tcmd">gcloud config set</span> project YOUR-PROJECT-ID<br><br>
+<span class="tc"># Create GKE Autopilot cluster (easiest + cheapest)</span><br>
+<span class="tcmd">gcloud container clusters create-auto</span> dream-cluster \<br>
+&nbsp;&nbsp;<span class="tf">--region</span> us-central1 \<br>
+&nbsp;&nbsp;<span class="tf">--project</span> YOUR-PROJECT-ID<br><br>
+<span class="tout"># Takes ~5 minutes. Grab chai ☕</span><br><br>
+<span class="tc"># Connect kubectl to your cluster</span><br>
+<span class="tcmd">gcloud container clusters get-credentials</span> dream-cluster \<br>
+&nbsp;&nbsp;<span class="tf">--region</span> us-central1<br><br>
+<span class="tc"># Verify</span><br>
+<span class="tcmd">kubectl get nodes</span><br>
+<span class="tout"># NAME                       STATUS   ROLES    AGE</span><br>
+<span class="tout"># gk3-dream-cluster-xxx   Ready    agent    2m</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step-item">
+        <div><div class="step-dot">2</div><div class="step-vline"></div></div>
+        <div class="step-content">
+          <div class="step-title">Push Docker Images to GCR</div>
+          <div class="term">
+            <div class="term-bar"><div class="td td-r"></div><div class="td td-y"></div><div class="td td-g"></div><div class="t-label">Build and push to Google Container Registry</div></div>
+            <div class="term-body">
+<span class="tcmd">export</span> PROJECT_ID=$(gcloud config get-value project)<br>
+<span class="tcmd">export</span> IMAGE_TAG=v1.0.0<br><br>
+<span class="tc"># Configure Docker to use GCR</span><br>
+<span class="tcmd">gcloud auth configure-docker</span><br><br>
+<span class="tc"># Build + push backend</span><br>
+<span class="tcmd">docker build</span> <span class="tf">-t</span> gcr.io/$PROJECT_ID/dream-backend:$IMAGE_TAG ./backend<br>
+<span class="tcmd">docker push</span> gcr.io/$PROJECT_ID/dream-backend:$IMAGE_TAG<br><br>
+<span class="tc"># Build + push frontend (pass backend URL)</span><br>
+<span class="tcmd">docker build</span> <span class="tf">-t</span> gcr.io/$PROJECT_ID/dream-frontend:$IMAGE_TAG \<br>
+&nbsp;&nbsp;<span class="tf">--build-arg</span> REACT_APP_BACKEND_URL=https://api.dreamchat.io \<br>
+&nbsp;&nbsp;./frontend<br>
+<span class="tcmd">docker push</span> gcr.io/$PROJECT_ID/dream-frontend:$IMAGE_TAG
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step-item">
+        <div><div class="step-dot">3</div><div class="step-vline"></div></div>
+        <div class="step-content">
+          <div class="step-title">Kubernetes Manifests — Deploy the App</div>
+          <div class="term">
+            <div class="term-bar"><div class="td td-r"></div><div class="td td-y"></div><div class="td td-g"></div><div class="t-label">k8s/namespace.yaml</div></div>
+            <div class="term-body">
+apiVersion: v1<br>
+kind: Namespace<br>
+metadata:<br>
+&nbsp;&nbsp;name: dream-chat<br>
+&nbsp;&nbsp;labels:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;app: dream-chat
+            </div>
+          </div>
+          <div class="term" style="margin-top:8px">
+            <div class="term-bar"><div class="td td-r"></div><div class="td td-y"></div><div class="td td-g"></div><div class="t-label">k8s/backend-deployment.yaml</div></div>
+            <div class="term-body">
+apiVersion: apps/v1<br>
+kind: Deployment<br>
+metadata:<br>
+&nbsp;&nbsp;name: dream-backend<br>
+&nbsp;&nbsp;namespace: dream-chat<br>
+spec:<br>
+&nbsp;&nbsp;replicas: 3<br>
+&nbsp;&nbsp;selector:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;matchLabels: {app: dream-backend}<br>
+&nbsp;&nbsp;template:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;metadata:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;labels: {app: dream-backend}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;spec:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;containers:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- name: backend<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;image: gcr.io/YOUR-PROJECT/dream-backend:v1.0.0<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ports: [{containerPort: 3001}]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;env:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- name: MONGO_URI<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;valueFrom:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;secretKeyRef:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name: dream-secrets<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;key: MONGO_URI<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;resources:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;requests: {memory: "128Mi", cpu: "100m"}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;limits: {memory: "256Mi", cpu: "500m"}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;livenessProbe:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;httpGet: {path: /health, port: 3001}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;initialDelaySeconds: 15<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;readinessProbe:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;httpGet: {path: /health, port: 3001}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;initialDelaySeconds: 5<br>
+---<br>
+apiVersion: v1<br>
+kind: Service<br>
+metadata:<br>
+&nbsp;&nbsp;name: dream-backend-svc<br>
+&nbsp;&nbsp;namespace: dream-chat<br>
+spec:<br>
+&nbsp;&nbsp;selector: {app: dream-backend}<br>
+&nbsp;&nbsp;ports: [{port: 3001, targetPort: 3001}]
+            </div>
+          </div>
+          <div class="term" style="margin-top:8px">
+            <div class="term-bar"><div class="td td-r"></div><div class="td td-y"></div><div class="td td-g"></div><div class="t-label">Create secret + deploy everything</div></div>
+            <div class="term-body">
+<span class="tc"># Create K8s secret for MongoDB URI</span><br>
+<span class="tcmd">kubectl create secret generic</span> dream-secrets \<br>
+&nbsp;&nbsp;<span class="tf">--from-literal</span>=MONGO_URI=<span class="ts">"YOUR_MONGO_URI"</span> \<br>
+&nbsp;&nbsp;<span class="tf">-n</span> dream-chat<br><br>
+<span class="tc"># Apply all manifests</span><br>
+<span class="tcmd">kubectl apply -f</span> k8s/<br><br>
+<span class="tc"># Watch pods come up</span><br>
+<span class="tcmd">kubectl get pods -n</span> dream-chat <span class="tf">-w</span><br>
+<span class="tout"># dream-backend-xxx   1/1   Running   0   30s</span><br>
+<span class="tout"># dream-frontend-xxx  1/1   Running   0   28s</span><br><br>
+<span class="tc"># Get external IP</span><br>
+<span class="tcmd">kubectl get svc -n</span> dream-chat<br>
+<span class="tout"># dream-frontend-svc  LoadBalancer  34.x.x.x  80:30xxx/TCP</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step-item">
+        <div><div class="step-dot">4</div></div>
+        <div class="step-content">
+          <div class="step-title">HPA — Auto-Scale When Traffic Spikes</div>
+          <div class="term">
+            <div class="term-bar"><div class="td td-r"></div><div class="td td-y"></div><div class="td td-g"></div><div class="t-label">k8s/hpa.yaml — Horizontal Pod Autoscaler</div></div>
+            <div class="term-body">
+apiVersion: autoscaling/v2<br>
+kind: HorizontalPodAutoscaler<br>
+metadata:<br>
+&nbsp;&nbsp;name: dream-backend-hpa<br>
+&nbsp;&nbsp;namespace: dream-chat<br>
+spec:<br>
+&nbsp;&nbsp;scaleTargetRef:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;apiVersion: apps/v1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;kind: Deployment<br>
+&nbsp;&nbsp;&nbsp;&nbsp;name: dream-backend<br>
+&nbsp;&nbsp;minReplicas: 2<br>
+&nbsp;&nbsp;maxReplicas: 10  <span class="tc"># auto-scale up to 10 pods!</span><br>
+&nbsp;&nbsp;metrics:<br>
+&nbsp;&nbsp;- type: Resource<br>
+&nbsp;&nbsp;&nbsp;&nbsp;resource:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name: cpu<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;target:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;type: Utilization<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;averageUtilization: 70  <span class="tc"># scale when CPU > 70%</span>
+            </div>
+          </div>
+          <div class="info-box ib-lime" style="margin-top:10px">
+            <span class="ib-icon">🏆</span>
+            <div class="ib-text"><strong>Interview win:</strong> "I configured HPA with CPU-based autoscaling. During load testing with k6 I saw pods scale from 2 to 8 automatically when CPU hit 70%. Scaled back down after traffic subsided — cost optimization built in."</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════ PHASE 4: TERRAFORM + ANSIBLE ══════════════════════ -->
+<section id="phase4">
+  <div class="container">
+    <div class="sec-label">// phase 4</div>
+    <h2 class="sec-title" style="color:var(--pink)">Terraform + Ansible IaC</h2>
+
+    <div class="phase-header" style="border-left-color:var(--pink)">
+      <div class="ph-num" style="color:rgba(244,114,182,0.2)">04</div>
+      <div><div class="ph-title">Infrastructure as Code — Build with Code not Clicks</div><div class="ph-desc">Terraform for cloud infra · Ansible for VM configuration · Shell scripts for automation</div></div>
+    </div>
+
+    <div class="steps">
+      <div class="step-item">
+        <div><div class="step-dot">1</div><div class="step-vline"></div></div>
+        <div class="step-content">
+          <div class="step-title">Terraform — Provision GKE Cluster with Code</div>
+          <div class="term">
+            <div class="term-bar"><div class="td td-r"></div><div class="td td-y"></div><div class="td td-g"></div><div class="t-label">terraform/main.tf</div></div>
+            <div class="term-body">
+terraform {<br>
+&nbsp;&nbsp;required_providers {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;google = { source = <span class="ts">"hashicorp/google"</span>, version = <span class="ts">"~> 5.0"</span> }<br>
+&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;<span class="tc"># Store state in GCS bucket (free)</span><br>
+&nbsp;&nbsp;backend <span class="ts">"gcs"</span> {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;bucket = <span class="ts">"dream-tfstate-bucket"</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;prefix = <span class="ts">"dream/state"</span><br>
+&nbsp;&nbsp;}<br>
+}<br><br>
+provider <span class="ts">"google"</span> {<br>
+&nbsp;&nbsp;project = var.project_id<br>
+&nbsp;&nbsp;region  = var.region<br>
+}<br><br>
+<span class="tc"># GKE Autopilot Cluster</span><br>
+resource <span class="ts">"google_container_cluster"</span> <span class="ts">"dream"</span> {<br>
+&nbsp;&nbsp;name     = <span class="ts">"dream-cluster"</span><br>
+&nbsp;&nbsp;location = var.region<br>
+&nbsp;&nbsp;enable_autopilot = true<br>
+&nbsp;&nbsp;deletion_protection = false<br>
+}<br><br>
+output <span class="ts">"cluster_name"</span> {<br>
+&nbsp;&nbsp;value = google_container_cluster.dream.name<br>
+}
+            </div>
+          </div>
+          <div class="term" style="margin-top:8px">
+            <div class="term-bar"><div class="td td-r"></div><div class="td td-y"></div><div class="td td-g"></div><div class="t-label">Deploy with Terraform</div></div>
+            <div class="term-body">
+<span class="tcmd">cd</span> terraform/<br>
+<span class="tcmd">terraform init</span>    <span class="tc"># downloads GCP provider</span><br>
+<span class="tcmd">terraform plan</span>    <span class="tc"># preview what will be created</span><br>
+<span class="tcmd">terraform apply</span>   <span class="tc"># type 'yes' to create</span><br><br>
+<span class="tc"># 💸 SAVE MONEY: destroy when not learning</span><br>
+<span class="tcmd">terraform destroy</span> <span class="tc"># deletes everything cleanly</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step-item">
+        <div><div class="step-dot">2</div><div class="step-vline"></div></div>
+        <div class="step-content">
+          <div class="step-title">Ansible — Configure VM Automatically</div>
+          <div class="term">
+            <div class="term-bar"><div class="td td-r"></div><div class="td td-y"></div><div class="td td-g"></div><div class="t-label">ansible/setup-vm.yml</div></div>
+            <div class="term-body">
+---<br>
+- name: Configure Dream Chat Dev VM<br>
+&nbsp;&nbsp;hosts: dream_vms<br>
+&nbsp;&nbsp;become: yes<br>
+&nbsp;&nbsp;vars:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;node_version: <span class="ts">"20"</span><br>
+&nbsp;&nbsp;tasks:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;- name: Update apt and install basics<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;apt: update_cache=yes name={{ item }} state=present<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;loop: [git, curl, wget, unzip, htop]<br><br>
+&nbsp;&nbsp;&nbsp;&nbsp;- name: Install Docker<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;shell: curl -fsSL https://get.docker.com | sh<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;args: {creates: /usr/bin/docker}  <span class="tc"># idempotent!</span><br><br>
+&nbsp;&nbsp;&nbsp;&nbsp;- name: Add user to docker group<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;user: name={{ ansible_user }} groups=docker append=yes<br><br>
+&nbsp;&nbsp;&nbsp;&nbsp;- name: Install Node.js {{ node_version }}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;shell: |<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;curl -fsSL https://deb.nodesource.com/setup_{{ node_version }}.x | bash -<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;apt-get install -y nodejs<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;args: {creates: /usr/bin/node}<br><br>
+&nbsp;&nbsp;&nbsp;&nbsp;- name: Configure git<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;git_config: name={{ item.name }} value={{ item.value }} scope=global<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;loop:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- {name: user.name, value: "Dream Dev"}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- {name: init.defaultBranch, value: main}
+            </div>
+          </div>
+          <div class="term" style="margin-top:8px">
+            <div class="term-bar"><div class="td td-r"></div><div class="td td-y"></div><div class="td td-g"></div><div class="t-label">Run Ansible playbook</div></div>
+            <div class="term-body">
+<span class="tc"># inventory.ini</span><br>
+[dream_vms]<br>
+dream-vm ansible_host=YOUR-VM-IP ansible_user=ubuntu ansible_ssh_private_key_file=~/.ssh/dream-key<br><br>
+<span class="tcmd">ansible-playbook</span> <span class="tf">-i</span> inventory.ini ansible/setup-vm.yml<br>
+<span class="tout"># PLAY RECAP ****</span><br>
+<span class="tout"># dream-vm : ok=6 changed=4 unreachable=0 failed=0</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step-item">
+        <div><div class="step-dot">3</div></div>
+        <div class="step-content">
+          <div class="step-title">Shell Scripts — Daily DevOps Automation</div>
+          <div class="term">
+            <div class="term-bar"><div class="td td-r"></div><div class="td td-y"></div><div class="td td-g"></div><div class="t-label">scripts/deploy.sh — one command deploys everything</div></div>
+            <div class="term-body">
+<span class="ts">#!/bin/bash</span><br>
+<span class="tc"># DreamChat Deploy Script — used in CI/CD + manual deploys</span><br>
+set -euo pipefail  <span class="tc"># exit on error, undefined var, pipe fail</span><br><br>
+<span class="tk">PROJECT_ID</span>=${1:-$(gcloud config get-value project)}<br>
+<span class="tk">IMAGE_TAG</span>=${2:-$(git rev-parse --short HEAD)}  <span class="tc"># use git commit hash!</span><br>
+<span class="tk">NAMESPACE</span>=dream-chat<br><br>
+<span class="tcmd">echo</span> <span class="ts">"🚀 Deploying DreamChat $IMAGE_TAG to K8s..."</span><br><br>
+<span class="tc"># Build and push images</span><br>
+<span class="tcmd">docker build</span> <span class="tf">-t</span> gcr.io/$PROJECT_ID/dream-backend:$IMAGE_TAG ./backend<br>
+<span class="tcmd">docker push</span> gcr.io/$PROJECT_ID/dream-backend:$IMAGE_TAG<br><br>
+<span class="tc"># Update K8s deployment with new image</span><br>
+<span class="tcmd">kubectl set image</span> deployment/dream-backend \<br>
+&nbsp;&nbsp;backend=gcr.io/$PROJECT_ID/dream-backend:$IMAGE_TAG \<br>
+&nbsp;&nbsp;<span class="tf">-n</span> $NAMESPACE<br><br>
+<span class="tc"># Wait for rollout to complete</span><br>
+<span class="tcmd">kubectl rollout status</span> deployment/dream-backend <span class="tf">-n</span> $NAMESPACE<br><br>
+<span class="tcmd">echo</span> <span class="ts">"✅ Deploy complete! Version: $IMAGE_TAG"</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════ PHASE 5: CI/CD ══════════════════════ -->
+<section id="phase5">
+  <div class="container">
+    <div class="sec-label">// phase 5</div>
+    <h2 class="sec-title" style="color:var(--cyan)">CI/CD Pipeline — Real Company Way</h2>
+
+    <div class="phase-header" style="border-left-color:var(--lime)">
+      <div class="ph-num" style="color:rgba(57,255,20,0.2)">05</div>
+      <div><div class="ph-title">GitHub Actions + Jenkins + ArgoCD</div><div class="ph-desc">How real teams work · branch strategy · PR reviews · automated deployments</div></div>
+    </div>
+
+    <h3 style="margin-bottom:14px">🌿 Real Company Git Branch Strategy</h3>
+    <div class="arch">
+      <div class="arch-row">
+        <div class="arch-box" style="border-color:rgba(255,59,92,.4)"><span class="ab-icon">🔒</span>main<span class="ab-label">Production — protected</span></div>
+        <div class="arch-arr">←</div>
+        <div class="arch-box" style="border-color:rgba(57,255,20,.4)"><span class="ab-icon">🧪</span>develop<span class="ab-label">Integration branch</span></div>
+        <div class="arch-arr">←</div>
+        <div class="arch-box" style="border-color:rgba(0,245,255,.4)"><span class="ab-icon">✨</span>feature/xxx<span class="ab-label">Your work</span></div>
+      </div>
+      <div style="text-align:center;color:var(--muted);font-family:var(--code);font-size:12px;margin-top:16px">
+        Rule: <span style="color:var(--red)">NEVER push directly to main</span> · Always PR → develop → PR → main · Every PR triggers CI pipeline
+      </div>
+    </div>
+
+    <div class="term" style="margin-top:16px">
+      <div class="term-bar"><div class="td td-r"></div><div class="td td-y"></div><div class="td td-g"></div><div class="t-label">.github/workflows/ci-cd.yml — Full GitHub Actions Pipeline</div></div>
+      <div class="term-body">
+name: DreamChat CI/CD<br><br>
+on:<br>
+&nbsp;&nbsp;push:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;branches: [main, develop]<br>
+&nbsp;&nbsp;pull_request:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;branches: [main]<br><br>
+env:<br>
+&nbsp;&nbsp;PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}<br>
+&nbsp;&nbsp;IMAGE_TAG: ${{ github.sha }}  <span class="tc"># unique per commit — critical!</span><br><br>
+jobs:<br>
+&nbsp;&nbsp;<span class="ts">test</span>:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;runs-on: ubuntu-latest<br>
+&nbsp;&nbsp;&nbsp;&nbsp;steps:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- uses: actions/checkout@v4<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- uses: actions/setup-node@v4<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;with: {node-version: '20'}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- name: Install + Test backend<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;run: cd backend && npm ci && npm test<br><br>
+&nbsp;&nbsp;<span class="ts">security-scan</span>:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;needs: test<br>
+&nbsp;&nbsp;&nbsp;&nbsp;runs-on: ubuntu-latest<br>
+&nbsp;&nbsp;&nbsp;&nbsp;steps:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- uses: actions/checkout@v4<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- name: Run Trivy vulnerability scan<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;uses: aquasecurity/trivy-action@master<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;with:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;scan-type: fs<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;severity: CRITICAL,HIGH<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;exit-code: '1'  <span class="tc"># FAIL if critical vulns found</span><br><br>
+&nbsp;&nbsp;<span class="ts">build-push</span>:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;needs: security-scan<br>
+&nbsp;&nbsp;&nbsp;&nbsp;if: github.ref == 'refs/heads/main'  <span class="tc"># only deploy from main</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;runs-on: ubuntu-latest<br>
+&nbsp;&nbsp;&nbsp;&nbsp;steps:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- uses: actions/checkout@v4<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- uses: google-github-actions/auth@v2<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;with:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;credentials_json: ${{ secrets.GCP_SA_KEY }}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- name: Build + Push to GCR<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;run: |<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gcloud auth configure-docker<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;docker build -t gcr.io/$PROJECT_ID/dream-backend:$IMAGE_TAG ./backend<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;docker push gcr.io/$PROJECT_ID/dream-backend:$IMAGE_TAG<br><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- name: Update K8s manifest with new image tag<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;run: |<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sed -i "s|dream-backend:.*|dream-backend:$IMAGE_TAG|g" k8s/backend-deployment.yaml<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;git config user.email "ci@dreamchat.io"<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;git add k8s/backend-deployment.yaml<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;git commit -m "ci: update backend image to $IMAGE_TAG [skip ci]"<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;git push  <span class="tc"># ArgoCD detects this and deploys!</span>
+      </div>
+    </div>
+
+    <div class="info-box ib-amber" style="margin-top:16px">
+      <span class="ib-icon">🏢</span>
+      <div class="ib-text"><strong>How REAL companies work:</strong> Developer creates branch <code>feat/add-emoji-reactions</code> → pushes → CI runs tests automatically → opens PR → teammate reviews code → approves → merge to develop → CI again → PR to main → CI + security scan → merge → ArgoCD auto-deploys to production. No manual deployments ever.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════ PHASE 6: MONITORING ══════════════════════ -->
+<section id="phase6">
+  <div class="container">
+    <div class="sec-label">// phase 6</div>
+    <h2 class="sec-title" style="color:var(--amber)">Monitoring + Observability</h2>
+
+    <div class="phase-header" style="border-left-color:var(--amber)">
+      <div class="ph-num" style="color:rgba(255,179,0,0.2)">06</div>
+      <div><div class="ph-title">Prometheus + Grafana + Loki + AlertManager</div><div class="ph-desc">Full observability stack · 4 Golden Signals · Slack alerts · Log aggregation</div></div>
+    </div>
+
+    <div class="steps">
+      <div class="step-item">
+        <div><div class="step-dot">1</div><div class="step-vline"></div></div>
+        <div class="step-content">
+          <div class="step-title">Install Full Monitoring Stack with Helm</div>
+          <div class="term">
+            <div class="term-bar"><div class="td td-r"></div><div class="td td-y"></div><div class="td td-g"></div><div class="t-label">One command installs everything</div></div>
+            <div class="term-body">
+<span class="tc"># Add Helm repos</span><br>
+<span class="tcmd">helm repo add</span> prometheus-community https://prometheus-community.github.io/helm-charts<br>
+<span class="tcmd">helm repo add</span> grafana https://grafana.github.io/helm-charts<br>
+<span class="tcmd">helm repo update</span><br><br>
+<span class="tc"># Install kube-prometheus-stack (Prometheus + Grafana + AlertManager)</span><br>
+<span class="tcmd">helm install</span> monitoring prometheus-community/kube-prometheus-stack \<br>
+&nbsp;&nbsp;<span class="tf">-n</span> monitoring <span class="tf">--create-namespace</span> \<br>
+&nbsp;&nbsp;<span class="tf">--set</span> grafana.service.type=LoadBalancer \<br>
+&nbsp;&nbsp;<span class="tf">--set</span> grafana.adminPassword=DreamChart2026<br><br>
+<span class="tc"># Install Loki for logs</span><br>
+<span class="tcmd">helm install</span> loki grafana/loki-stack \<br>
+&nbsp;&nbsp;<span class="tf">-n</span> monitoring<br><br>
+<span class="tc"># Get Grafana URL</span><br>
+<span class="tcmd">kubectl get svc -n</span> monitoring | grep grafana<br>
+<span class="tout"># Open http://GRAFANA-IP → admin / DreamChart2026</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step-item">
+        <div><div class="step-dot">2</div></div>
+        <div class="step-content">
+          <div class="step-title">Import Dream Chat Dashboards</div>
+          <div class="csteps">
+            <div class="cstep"><div class="cstep-num">1</div><div class="cstep-body"><div class="cstep-title">Import K8s cluster dashboard</div><div class="cstep-desc">Grafana → Dashboards → Import → ID: <strong>15760</strong> → Load → Select Prometheus datasource → Import. Shows all pods, CPU, memory, network.</div></div></div>
+            <div class="cstep"><div class="cstep-num">2</div><div class="cstep-body"><div class="cstep-title">Import Node.js app dashboard</div><div class="cstep-desc">Import ID: <strong>11159</strong> → this shows your backend's request rate, response times, active WebSocket connections. The money dashboard for chat app monitoring!</div></div></div>
+            <div class="cstep"><div class="cstep-num">3</div><div class="cstep-body"><div class="cstep-title">Create Slack alert</div><div class="cstep-desc">Grafana → Alerting → Contact Points → Add contact point → Slack → paste webhook URL → test. Now if CPU > 80% or error rate > 1% → you get a Slack message instantly.</div></div></div>
+          </div>
+          <div class="info-box ib-lime">
+            <span class="ib-icon">🏆</span>
+            <div class="ib-text"><strong>Interview answer:</strong> "I monitored the 4 Golden Signals — Latency (p99 WebSocket message delivery under 50ms), Traffic (concurrent connections), Errors (disconnect rate), Saturation (memory per pod). AlertManager sent Slack notifications when any threshold was breached."</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════ PHASE 7: LIVE ══════════════════════ -->
+<section id="phase7">
+  <div class="container">
+    <div class="sec-label">// phase 7 — the finish line</div>
+    <h2 class="sec-title" style="color:var(--lime)">🚀 Make It Live — Custom Domain + HTTPS</h2>
+
+    <div class="steps">
+      <div class="step-item">
+        <div><div class="step-dot">1</div><div class="step-vline"></div></div>
+        <div class="step-content">
+          <div class="step-title">Free Domain from Freenom (or use subdomain)</div>
+          <div class="step-desc">Option A: Get a free domain at <strong>freenom.com</strong> (.tk, .ml, .ga all free). Option B (easier): use your GitHub Pages URL with a CNAME. Option C (pro): buy a cheap .dev domain (~$12/year from Namecheap) — best for resume/interview.</div>
+        </div>
+      </div>
+      <div class="step-item">
+        <div><div class="step-dot">2</div><div class="step-vline"></div></div>
+        <div class="step-content">
+          <div class="step-title">Install Cert-Manager for Free HTTPS (Let's Encrypt)</div>
+          <div class="term">
+            <div class="term-bar"><div class="td td-r"></div><div class="td td-y"></div><div class="td td-g"></div><div class="t-label">Free SSL certificate automatically renewed</div></div>
+            <div class="term-body">
+<span class="tcmd">helm repo add</span> jetstack https://charts.jetstack.io<br>
+<span class="tcmd">helm install</span> cert-manager jetstack/cert-manager \<br>
+&nbsp;&nbsp;<span class="tf">--namespace</span> cert-manager <span class="tf">--create-namespace</span> \<br>
+&nbsp;&nbsp;<span class="tf">--set</span> installCRDs=true<br><br>
+<span class="tc"># Create ClusterIssuer (gets certs from Let's Encrypt for FREE)</span><br>
+<span class="tcmd">cat</span> << 'EOF' | kubectl apply -f -<br>
+apiVersion: cert-manager.io/v1<br>
+kind: ClusterIssuer<br>
+metadata: {name: letsencrypt-prod}<br>
+spec:<br>
+&nbsp;&nbsp;acme:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;email: your@email.com<br>
+&nbsp;&nbsp;&nbsp;&nbsp;server: https://acme-v02.api.letsencrypt.org/directory<br>
+&nbsp;&nbsp;&nbsp;&nbsp;privateKeySecretRef: {name: letsencrypt-prod}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;solvers: [{http01: {ingress: {class: nginx}}}]<br>
+EOF
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="step-item">
+        <div><div class="step-dot">3</div></div>
+        <div class="step-content">
+          <div class="step-title">🎉 DreamChat is LIVE!</div>
+          <div class="info-box ib-lime">
+            <span class="ib-icon">🎊</span>
+            <div class="ib-text">
+              <strong>Your live URLs:</strong><br>
+              🌐 https://dreamchat.yourdomain.com — React chat app<br>
+              🔌 wss://api.dreamchat.yourdomain.com — WebSocket backend<br>
+              📊 https://grafana.yourdomain.com — Monitoring dashboards<br>
+              🌊 https://argocd.yourdomain.com — GitOps dashboard<br><br>
+              <strong>Share these in your resume and GitHub README. This is your portfolio project.</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════ ERROR BIBLE ══════════════════════ -->
+<section id="errors" style="background:linear-gradient(180deg,var(--bg) 0%,rgba(255,59,92,0.03) 100%)">
+  <div class="container">
+    <div class="sec-label">// error bible</div>
+    <h2 class="sec-title" style="color:var(--red)">🚨 Error Bible — Fix Anything Fast</h2>
+    <p class="sec-desc">Every error you'll hit on this project + exact fix. Bookmark this section.</p>
+
+    <div class="two-col" style="margin-top:24px">
+      <div>
+        <h4>Kubernetes Errors</h4>
+        <div class="err-block"><div class="err-label">⛔ K8s</div><div class="err-text">OOMKilled — pod killed due to Out Of Memory</div></div>
+        <div class="fix-block"><div class="fix-label">✅ FIX</div><div class="fix-text">Increase memory limit in deployment.yaml:<br><code>limits: {memory: "512Mi"}</code><br>Also check for memory leaks in app: <code>kubectl top pods -n dream-chat</code></div></div>
+
+        <div class="err-block"><div class="err-label">⛔ K8s</div><div class="err-text">Pending — 0/2 nodes available: Insufficient CPU</div></div>
+        <div class="fix-block"><div class="fix-label">✅ FIX</div><div class="fix-text">Lower resource requests: <code>requests: {cpu: "50m"}</code> OR scale nodes: <code>gcloud container clusters resize dream-cluster --num-nodes 3</code></div></div>
+
+        <div class="err-block"><div class="err-label">⛔ K8s</div><div class="err-text">WebSocket connections drop every 30 seconds on K8s</div></div>
+        <div class="fix-block"><div class="fix-label">✅ FIX</div><div class="fix-text">K8s default service timeout is 30s. Add to Service annotations:<br><code>service.beta.kubernetes.io/aws-load-balancer-connection-idle-timeout: "3600"</code><br>Also enable sticky sessions for WebSocket load balancing.</div></div>
+      </div>
+      <div>
+        <h4>CI/CD Errors</h4>
+        <div class="err-block"><div class="err-label">⛔ GHA</div><div class="err-text">Error: buildx failed with: ERROR [auth] docker.io: unauthorized</div></div>
+        <div class="fix-block"><div class="fix-label">✅ FIX</div><div class="fix-text">Add Docker credentials as GitHub Secrets:<br>Settings → Secrets → DOCKER_USERNAME and DOCKER_PASSWORD<br>Then in workflow: <code>docker login -u ${{ secrets.DOCKER_USERNAME }}</code></div></div>
+
+        <div class="err-block"><div class="err-label">⛔ Git</div><div class="err-text">! [rejected] main → main (fetch first) — push rejected</div></div>
+        <div class="fix-block"><div class="fix-label">✅ FIX</div><div class="fix-text">Remote has commits you don't have. Pull first:<br><code>git pull --rebase origin main</code><br>Then push again. NEVER use <code>git push --force</code> on shared branches!</div></div>
+
+        <div class="err-block"><div class="err-label">⛔ Terraform</div><div class="err-text">Error: Error creating Cluster: googleapi: Error 409: Already exists</div></div>
+        <div class="fix-block"><div class="fix-label">✅ FIX</div><div class="fix-text">Cluster already exists. Either:<br>1. Import it: <code>terraform import google_container_cluster.dream us-central1/dream-cluster</code><br>2. Or destroy old one first: <code>gcloud container clusters delete dream-cluster</code></div></div>
+      </div>
+    </div>
+
+    <div class="info-box ib-cyan" style="margin-top:24px">
+      <span class="ib-icon">💰</span>
+      <div class="ib-text"><strong>Cost Saver Script — Run every night before sleep!</strong><br>
+      <code style="font-family:var(--code);font-size:11px">gcloud container clusters resize dream-cluster --num-nodes 0 --region us-central1</code><br>
+      Scales cluster to 0 nodes = no node VM costs. In morning: <code>--num-nodes 2</code> to bring back up. Saves ~$1.50/day = ~$45/month on GCP!</div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div>DREAM Project · DreamChat · End-to-End DevOps · 2026</div>
+  <div style="margin-top:6px">
+    <a href="dream-cicd.html">CI/CD Guide →</a> &nbsp;·&nbsp;
+    <a href="dream-interview.html">Interview Quiz →</a> &nbsp;·&nbsp;
+    <a href="dream-cost.html">Cost Optimizer →</a> &nbsp;·&nbsp;
+    <a href="index.html">← Portal</a>
+  </div>
+</footer>
+</body>
+</html>

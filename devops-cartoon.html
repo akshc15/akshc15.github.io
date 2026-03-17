@@ -1,0 +1,1437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DevOps Adventure — The Animated Story</title>
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:wght@400;700&family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --sky: #1a1a2e;
+  --sky2: #16213e;
+  --yellow: #FFD93D;
+  --orange: #FF6B35;
+  --green: #6BCB77;
+  --blue: #4FC3F7;
+  --pink: #FF6B9D;
+  --purple: #B57BEE;
+  --red: #FF4757;
+  --white: #F0F4FF;
+  --dark: #0D0D1A;
+  --comic: 'Bangers', cursive;
+  --body: 'Nunito', sans-serif;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--sky);
+  font-family: var(--body);
+  overflow-x: hidden;
+  cursor: default;
+}
+
+/* STARS BACKGROUND */
+.stars {
+  position: fixed; top:0; left:0; width:100%; height:100%;
+  pointer-events: none; z-index: 0;
+  background:
+    radial-gradient(1px 1px at 10% 20%, white, transparent),
+    radial-gradient(1px 1px at 30% 50%, white, transparent),
+    radial-gradient(1px 1px at 50% 10%, white, transparent),
+    radial-gradient(1px 1px at 70% 80%, white, transparent),
+    radial-gradient(1px 1px at 90% 30%, white, transparent),
+    radial-gradient(1px 1px at 20% 70%, white, transparent),
+    radial-gradient(1px 1px at 80% 60%, rgba(255,255,255,0.5), transparent),
+    radial-gradient(1px 1px at 45% 90%, rgba(255,255,255,0.5), transparent),
+    radial-gradient(2px 2px at 60% 40%, rgba(255,255,255,0.4), transparent),
+    radial-gradient(1px 1px at 15% 85%, white, transparent),
+    radial-gradient(1px 1px at 55% 55%, rgba(255,255,255,0.3), transparent),
+    radial-gradient(1px 1px at 35% 15%, white, transparent);
+  animation: twinkle 4s infinite alternate;
+}
+@keyframes twinkle { from{opacity:0.7} to{opacity:1} }
+
+/* TITLE SCREEN */
+#title-screen {
+  position: relative; z-index:10;
+  min-height: 100vh;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 40px 20px;
+  text-align: center;
+  background: radial-gradient(ellipse at center, #1a1a3e 0%, #0a0a1a 100%);
+}
+
+.title-glow {
+  font-family: var(--comic);
+  font-size: clamp(50px, 10vw, 110px);
+  letter-spacing: 4px;
+  line-height: 1;
+  color: var(--yellow);
+  text-shadow:
+    0 0 20px rgba(255,217,61,0.8),
+    0 0 60px rgba(255,217,61,0.4),
+    4px 4px 0 var(--orange),
+    6px 6px 0 rgba(255,107,53,0.5);
+  animation: titlePulse 2s ease-in-out infinite alternate;
+}
+@keyframes titlePulse {
+  from { text-shadow: 0 0 20px rgba(255,217,61,0.8), 0 0 60px rgba(255,217,61,0.4), 4px 4px 0 var(--orange); }
+  to   { text-shadow: 0 0 40px rgba(255,217,61,1), 0 0 100px rgba(255,217,61,0.6), 4px 4px 0 var(--orange), 0 0 120px rgba(255,107,53,0.3); }
+}
+.title-sub {
+  font-family: var(--comic);
+  font-size: clamp(18px, 4vw, 32px);
+  color: var(--blue);
+  letter-spacing: 2px;
+  margin-top: 8px;
+  animation: fadeInUp 1s 0.5s both;
+}
+@keyframes fadeInUp { from{opacity:0;transform:translateY(30px)} to{opacity:1;transform:translateY(0)} }
+
+/* HERO CHARACTER */
+.hero-char {
+  width: 160px; height: 160px;
+  margin: 30px auto 10px;
+  animation: heroFloat 3s ease-in-out infinite;
+  position: relative;
+}
+@keyframes heroFloat {
+  0%,100%{transform:translateY(0)} 50%{transform:translateY(-18px)}
+}
+
+/* SVG CHARACTERS inline */
+.char-svg { width:100%; height:100%; }
+
+.start-btn {
+  margin-top: 20px;
+  background: var(--yellow);
+  color: var(--dark);
+  border: none;
+  font-family: var(--comic);
+  font-size: 28px;
+  letter-spacing: 2px;
+  padding: 16px 50px;
+  border-radius: 60px;
+  cursor: pointer;
+  box-shadow: 0 8px 0 var(--orange), 0 12px 30px rgba(255,107,53,0.4);
+  transition: all 0.15s;
+  animation: fadeInUp 1s 1s both;
+}
+.start-btn:hover { transform: translateY(-4px); box-shadow: 0 12px 0 var(--orange), 0 18px 40px rgba(255,107,53,0.5); }
+.start-btn:active { transform: translateY(4px); box-shadow: 0 4px 0 var(--orange); }
+
+/* SCENE SYSTEM */
+.scenes { display: none; position: relative; z-index:10; }
+.scenes.active { display: block; }
+
+.scene {
+  display: none;
+  min-height: 100vh;
+  padding: 20px;
+  position: relative;
+}
+.scene.active { display: flex; flex-direction: column; align-items: center; }
+
+/* COMIC PANEL */
+.comic-panel {
+  background: white;
+  border: 4px solid var(--dark);
+  border-radius: 16px;
+  box-shadow: 8px 8px 0 var(--dark);
+  padding: 20px;
+  max-width: 900px;
+  width: 100%;
+  margin-bottom: 20px;
+  position: relative;
+  animation: popIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+@keyframes popIn { from{transform:scale(0.5);opacity:0} to{transform:scale(1);opacity:1} }
+
+.panel-title {
+  font-family: var(--comic);
+  font-size: 36px;
+  letter-spacing: 2px;
+  text-align: center;
+  margin-bottom: 16px;
+  position: relative;
+}
+
+/* SPEECH BUBBLE */
+.bubble {
+  background: white;
+  border: 3px solid var(--dark);
+  border-radius: 20px;
+  padding: 12px 18px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--dark);
+  position: relative;
+  box-shadow: 3px 3px 0 var(--dark);
+  margin: 8px 0;
+  line-height: 1.5;
+}
+.bubble.yellow { background: var(--yellow); }
+.bubble.blue { background: #e0f7ff; }
+.bubble.green { background: #e8fce8; }
+.bubble.orange { background: #fff0e8; border-color: var(--orange); }
+.bubble.red { background: #ffe0e0; border-color: var(--red); }
+.bubble.purple { background: #f3e8ff; border-color: var(--purple); }
+
+.bubble::after {
+  content: '';
+  position: absolute;
+  bottom: -12px; left: 20px;
+  width: 0; height: 0;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-top: 12px solid var(--dark);
+}
+.bubble.right::after { left:auto; right:20px; }
+.bubble.top-arrow::after {
+  bottom: auto; top: -12px;
+  border-top: none;
+  border-bottom: 12px solid var(--dark);
+}
+
+/* SCENE LAYOUTS */
+.scene-row {
+  display: flex; align-items: flex-end; gap: 20px;
+  justify-content: center; flex-wrap: wrap;
+  margin: 16px 0;
+}
+.char-box { text-align: center; }
+.char-box .name {
+  font-family: var(--comic);
+  font-size: 18px;
+  margin-top: 4px;
+}
+
+/* ANIMATED PIPELINE */
+.pipeline {
+  display: flex; align-items: center; gap: 0;
+  overflow-x: auto; padding: 10px 0;
+  flex-wrap: wrap; justify-content: center;
+  gap: 4px;
+}
+.pipe-step {
+  background: var(--dark);
+  color: white;
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 13px;
+  font-weight: 700;
+  text-align: center;
+  min-width: 80px;
+  border: 2px solid transparent;
+  position: relative;
+  animation: pipeIn 0.3s both;
+}
+.pipe-step.done { background: var(--green); color: var(--dark); border-color: var(--dark); }
+.pipe-step.running { background: var(--yellow); color: var(--dark); border-color: var(--dark); animation: pulse 0.8s infinite alternate; }
+.pipe-step.fail { background: var(--red); border-color: var(--dark); }
+@keyframes pulse { from{transform:scale(1)} to{transform:scale(1.08)} }
+@keyframes pipeIn { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+
+.pipe-arrow {
+  font-size: 22px; color: var(--dark);
+  font-weight: 900; padding: 0 2px;
+}
+
+/* ERROR BOX */
+.error-box {
+  background: #1a0000;
+  border: 3px solid var(--red);
+  border-radius: 10px;
+  padding: 14px 18px;
+  font-family: monospace;
+  font-size: 13px;
+  color: #ff8080;
+  margin: 12px 0;
+  position: relative;
+  overflow: hidden;
+}
+.error-box::before {
+  content: '💥 ERROR';
+  font-family: var(--comic);
+  font-size: 14px;
+  color: var(--red);
+  display: block;
+  margin-bottom: 6px;
+}
+.error-fix {
+  background: #001a00;
+  border: 3px solid var(--green);
+  border-radius: 10px;
+  padding: 14px 18px;
+  font-family: monospace;
+  font-size: 13px;
+  color: #80ff80;
+  margin: 12px 0;
+}
+.error-fix::before {
+  content: '✅ FIX';
+  font-family: var(--comic);
+  font-size: 14px;
+  color: var(--green);
+  display: block;
+  margin-bottom: 6px;
+}
+
+/* NEXT BUTTON */
+.next-btn {
+  background: var(--orange);
+  color: white;
+  border: 3px solid var(--dark);
+  font-family: var(--comic);
+  font-size: 24px;
+  letter-spacing: 2px;
+  padding: 14px 40px;
+  border-radius: 50px;
+  cursor: pointer;
+  box-shadow: 5px 5px 0 var(--dark);
+  transition: all 0.15s;
+  margin: 20px 0;
+}
+.next-btn:hover { transform: translate(-2px,-2px); box-shadow: 7px 7px 0 var(--dark); }
+.next-btn:active { transform: translate(2px,2px); box-shadow: 3px 3px 0 var(--dark); }
+
+/* PROGRESS BAR */
+.progress-bar {
+  position: fixed; bottom: 0; left:0; right:0;
+  background: rgba(0,0,0,0.8);
+  padding: 10px 20px;
+  z-index: 1000;
+  display: flex; gap: 6px; align-items: center; justify-content: center;
+}
+.prog-dot {
+  width: 12px; height: 12px; border-radius: 50%;
+  background: rgba(255,255,255,0.2);
+  border: 2px solid rgba(255,255,255,0.3);
+  cursor: pointer;
+  transition: all 0.3s;
+}
+.prog-dot.active { background: var(--yellow); border-color: var(--yellow); transform: scale(1.4); }
+.prog-dot.done { background: var(--green); border-color: var(--green); }
+.prog-label {
+  font-family: var(--comic);
+  font-size: 14px;
+  color: rgba(255,255,255,0.6);
+  margin-left: 10px;
+}
+
+/* SCENE BG COLORS */
+.scene-1 { background: linear-gradient(180deg, #1a1a2e 0%, #0f3460 100%); }
+.scene-2 { background: linear-gradient(180deg, #0f3460 0%, #533483 100%); }
+.scene-3 { background: linear-gradient(180deg, #1a3a1a 0%, #0d2b0d 100%); }
+.scene-4 { background: linear-gradient(180deg, #3a1a00 0%, #1a0d00 100%); }
+.scene-5 { background: linear-gradient(180deg, #1a001a 0%, #0d001a 100%); }
+.scene-6 { background: linear-gradient(180deg, #001a3a 0%, #000d1a 100%); }
+.scene-7 { background: linear-gradient(180deg, #001a0d 0%, #000d06 100%); }
+.scene-8 { background: linear-gradient(180deg, #1a1a00 0%, #0d0d00 100%); }
+.scene-9 { background: linear-gradient(180deg, #1a0000 0%, #0d0000 100%); }
+.scene-10 { background: linear-gradient(180deg, #001a1a 0%, #000d0d 100%); }
+.scene-final { background: radial-gradient(ellipse at center, #1a3a0a 0%, #0a1a04 100%); }
+
+/* CLOUD ANIMATION */
+.cloud-float {
+  animation: cloudFloat 4s ease-in-out infinite;
+  display: inline-block;
+}
+@keyframes cloudFloat { 0%,100%{transform:translateY(0) rotate(-2deg)} 50%{transform:translateY(-10px) rotate(2deg)} }
+
+/* ZAP EFFECT */
+.zap { animation: zap 0.5s infinite; display:inline-block; }
+@keyframes zap { 0%,100%{transform:scale(1) rotate(0)} 50%{transform:scale(1.3) rotate(5deg)} color:var(--yellow); }
+
+/* TYPING EFFECT */
+.typing {
+  overflow: hidden;
+  white-space: nowrap;
+  animation: typing 2s steps(40) both;
+  font-family: monospace;
+}
+@keyframes typing { from{width:0} to{width:100%} }
+
+/* K8S PODS */
+.pods-row {
+  display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;
+  margin: 16px 0;
+}
+.pod {
+  width: 80px; height: 80px;
+  border-radius: 12px;
+  border: 3px solid var(--dark);
+  display: flex; flex-direction:column; align-items:center; justify-content:center;
+  font-size: 11px; font-weight:700;
+  box-shadow: 3px 3px 0 var(--dark);
+  animation: podIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+.pod.green { background: var(--green); }
+.pod.blue { background: var(--blue); }
+.pod.yellow { background: var(--yellow); }
+.pod.red { background: var(--red); color:white; }
+.pod.grey { background: #ccc; }
+.pod-icon { font-size: 28px; }
+@keyframes podIn { from{transform:scale(0) rotate(-10deg)} to{transform:scale(1) rotate(0)} }
+
+/* INFOBADGE */
+.info-badge {
+  display: inline-flex; align-items:center; gap:6px;
+  background: var(--dark);
+  color: var(--yellow);
+  font-family: var(--comic);
+  font-size: 14px;
+  padding: 4px 14px;
+  border-radius: 20px;
+  margin: 4px;
+}
+
+/* TWO COL */
+.two-col { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+@media(max-width:600px) { .two-col{grid-template-columns:1fr} }
+
+/* SCENE CHAPTER TITLE */
+.chapter {
+  font-family: var(--comic);
+  font-size: clamp(28px, 6vw, 52px);
+  text-align: center;
+  margin-bottom: 16px;
+  letter-spacing: 3px;
+  animation: fadeInUp 0.6s both;
+}
+
+/* MEMORY CARD */
+.memory {
+  background: var(--yellow);
+  border: 4px solid var(--dark);
+  border-radius: 14px;
+  padding: 16px 20px;
+  box-shadow: 6px 6px 0 var(--dark);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--dark);
+  margin: 12px 0;
+}
+.memory::before { content: '🧠 REMEMBER: '; font-family: var(--comic); font-size: 18px; }
+
+/* SCROLL HINT */
+.scroll-hint {
+  font-family: var(--comic);
+  font-size: 16px;
+  color: rgba(255,255,255,0.5);
+  text-align: center;
+  animation: bounce 1.5s infinite;
+  margin-top: 10px;
+}
+@keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(8px)} }
+
+/* SCENE NAVIGATION */
+.scene-nav {
+  display: flex; gap: 12px; flex-wrap:wrap; justify-content:center;
+  margin: 20px 0 80px;
+}
+
+/* LARGE EMOJI CHAR */
+.big-emoji {
+  font-size: clamp(60px, 12vw, 120px);
+  display: block;
+  text-align: center;
+  animation: heroFloat 2.5s ease-in-out infinite;
+  filter: drop-shadow(0 10px 20px rgba(0,0,0,0.5));
+}
+
+/* THOUGHT BUBBLE */
+.thought {
+  background: white;
+  border: 3px solid var(--dark);
+  border-radius: 30px;
+  padding: 14px 20px;
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--dark);
+  position: relative;
+  box-shadow: 3px 3px 0 var(--dark);
+  max-width: 300px;
+}
+.thought::before, .thought::after {
+  content: '';
+  background: white;
+  border: 3px solid var(--dark);
+  border-radius: 50%;
+  position: absolute;
+}
+.thought::before { width:14px; height:14px; bottom:-18px; left:20px; }
+.thought::after { width:8px; height:8px; bottom:-28px; left:16px; }
+
+/* HIGHLIGHT */
+.hl { background: var(--yellow); padding: 0 4px; border-radius: 4px; color:var(--dark); }
+.hl-blue { background: var(--blue); padding:0 4px; border-radius:4px; color:var(--dark); }
+.hl-green { background: var(--green); padding:0 4px; border-radius:4px; color:var(--dark); }
+.hl-red { background: var(--red); padding:0 4px; border-radius:4px; color:white; }
+.hl-purple { background: var(--purple); padding:0 4px; border-radius:4px; color:white; }
+
+/* vs box */
+.vs-box {
+  display:flex; gap:10px; align-items:center; margin:12px 0;
+}
+.vs-card {
+  flex:1; border:3px solid var(--dark); border-radius:10px;
+  padding:12px; text-align:center; font-size:13px; font-weight:700;
+}
+.vs-divider {
+  font-family:var(--comic); font-size:28px; color:var(--red);
+}
+
+/* FINAL BADGE */
+.final-badge {
+  background: var(--yellow);
+  border: 5px solid var(--dark);
+  border-radius: 50%;
+  width: 180px; height: 180px;
+  display: flex; flex-direction:column;
+  align-items:center; justify-content:center;
+  font-family: var(--comic);
+  font-size: 16px;
+  color: var(--dark);
+  box-shadow: 8px 8px 0 var(--dark);
+  animation: spinIn 1s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  text-align:center;
+  line-height:1.3;
+}
+@keyframes spinIn { from{transform:scale(0) rotate(-180deg)} to{transform:scale(1) rotate(0)} }
+
+/* Scroll to top */
+.top-btn {
+  position:fixed; bottom:60px; right:20px;
+  background:var(--yellow); border:3px solid var(--dark);
+  border-radius:50%; width:50px; height:50px;
+  font-size:22px; cursor:pointer;
+  box-shadow:4px 4px 0 var(--dark);
+  display:flex; align-items:center; justify-content:center;
+  z-index:999; transition:all 0.2s;
+}
+.top-btn:hover{transform:scale(1.1);}
+</style>
+</head>
+<body>
+<div class="stars"></div>
+
+<!-- ============================================================ -->
+<!-- TITLE SCREEN -->
+<!-- ============================================================ -->
+<div id="title-screen">
+  <div class="hero-char">
+    <svg viewBox="0 0 160 160" class="char-svg">
+      <!-- Body -->
+      <ellipse cx="80" cy="110" rx="35" ry="40" fill="#FFD93D" stroke="#1a1a2e" stroke-width="3"/>
+      <!-- Laptop -->
+      <rect x="55" y="118" width="50" height="32" rx="4" fill="#4FC3F7" stroke="#1a1a2e" stroke-width="2.5"/>
+      <rect x="57" y="120" width="46" height="20" rx="2" fill="#1a1a2e"/>
+      <!-- Code on screen -->
+      <line x1="61" y1="124" x2="80" y2="124" stroke="#00ff88" stroke-width="1.5"/>
+      <line x1="61" y1="128" x2="74" y2="128" stroke="#4FC3F7" stroke-width="1.5"/>
+      <line x1="61" y1="132" x2="78" y2="132" stroke="#FF6B35" stroke-width="1.5"/>
+      <!-- Head -->
+      <circle cx="80" cy="72" r="28" fill="#FFD93D" stroke="#1a1a2e" stroke-width="3"/>
+      <!-- Eyes -->
+      <circle cx="72" cy="68" r="5" fill="white" stroke="#1a1a2e" stroke-width="2"/>
+      <circle cx="88" cy="68" r="5" fill="white" stroke="#1a1a2e" stroke-width="2"/>
+      <circle cx="73" cy="69" r="2.5" fill="#1a1a2e"/>
+      <circle cx="89" cy="69" r="2.5" fill="#1a1a2e"/>
+      <!-- Smile -->
+      <path d="M72 78 Q80 86 88 78" stroke="#1a1a2e" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      <!-- Hair -->
+      <path d="M56 64 Q60 44 80 44 Q100 44 104 64" fill="#FF6B35" stroke="#1a1a2e" stroke-width="2"/>
+      <!-- Arms -->
+      <ellipse cx="47" cy="105" rx="10" ry="16" fill="#FFD93D" stroke="#1a1a2e" stroke-width="2.5" transform="rotate(-15 47 105)"/>
+      <ellipse cx="113" cy="105" rx="10" ry="16" fill="#FFD93D" stroke="#1a1a2e" stroke-width="2.5" transform="rotate(15 113 105)"/>
+      <!-- Hat with K8s logo -->
+      <ellipse cx="80" cy="48" rx="32" ry="8" fill="#4FC3F7" stroke="#1a1a2e" stroke-width="2"/>
+      <rect x="66" y="28" width="28" height="22" rx="6" fill="#4FC3F7" stroke="#1a1a2e" stroke-width="2"/>
+      <text x="80" y="44" text-anchor="middle" fill="white" font-size="10" font-weight="900">K8s</text>
+    </svg>
+  </div>
+  <div class="title-glow">DEVOPS</div>
+  <div class="title-glow" style="color:var(--orange)">ADVENTURE!</div>
+  <div class="title-sub">🚀 AN ANIMATED STORY FOR FOREVER MEMORY 🚀</div>
+  <p style="color:rgba(255,255,255,0.5);margin-top:12px;font-size:14px;max-width:500px;text-align:center">
+    Follow Dev the Developer as he goes from zero to DevOps hero — with cartoons, jokes, and error fixes you'll NEVER forget!
+  </p>
+  <button class="start-btn" onclick="startAdventure()">▶ BEGIN ADVENTURE!</button>
+  <div style="margin-top:16px;color:rgba(255,255,255,0.3);font-size:13px">10 Episodes + Error Fixing Lab</div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SCENES WRAPPER -->
+<!-- ============================================================ -->
+<div class="scenes" id="scenes">
+
+<!-- SCENE 1: WHAT IS DEVOPS -->
+<div class="scene scene-1" id="scene-1">
+  <div class="chapter" style="color:var(--yellow)">⚡ EPISODE 1: "THE CHAOS"</div>
+  <div class="comic-panel">
+    <div class="panel-title" style="color:var(--red)">😤 LIFE WITHOUT DEVOPS</div>
+    <div class="scene-row">
+      <div class="char-box">
+        <span style="font-size:70px;display:block;animation:heroFloat 2s infinite">🧑‍💻</span>
+        <div class="name" style="color:var(--dark)">DEV TEAM</div>
+        <div class="bubble yellow">"Code done! Deploy it!"</div>
+      </div>
+      <div style="font-size:40px;padding:0 10px">⚔️</div>
+      <div class="char-box">
+        <span style="font-size:70px;display:block;animation:heroFloat 2.5s infinite">👨‍💼</span>
+        <div class="name" style="color:var(--dark)">OPS TEAM</div>
+        <div class="bubble red">"IT BROKE PROD!! WHO DID THIS?! 🔥🔥🔥"</div>
+      </div>
+    </div>
+    <div class="memory">DevOps = Breaking the WALL between Dev & Ops. Build fast AND deploy safely. Both teams = ONE team.</div>
+  </div>
+
+  <div class="comic-panel">
+    <div class="panel-title" style="color:var(--green)">😎 LIFE WITH DEVOPS</div>
+    <p style="text-align:center;font-weight:700;margin-bottom:16px">When Dev pushes code, a magic pipeline handles EVERYTHING automatically:</p>
+    <div class="pipeline">
+      <div class="pipe-step done" style="animation-delay:0s">📝<br>Code Push</div>
+      <div class="pipe-arrow">→</div>
+      <div class="pipe-step done" style="animation-delay:0.1s">🔍<br>Auto Test</div>
+      <div class="pipe-arrow">→</div>
+      <div class="pipe-step done" style="animation-delay:0.2s">🛡️<br>Security</div>
+      <div class="pipe-arrow">→</div>
+      <div class="pipe-step done" style="animation-delay:0.3s">📦<br>Package</div>
+      <div class="pipe-arrow">→</div>
+      <div class="pipe-step done" style="animation-delay:0.4s">🚀<br>Deploy</div>
+      <div class="pipe-arrow">→</div>
+      <div class="pipe-step done" style="animation-delay:0.5s">📊<br>Monitor</div>
+    </div>
+    <div class="bubble green" style="text-align:center;margin-top:10px">Everyone goes home at 5pm. No fires. No yelling. ✨</div>
+  </div>
+  <button class="next-btn" onclick="goScene(2)">NEXT EPISODE →</button>
+</div>
+
+<!-- SCENE 2: DOCKER -->
+<div class="scene scene-2" id="scene-2">
+  <div class="chapter" style="color:var(--blue)">🐳 EPISODE 2: "THE MAGIC BOX"<br><small style="font-size:50%">(Docker)</small></div>
+
+  <div class="comic-panel">
+    <div class="panel-title" style="color:var(--red)">😱 THE PROBLEM</div>
+    <div class="scene-row">
+      <div class="char-box">
+        <span style="font-size:80px;display:block">🧑‍💻</span>
+        <div class="bubble yellow">"It works on MY machine! Node 18, npm 9.2..."</div>
+      </div>
+      <div class="char-box">
+        <span style="font-size:80px;display:block">😡</span>
+        <div class="bubble red">"It CRASHES on the server! Node 14, npm 6!"</div>
+      </div>
+    </div>
+    <div style="text-align:center;font-size:50px;margin:10px">💥</div>
+    <p style="text-align:center;font-weight:700">Different environments = different results. This kills teams.</p>
+  </div>
+
+  <div class="comic-panel">
+    <div class="panel-title" style="color:var(--blue)">🐳 DOCKER TO THE RESCUE!</div>
+    <div style="text-align:center">
+      <span style="font-size:100px;display:inline-block;animation:heroFloat 2s infinite">🐳</span>
+      <div class="thought" style="margin:0 auto;display:inline-block">
+        I'll put EVERYTHING needed — Node, npm, code, libraries — into a sealed container! It runs identically EVERYWHERE!
+      </div>
+    </div>
+  </div>
+
+  <div class="comic-panel">
+    <div class="panel-title">🍕 THE PIZZA ANALOGY</div>
+    <div class="two-col">
+      <div>
+        <div style="text-align:center;font-size:60px">📋</div>
+        <div class="bubble yellow"><strong>Dockerfile</strong> = The RECIPE<br>"Take Ubuntu, add Node 18, copy my code, run npm install"</div>
+      </div>
+      <div>
+        <div style="text-align:center;font-size:60px">🍕</div>
+        <div class="bubble blue"><strong>Docker Image</strong> = The FROZEN PIZZA<br>Built from recipe. Can be stored, shared, shipped anywhere.</div>
+      </div>
+    </div>
+    <div style="text-align:center;font-size:60px;margin:10px">🔥</div>
+    <div class="bubble green" style="text-align:center"><strong>Container</strong> = PIZZA IN THE OVEN (running). You can run 10 pizzas from 1 frozen pizza!</div>
+    <div class="memory">Dockerfile → docker build → Image → docker run → Container. Image is FROZEN. Container is RUNNING.</div>
+  </div>
+
+  <div class="comic-panel">
+    <div class="panel-title" style="color:var(--red)">🚨 REAL ERRORS YOU'LL HIT + FIXES</div>
+    <div class="error-box">COPY failed: file not found in build context or excluded by .dockerignore: stat package.json</div>
+    <div class="error-fix">You're running `docker build` from wrong directory! Run it from folder that contains Dockerfile:<br><code>cd my-app && docker build -t myapp .</code><br>The DOT (.) at end = "use current folder as context"</div>
+
+    <div class="error-box">Error response from daemon: driver failed programming external connectivity: port is already allocated</div>
+    <div class="error-fix">Another process is using that port. Find and kill it:<br><code>lsof -i :8080</code> → shows what's using port 8080<br><code>kill -9 [PID]</code> → kill it<br>OR use a different port: <code>docker run -p 8081:8080 myapp</code></div>
+
+    <div class="error-box">OCI runtime exec failed: exec: "sh": executable file not found in $PATH</div>
+    <div class="error-fix">You used Alpine Linux image which uses `ash` not `sh`. Use: <code>docker exec -it container_id /bin/ash</code><br>OR switch FROM alpine to FROM ubuntu in Dockerfile</div>
+  </div>
+  <button class="next-btn" onclick="goScene(3)">NEXT EPISODE →</button>
+</div>
+
+<!-- SCENE 3: KUBERNETES -->
+<div class="scene scene-3" id="scene-3">
+  <div class="chapter" style="color:var(--green)">⚙️ EPISODE 3: "THE ORCHESTRA"<br><small style="font-size:50%">(Kubernetes)</small></div>
+
+  <div class="comic-panel">
+    <div class="panel-title" style="color:var(--orange)">😰 THE NEW PROBLEM</div>
+    <div class="scene-row">
+      <div style="text-align:center">
+        <span style="font-size:55px">😰</span>
+        <div class="bubble orange">"I have 50 containers running on 5 servers. One crashed at 3am. Users are complaining. I can't manually restart and manage all of this!"</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="comic-panel">
+    <div class="panel-title">☸️ KUBERNETES = THE CONDUCTOR</div>
+    <div style="text-align:center;margin-bottom:12px">
+      <span style="font-size:90px;display:inline-block;animation:heroFloat 2s infinite">🎼</span>
+    </div>
+    <div class="bubble purple" style="text-align:center">
+      Think of Kubernetes as a brilliant orchestra conductor. Each musician (container) plays their part. Conductor ensures:<br>
+      🎵 Right number of musicians always playing<br>
+      🎵 If one musician faints → instantly replace them<br>
+      🎵 Audience (traffic) routed to correct section<br>
+      🎵 Scale up for concert night, scale down after
+    </div>
+  </div>
+
+  <div class="comic-panel">
+    <div class="panel-title">🏗️ K8s KEY OBJECTS — EXPLAINED WITH EMOJIS</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px">
+      <div class="bubble yellow">
+        🫙 <strong>Pod</strong><br>
+        1 or more containers sharing a house. Smallest unit. Ephemeral (can die anytime).
+        <br><small>Analogy: A hotel room with roommates</small>
+      </div>
+      <div class="bubble blue">
+        🏭 <strong>Deployment</strong><br>
+        Manages Pods. "I want 3 replicas ALWAYS running. If one dies, make another."
+        <br><small>Analogy: Hotel manager who fills empty rooms</small>
+      </div>
+      <div class="bubble green">
+        📮 <strong>Service</strong><br>
+        Stable address for pods. Pods have changing IPs — Service gives permanent DNS name.
+        <br><small>Analogy: Hotel reception desk (always same address)</small>
+      </div>
+      <div class="bubble orange">
+        ⚖️ <strong>Ingress</strong><br>
+        Routes external HTTP traffic to correct services. Like a traffic cop at hotel entrance.
+        <br><small>Analogy: Hotel doorman directing guests</small>
+      </div>
+      <div class="bubble purple">
+        🗂️ <strong>ConfigMap</strong><br>
+        Stores config (non-secret). Inject env vars without hardcoding in image.
+        <br><small>Analogy: Hotel welcome booklet</small>
+      </div>
+      <div class="bubble red">
+        🔐 <strong>Secret</strong><br>
+        Like ConfigMap but encrypted. Passwords, API keys, tokens.
+        <br><small>Analogy: Hotel room safe</small>
+      </div>
+    </div>
+
+    <div class="pods-row" style="margin-top:16px">
+      <div class="pod green"><div class="pod-icon">⚛️</div>Frontend<br>Pod 1</div>
+      <div class="pod green"><div class="pod-icon">⚛️</div>Frontend<br>Pod 2</div>
+      <div class="pod red"><div class="pod-icon">💀</div>Frontend<br>Pod 3 ☠️</div>
+      <div style="display:flex;align-items:center;font-size:30px">→</div>
+      <div class="pod yellow"><div class="pod-icon">🔄</div>K8s<br>RESTARTS!</div>
+      <div style="display:flex;align-items:center;font-size:30px">→</div>
+      <div class="pod green"><div class="pod-icon">⚛️</div>Frontend<br>Pod 3 ✅</div>
+    </div>
+    <div class="memory">kubectl get pods = check what's running. kubectl describe pod NAME = debug a specific pod. kubectl logs NAME = see what a pod printed.</div>
+  </div>
+
+  <div class="comic-panel">
+    <div class="panel-title" style="color:var(--red)">🚨 REAL K8s ERRORS + FIXES</div>
+
+    <div class="error-box">NAME: frontend-pod-xxx    STATUS: CrashLoopBackOff    RESTARTS: 6</div>
+    <div class="error-fix">
+      Container keeps crashing and K8s keeps restarting it.<br>
+      <strong>Step 1:</strong> <code>kubectl logs frontend-pod-xxx</code> → Read the actual error message<br>
+      <strong>Step 2:</strong> <code>kubectl describe pod frontend-pod-xxx</code> → Look at "Events" section at bottom<br>
+      Common causes: App has a bug, wrong ENV vars, can't connect to DB, wrong image tag
+    </div>
+
+    <div class="error-box">0/2 nodes are available: 2 Insufficient memory. preemption: 0/2 nodes are available</div>
+    <div class="error-fix">
+      Your pod wants more memory than nodes have free!<br>
+      <strong>Fix 1:</strong> Lower memory request in deployment.yaml: <code>resources.requests.memory: "128Mi"</code><br>
+      <strong>Fix 2:</strong> Add more nodes to your EKS cluster with eksctl<br>
+      <code>eksctl scale nodegroup --cluster=NAME --nodes=3 -n nodegroup-name</code>
+    </div>
+
+    <div class="error-box">ImagePullBackOff — Failed to pull image "123456.dkr.ecr.us-east-1.amazonaws.com/frontend:latest"</div>
+    <div class="error-fix">
+      K8s can't pull your image from ECR. 3 possible causes:<br>
+      1. <strong>Wrong image name</strong> — typo in deployment.yaml image field<br>
+      2. <strong>No ECR secret</strong> — create <code>kubectl create secret docker-registry ecr-secret ...</code><br>
+      3. <strong>Node IAM role missing ECR permission</strong> — add AmazonEC2ContainerRegistryReadOnly policy to EKS node role in AWS Console
+    </div>
+  </div>
+  <button class="next-btn" onclick="goScene(4)">NEXT EPISODE →</button>
+</div>
+
+<!-- SCENE 4: TERRAFORM -->
+<div class="scene scene-4" id="scene-4">
+  <div class="chapter" style="color:var(--orange)">🏗️ EPISODE 4: "THE ARCHITECT"<br><small style="font-size:50%">(Terraform)</small></div>
+
+  <div class="comic-panel">
+    <div class="panel-title">🖱️ BEFORE TERRAFORM: CLICK HELL</div>
+    <div style="text-align:center">
+      <span style="font-size:80px;display:inline-block">😵‍💫</span>
+      <div class="bubble orange">
+        "I clicked through 47 AWS Console screens to set up 1 environment.<br>
+        Now I need to recreate it for staging. I don't remember what I clicked.<br>
+        There's no documentation. I'm the only one who knows how it works.<br>
+        I'm going on vacation. I'm scared. 😰"
+      </div>
+    </div>
+  </div>
+
+  <div class="comic-panel">
+    <div class="panel-title" style="color:var(--green)">✍️ WITH TERRAFORM: CODE = INFRA</div>
+    <div class="two-col">
+      <div>
+        <div class="bubble yellow">
+          <strong>You write .tf files:</strong><br><br>
+          <code>resource "aws_instance" "jenkins" {</code><br>
+          <code>&nbsp; ami = "ami-0abcdef"</code><br>
+          <code>&nbsp; instance_type = "t2.large"</code><br>
+          <code>}</code>
+        </div>
+      </div>
+      <div>
+        <div class="bubble green">
+          <strong>Terraform does the work:</strong><br>
+          🔍 <strong>init</strong> — download AWS plugin<br>
+          👀 <strong>plan</strong> — preview changes<br>
+          ✅ <strong>apply</strong> — create resources<br>
+          💥 <strong>destroy</strong> — delete everything
+        </div>
+      </div>
+    </div>
+    <div class="memory">Terraform is IDEMPOTENT — run apply 100 times, same result. It only changes what's different between your code and reality.</div>
+  </div>
+
+  <div class="comic-panel">
+    <div class="panel-title">🌍 THE TERRAFORM STATE STORY</div>
+    <div style="text-align:center;font-size:70px;margin:10px">📸</div>
+    <div class="bubble blue">
+      Terraform's <strong>state file (terraform.tfstate)</strong> is like a PHOTO of everything it created.<br><br>
+      Without it: "Did I already create that VPC? Where's my EC2? How many subnets do I have?" — CHAOS!<br><br>
+      With it: Terraform knows exactly what exists and what needs to change.<br><br>
+      <strong>In our project</strong> → State stored in S3 bucket. Why? Team members can share it. It has version history. No accidental duplicate creates.
+    </div>
+
+    <div class="error-box">Error: Error acquiring the state lock. Lock Info: ID: xxx Path: s3://bucket/terraform.tfstate</div>
+    <div class="error-fix">
+      Someone else (or a crashed previous run) left a lock on the state. 
+      <strong>Only do this if you're SURE no one else is running Terraform!</strong><br>
+      <code>terraform force-unlock LOCK_ID</code><br>
+      Get LOCK_ID from the error message above.
+    </div>
+
+    <div class="error-box">Error: Provider "registry.terraform.io/hashicorp/aws" was not found. Run terraform init</div>
+    <div class="error-fix">
+      You forgot to run <code>terraform init</code> first! Or you're in the wrong directory.<br>
+      <code>cd Jenkins-Server-TF/</code><br>
+      <code>terraform init</code><br>
+      This downloads the AWS provider plugin into .terraform/ folder.
+    </div>
+  </div>
+  <button class="next-btn" onclick="goScene(5)">NEXT EPISODE →</button>
+</div>
+
+<!-- SCENE 5: JENKINS CI/CD -->
+<div class="scene scene-5" id="scene-5">
+  <div class="chapter" style="color:var(--purple)">⚙️ EPISODE 5: "THE FACTORY"<br><small style="font-size:50%">(Jenkins CI/CD)</small></div>
+
+  <div class="comic-panel">
+    <div class="panel-title">🏭 JENKINS IS A ROBOT FACTORY WORKER</div>
+    <div style="text-align:center">
+      <span style="font-size:90px;display:inline-block;animation:heroFloat 2s infinite">🤖</span>
+      <div class="thought" style="display:inline-block;vertical-align:top;margin:20px 0 0 10px;max-width:280px">
+        Every time a developer pushes code, I wake up automatically and run all these tasks so humans don't have to!
+      </div>
+    </div>
+    <div class="pipeline" style="margin-top:16px">
+      <div class="pipe-step done" style="background:#e8fce8;color:#1a3a1a;animation-delay:0s">📥<br>Pull Code</div>
+      <div class="pipe-arrow">→</div>
+      <div class="pipe-step done" style="background:#fff0e8;color:#3a1a00;animation-delay:0.1s">🔍<br>SonarQube</div>
+      <div class="pipe-arrow">→</div>
+      <div class="pipe-step done" style="background:#f3e8ff;color:#1a0030;animation-delay:0.2s">🛡️<br>OWASP</div>
+      <div class="pipe-arrow">→</div>
+      <div class="pipe-step done" style="background:#e0f7ff;color:#003a50;animation-delay:0.3s">🐳<br>Docker Build</div>
+      <div class="pipe-arrow">→</div>
+      <div class="pipe-step done" style="background:#ffe0e0;color:#3a0000;animation-delay:0.4s">🔎<br>Trivy Scan</div>
+      <div class="pipe-arrow">→</div>
+      <div class="pipe-step done" style="background:#e8fce8;color:#1a3a1a;animation-delay:0.5s">📤<br>Push ECR</div>
+      <div class="pipe-arrow">→</div>
+      <div class="pipe-step done" style="background:#fffce8;color:#3a3000;animation-delay:0.6s">✏️<br>Update K8s</div>
+    </div>
+  </div>
+
+  <div class="comic-panel">
+    <div class="panel-title">🔐 THE 3 SECURITY GUARDS</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px">
+      <div style="text-align:center">
+        <div style="font-size:60px">🔍</div>
+        <div class="bubble yellow">
+          <strong>SonarQube (SAST)</strong><br>
+          Reads your SOURCE CODE like a smart reviewer.<br>
+          "You have SQL injection risk on line 47!"<br>
+          "This function is too complex!"<br>
+          "You have hardcoded password!"
+        </div>
+      </div>
+      <div style="text-align:center">
+        <div style="font-size:60px">🛡️</div>
+        <div class="bubble blue">
+          <strong>OWASP Dep-Check</strong><br>
+          Checks your package.json like a safety inspector.<br>
+          "You use lodash 4.17.15 which has CVE-2021-23337 — it can be exploited to run arbitrary commands!"
+        </div>
+      </div>
+      <div style="text-align:center">
+        <div style="font-size:60px">🔎</div>
+        <div class="bubble green">
+          <strong>Trivy (Container Scan)</strong><br>
+          Scans the BUILT DOCKER IMAGE.<br>
+          "Your Ubuntu base image has 12 CRITICAL OS vulnerabilities. Update: FROM ubuntu:22.04"
+        </div>
+      </div>
+    </div>
+    <div class="memory">SAST = Static (source code scan). SCA = Dependencies (OWASP). CSPM = Container (Trivy). These 3 cover your entire attack surface.</div>
+  </div>
+
+  <div class="comic-panel">
+    <div class="panel-title" style="color:var(--red)">🚨 JENKINS ERRORS + FIXES</div>
+
+    <div class="error-box">ERROR: No such DSL method 'withAWS' found among steps</div>
+    <div class="error-fix">
+      You're missing the "Pipeline: AWS Steps" Jenkins plugin!<br>
+      Jenkins → Manage Jenkins → Plugins → Available → search "Pipeline AWS" → Install<br>
+      Then restart Jenkins: <code>sudo systemctl restart jenkins</code>
+    </div>
+
+    <div class="error-box">hudson.plugins.git.GitException: Command "git fetch ..." returned status code 128: stderr: Permission denied (publickey)</div>
+    <div class="error-fix">
+      Jenkins can't authenticate with your GitHub repo.<br>
+      Fix: In Jenkins → Credentials → Add your GitHub Personal Access Token (NOT password!)<br>
+      Generate token: GitHub → Settings → Developer Settings → Personal Access Tokens → check 'repo' scope<br>
+      Then update your pipeline to use this credential ID.
+    </div>
+
+    <div class="error-box">Error response from daemon: denied: Your authorization token has expired. Reauthenticate and try again.</div>
+    <div class="error-fix">
+      ECR login tokens expire every 12 hours. Your pipeline must re-login on every run:<br>
+      Add this to your Jenkinsfile before docker push:<br>
+      <code>sh 'aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin $ECR_URL'</code>
+    </div>
+
+    <div class="error-box">SonarQube: QUALITY GATE FAILED — Reliability Rating is D (expected A)</div>
+    <div class="error-fix">
+      Not really an error — SonarQube found real bugs! Options:<br>
+      1. <strong>Fix the bugs</strong> it found (correct approach)<br>
+      2. In SonarQube dashboard → your project → Quality Gate → customize thresholds for learning<br>
+      3. In Jenkinsfile add <code>waitForQualityGate abortPipeline: false</code> to continue even if gate fails (while learning)
+    </div>
+  </div>
+  <button class="next-btn" onclick="goScene(6)">NEXT EPISODE →</button>
+</div>
+
+<!-- SCENE 6: ECR + EKS -->
+<div class="scene scene-6" id="scene-6">
+  <div class="chapter" style="color:var(--blue)">📦 EPISODE 6: "THE WAREHOUSE & STADIUM"<br><small style="font-size:50%">(ECR + EKS)</small></div>
+
+  <div class="comic-panel">
+    <div class="panel-title">📦 AWS ECR = YOUR PRIVATE DOCKER WAREHOUSE</div>
+    <div class="scene-row">
+      <div style="text-align:center">
+        <span style="font-size:80px;display:block">🏭</span>
+        <div class="bubble yellow">Jenkins builds Docker image here</div>
+      </div>
+      <div style="font-size:30px;padding:20px">→</div>
+      <div style="text-align:center">
+        <span style="font-size:80px;display:block">📦</span>
+        <strong>ECR<br>(Warehouse)</strong>
+        <div class="bubble blue">Stores: frontend:v1, frontend:v2, backend:v3... All private, safe, versioned.</div>
+      </div>
+      <div style="font-size:30px;padding:20px">→</div>
+      <div style="text-align:center">
+        <span style="font-size:80px;display:block">☸️</span>
+        <div class="bubble green">EKS pulls image and runs it as pods</div>
+      </div>
+    </div>
+    <div class="memory">Never use :latest tag in production! Use specific version tags like :v1.2.3 or :git-commit-hash. latest makes rollbacks impossible.</div>
+  </div>
+
+  <div class="comic-panel">
+    <div class="panel-title">☸️ EKS = THE FOOTBALL STADIUM</div>
+    <div style="text-align:center;margin:10px">
+      <span style="font-size:80px">🏟️</span>
+    </div>
+    <div class="bubble blue">
+      EKS = Elastic Kubernetes Service. AWS manages the <strong>control plane</strong> (referee + scoreboard) for you. You only manage the <strong>worker nodes</strong> (players/EC2 instances).<br><br>
+      <strong>Control Plane</strong> (AWS manages, you don't touch): API Server, etcd (database), Scheduler, Controller Manager<br><br>
+      <strong>Worker Nodes</strong> (your EC2s): Where your pods actually run. We use t3.medium × 2 nodes.
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:16px">
+      <div class="pod blue" style="height:auto;padding:12px">
+        <div class="pod-icon">📋</div>
+        <strong>API Server</strong>
+        <div style="font-size:11px">You talk to this with kubectl</div>
+      </div>
+      <div class="pod yellow" style="height:auto;padding:12px">
+        <div class="pod-icon">🗄️</div>
+        <strong>etcd</strong>
+        <div style="font-size:11px">K8s database — stores all cluster state</div>
+      </div>
+      <div class="pod green" style="height:auto;padding:12px">
+        <div class="pod-icon">📅</div>
+        <strong>Scheduler</strong>
+        <div style="font-size:11px">Decides which node gets each pod</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="comic-panel">
+    <div class="panel-title" style="color:var(--red)">🚨 EKS ERRORS + FIXES</div>
+
+    <div class="error-box">error: You must be logged in to the server (Unauthorized) — kubectl get nodes</div>
+    <div class="error-fix">
+      Your kubeconfig is outdated or wrong user.<br>
+      <code>aws eks update-kubeconfig --region us-east-1 --name three-tier-cluster</code><br>
+      Also check: <code>aws sts get-caller-identity</code> — are you logged in as the RIGHT IAM user that created the cluster?<br>
+      If cluster was created by a different role, you need to add your user to the aws-auth ConfigMap.
+    </div>
+
+    <div class="error-box">Error: The connection to the server localhost:8080 was refused</div>
+    <div class="error-fix">
+      kubectl doesn't know which cluster to talk to. Your kubeconfig is empty or missing.<br>
+      <code>export KUBECONFIG=~/.kube/config</code><br>
+      <code>aws eks update-kubeconfig --region us-east-1 --name three-tier-cluster</code><br>
+      <code>kubectl cluster-info</code>  ← verify connection
+    </div>
+
+    <div class="error-box">EKS cluster creation failed: Cannot create cluster — VPC limit exceeded</div>
+    <div class="error-fix">
+      AWS default limit is 5 VPCs per region. You may have hit it from previous experiments.<br>
+      Go to AWS Console → VPC → delete old/unused VPCs<br>
+      OR request a limit increase at AWS Service Quotas.
+    </div>
+  </div>
+  <button class="next-btn" onclick="goScene(7)">NEXT EPISODE →</button>
+</div>
+
+<!-- SCENE 7: ARGOCD GITOPS -->
+<div class="scene scene-7" id="scene-7">
+  <div class="chapter" style="color:var(--green)">🌊 EPISODE 7: "THE GUARDIAN"<br><small style="font-size:50%">(ArgoCD + GitOps)</small></div>
+
+  <div class="comic-panel">
+    <div class="panel-title">🌊 ARGOCD IS A TEMPLE GUARDIAN</div>
+    <div style="text-align:center">
+      <span style="font-size:90px;display:inline-block;animation:heroFloat 2s infinite">🗿</span>
+    </div>
+    <div class="bubble green">
+      ArgoCD sits inside your Kubernetes cluster, staring at your Git repo 24/7.<br><br>
+      The moment you change a Kubernetes YAML file in GitHub, ArgoCD sees it and says:<br>
+      <strong>"Cluster state doesn't match Git state. SYNCING NOW."</strong><br><br>
+      It automatically applies the changes. No human needed. This is GitOps.
+    </div>
+    <div class="memory">Git = Single source of truth. NEVER run kubectl apply manually in GitOps. Always commit to Git and let ArgoCD apply it. This gives you full audit trail and easy rollback.</div>
+  </div>
+
+  <div class="comic-panel">
+    <div class="panel-title">🔄 THE FULL GITOPS LOOP</div>
+    <div style="text-align:center">
+      <div style="display:inline-flex;flex-direction:column;gap:8px;max-width:600px;width:100%">
+        <div class="pipe-step done" style="font-size:14px;padding:12px">
+          1️⃣ Dev pushes code to GitHub → Jenkins runs CI pipeline
+        </div>
+        <div class="pipe-arrow" style="text-align:center">⬇</div>
+        <div class="pipe-step done" style="font-size:14px;padding:12px">
+          2️⃣ Jenkins builds Docker image → pushes to ECR → tags it :v1.5
+        </div>
+        <div class="pipe-arrow" style="text-align:center">⬇</div>
+        <div class="pipe-step done" style="font-size:14px;padding:12px">
+          3️⃣ Jenkins updates deployment.yaml in GitHub: image: .../frontend:v1.5
+        </div>
+        <div class="pipe-arrow" style="text-align:center">⬇</div>
+        <div class="pipe-step done" style="font-size:14px;padding:12px">
+          4️⃣ ArgoCD detects change in Git repo within 3 minutes
+        </div>
+        <div class="pipe-arrow" style="text-align:center">⬇</div>
+        <div class="pipe-step done" style="font-size:14px;padding:12px">
+          5️⃣ ArgoCD applies new deployment.yaml → K8s does rolling update → New pods running!
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="comic-panel">
+    <div class="panel-title" style="color:var(--red)">🚨 ARGOCD ERRORS + FIXES</div>
+
+    <div class="error-box">App Status: OutOfSync — ComparisonError: failed to get git client: unknown key type: "ecdsa-sha2-nistp256"</div>
+    <div class="error-fix">
+      ArgoCD can't authenticate with GitHub. Use HTTPS with token instead of SSH:<br>
+      In ArgoCD UI → Settings → Repositories → + Connect Repo → HTTPS<br>
+      URL: https://github.com/youruser/yourrepo<br>
+      Username: your github username<br>
+      Password: your GitHub PAT (Personal Access Token with repo scope)
+    </div>
+
+    <div class="error-box">App Status: Degraded — Replica Set not available: Minimum availability not yet met</div>
+    <div class="error-fix">
+      Your pods are failing to start. Debug with:<br>
+      <code>kubectl get pods -n three-tier</code>  ← find failing pods<br>
+      <code>kubectl describe pod PODNAME -n three-tier</code> ← see Events section<br>
+      <code>kubectl logs PODNAME -n three-tier</code> ← see app logs<br>
+      Usually: wrong image tag, missing secret, wrong env var
+    </div>
+
+    <div class="error-box">ArgoCD App Health: Progressing (stuck for 10+ minutes)</div>
+    <div class="error-fix">
+      Deployment is stuck — new pods not becoming Ready.<br>
+      <code>kubectl get pods -n three-tier -w</code>  ← watch in real-time<br>
+      Look for: Pending (no resources), ErrImagePull (bad image), CrashLoopBackOff (app crashes)<br>
+      Fix the underlying pod issue → ArgoCD will automatically show Healthy once pods are running
+    </div>
+  </div>
+  <button class="next-btn" onclick="goScene(8)">NEXT EPISODE →</button>
+</div>
+
+<!-- SCENE 8: HELM -->
+<div class="scene scene-8" id="scene-8">
+  <div class="chapter" style="color:var(--yellow)">⚓ EPISODE 8: "THE PACKAGE MASTER"<br><small style="font-size:50%">(Helm Charts)</small></div>
+
+  <div class="comic-panel">
+    <div class="panel-title">😤 WITHOUT HELM</div>
+    <div style="text-align:center">
+      <span style="font-size:70px">😩</span>
+    </div>
+    <div class="bubble orange">
+      "To install Prometheus I need to write:<br>
+      deployment.yaml, service.yaml, serviceaccount.yaml, clusterrole.yaml, clusterrolebinding.yaml, configmap.yaml, servicemonitor.yaml...<br>
+      That's 15 YAML files! And I have to configure them all correctly!"
+    </div>
+  </div>
+
+  <div class="comic-panel">
+    <div class="panel-title" style="color:var(--green)">😎 WITH HELM</div>
+    <div style="text-align:center">
+      <span style="font-size:80px;display:inline-block;animation:heroFloat 2s infinite">⚓</span>
+    </div>
+    <div class="bubble green">
+      <strong>Helm = apt-get / brew for Kubernetes</strong><br><br>
+      Instead of 15 YAML files, just:<br><br>
+      <code>helm repo add prometheus-community https://...</code><br>
+      <code>helm install prometheus prometheus-community/kube-prometheus-stack</code><br><br>
+      Done! Prometheus + Grafana + AlertManager all running. 30 seconds. Zero manual YAML.
+    </div>
+    <div class="bubble blue" style="margin-top:12px">
+      <strong>Helm Chart</strong> = A package of K8s YAML templates with configurable values<br>
+      <strong>helm install</strong> = install a chart<br>
+      <strong>helm upgrade</strong> = update it<br>
+      <strong>helm rollback</strong> = go back to previous version<br>
+      <strong>helm uninstall</strong> = remove everything cleanly
+    </div>
+    <div class="memory">Chart.yaml = package metadata. values.yaml = default config. templates/ = the actual YAML files with {{ .Values.xxx }} placeholders.</div>
+  </div>
+
+  <div class="comic-panel">
+    <div class="panel-title" style="color:var(--red)">🚨 HELM ERRORS + FIXES</div>
+
+    <div class="error-box">Error: INSTALLATION FAILED: cannot re-use a name that is still in use: "prometheus"</div>
+    <div class="error-fix">
+      You already installed a release with this name. Options:<br>
+      <code>helm list -n monitoring</code>  ← see existing releases<br>
+      <code>helm upgrade prometheus prometheus-community/kube-prometheus-stack -n monitoring</code>  ← upgrade instead<br>
+      OR: <code>helm uninstall prometheus -n monitoring</code>  then install again
+    </div>
+
+    <div class="error-box">Error: failed to download "prometheus-community/kube-prometheus-stack" — repo not found</div>
+    <div class="error-fix">
+      You haven't added the Helm repo yet:<br>
+      <code>helm repo add prometheus-community https://prometheus-community.github.io/helm-charts</code><br>
+      <code>helm repo update</code><br>
+      <code>helm search repo prometheus-community</code>  ← verify it's added
+    </div>
+  </div>
+  <button class="next-btn" onclick="goScene(9)">NEXT EPISODE →</button>
+</div>
+
+<!-- SCENE 9: MONITORING -->
+<div class="scene scene-9" id="scene-9">
+  <div class="chapter" style="color:var(--pink)">📊 EPISODE 9: "THE WATCHTOWER"<br><small style="font-size:50%">(Prometheus + Grafana)</small></div>
+
+  <div class="comic-panel">
+    <div class="panel-title">👁️ THE WATCHTOWER STORY</div>
+    <div class="scene-row">
+      <div style="text-align:center">
+        <span style="font-size:70px;display:block;animation:heroFloat 2.5s infinite">🔭</span>
+        <strong>Prometheus</strong>
+        <div class="bubble blue">
+          I'm the DATA COLLECTOR.<br>
+          Every 15 seconds I ask your app and cluster:<br>
+          "What's your CPU?"<br>
+          "How many HTTP requests?"<br>
+          "Any errors?"<br>
+          I store all this as time-series data.
+        </div>
+      </div>
+      <div style="font-size:30px;padding:20px;align-self:center">→</div>
+      <div style="text-align:center">
+        <span style="font-size:70px;display:block;animation:heroFloat 2s infinite">📊</span>
+        <strong>Grafana</strong>
+        <div class="bubble yellow">
+          I'm the DASHBOARD ARTIST!<br>
+          I take Prometheus data and make beautiful graphs.<br>
+          CPU over time? Line chart!<br>
+          Error rate? Alert in red!<br>
+          Pod count? Stat panel!
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="comic-panel">
+    <div class="panel-title">🔍 WHAT TO WATCH — THE GOLDEN SIGNALS</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px">
+      <div style="text-align:center">
+        <div style="font-size:50px">⚡</div>
+        <div class="bubble yellow"><strong>Latency</strong><br>How long do requests take? p99 > 2s = something is wrong</div>
+      </div>
+      <div style="text-align:center">
+        <div style="font-size:50px">🚦</div>
+        <div class="bubble red"><strong>Error Rate</strong><br>% of 5xx responses. > 1% = your app is broken for users</div>
+      </div>
+      <div style="text-align:center">
+        <div style="font-size:50px">📈</div>
+        <div class="bubble blue"><strong>Traffic</strong><br>Requests per second. Sudden drop = outage. Spike = viral</div>
+      </div>
+      <div style="text-align:center">
+        <div style="font-size:50px">💻</div>
+        <div class="bubble green"><strong>Saturation</strong><br>CPU/Memory usage. > 80% = scale up or you'll crash</div>
+      </div>
+    </div>
+    <div class="memory">The 4 Golden Signals (Google SRE): Latency, Traffic, Errors, Saturation. Memorize these — you'll be asked in interviews!</div>
+  </div>
+
+  <div class="comic-panel">
+    <div class="panel-title" style="color:var(--red)">🚨 PROMETHEUS + GRAFANA ERRORS + FIXES</div>
+
+    <div class="error-box">Grafana: "No data" — Data source connected but dashboards show empty panels</div>
+    <div class="error-fix">
+      Prometheus isn't scraping your targets. Check:<br>
+      Port-forward Prometheus: <code>kubectl port-forward svc/prometheus-kube-prometheus-prometheus 9090:9090 -n monitoring</code><br>
+      Open http://localhost:9090 → Status → Targets<br>
+      All targets should say "UP". If DOWN → your app's metrics endpoint isn't accessible.
+    </div>
+
+    <div class="error-box">kubectl port-forward: Unable to forward port because pod is not running</div>
+    <div class="error-fix">
+      The Grafana/Prometheus pod crashed or is still starting.<br>
+      <code>kubectl get pods -n monitoring</code>  ← find the actual running pod name<br>
+      <code>kubectl logs PODNAME -n monitoring</code>  ← why it crashed<br>
+      Common: Not enough memory on nodes. Add node or reduce resource requests.
+    </div>
+  </div>
+  <button class="next-btn" onclick="goScene(10)">NEXT EPISODE →</button>
+</div>
+
+<!-- SCENE 10: THE BIG PICTURE -->
+<div class="scene scene-10" id="scene-10">
+  <div class="chapter" style="color:var(--blue)">🗺️ EPISODE 10: "THE FULL STORY"<br><small style="font-size:50%">(Everything Together)</small></div>
+
+  <div class="comic-panel">
+    <div class="panel-title">🎬 THE COMPLETE MOVIE: ONE COMMIT TO PRODUCTION</div>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <div style="display:flex;align-items:center;gap:12px">
+        <span style="font-size:30px;min-width:40px">1️⃣</span>
+        <div class="bubble yellow" style="flex:1">Dev on M4 Mac: <code>git push origin main</code> → GitHub receives code change</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px">
+        <span style="font-size:30px;min-width:40px">2️⃣</span>
+        <div class="bubble blue" style="flex:1">GitHub Webhook fires → wakes up Jenkins on EC2 (provisioned by Terraform)</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px">
+        <span style="font-size:30px;min-width:40px">3️⃣</span>
+        <div class="bubble green" style="flex:1">Jenkins Jenkinsfile runs: SonarQube code scan → OWASP dep check → passes all gates ✅</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px">
+        <span style="font-size:30px;min-width:40px">4️⃣</span>
+        <div class="bubble orange" style="flex:1">Jenkins: docker build → Trivy image scan → docker push to private ECR repository</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px">
+        <span style="font-size:30px;min-width:40px">5️⃣</span>
+        <div class="bubble purple" style="flex:1">Jenkins updates Kubernetes deployment.yaml in Git with new image tag :v1.5</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px">
+        <span style="font-size:30px;min-width:40px">6️⃣</span>
+        <div class="bubble blue" style="flex:1">ArgoCD watching Git detects change → auto-syncs → tells EKS to do rolling update</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px">
+        <span style="font-size:30px;min-width:40px">7️⃣</span>
+        <div class="bubble green" style="flex:1">EKS: new pods start (pulling image from ECR), old pods gracefully terminate. Zero downtime!</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px">
+        <span style="font-size:30px;min-width:40px">8️⃣</span>
+        <div class="bubble yellow" style="flex:1">Prometheus scrapes new pods, Grafana dashboards update. AWS LB routes users to healthy pods.</div>
+      </div>
+    </div>
+    <div class="memory">This entire flow happens in ~5-10 minutes automatically. Zero human intervention from git push to production. THIS is why DevOps engineers are paid well.</div>
+  </div>
+
+  <div class="comic-panel">
+    <div class="panel-title">🎯 THE ULTIMATE ERROR DEBUGGING FLOWCHART</div>
+    <div style="display:flex;flex-direction:column;gap:8px;font-weight:700">
+      <div class="bubble yellow">❓ App not working?</div>
+      <div style="padding-left:20px;display:flex;flex-direction:column;gap:6px">
+        <div class="bubble blue">→ <code>kubectl get pods -n three-tier</code> — what's the STATUS?</div>
+        <div style="padding-left:20px;display:flex;flex-direction:column;gap:6px">
+          <div class="bubble green">STATUS = Running but still broken → <code>kubectl logs POD_NAME</code> → app-level error → fix your code</div>
+          <div class="bubble orange">STATUS = CrashLoopBackOff → <code>kubectl logs POD_NAME --previous</code> → app crashed → fix code/config</div>
+          <div class="bubble red">STATUS = Pending → <code>kubectl describe pod POD_NAME</code> → Events section → no resources / scheduling issue</div>
+          <div class="bubble purple">STATUS = ErrImagePull → wrong image tag or ECR auth failed → check deployment.yaml image name + ECR secret</div>
+          <div class="bubble blue">STATUS = OOMKilled → out of memory → increase resources.limits.memory in deployment.yaml</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <button class="next-btn" onclick="goScene('final')">🏆 CLAIM YOUR BADGE →</button>
+</div>
+
+<!-- SCENE FINAL: COMPLETION -->
+<div class="scene scene-final" id="scene-final">
+  <div class="chapter" style="color:var(--yellow)">🏆 YOU'RE A DEVOPS HERO!</div>
+
+  <div class="comic-panel">
+    <div style="text-align:center;padding:20px">
+      <div class="final-badge" style="margin:0 auto 20px">
+        <div style="font-size:40px">🏆</div>
+        <div>DEVOPS<br>HERO</div>
+        <div style="font-size:11px;color:var(--orange)">CERTIFIED</div>
+      </div>
+      <div class="scene-row" style="justify-content:center">
+        <span style="font-size:60px;animation:heroFloat 2s infinite">🧑‍💻</span>
+        <div class="bubble yellow" style="max-width:350px">
+          You now understand the COMPLETE flow:<br>
+          M4 Mac → Git → Jenkins → Docker → ECR → EKS → ArgoCD → Prometheus/Grafana<br><br>
+          Most DevOps engineers took YEARS to understand this. You got it in one cartoon session. 🚀
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="comic-panel">
+    <div class="panel-title" style="color:var(--green)">🧠 MEMORY PALACE — NEVER FORGET</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px">
+      <div class="bubble yellow">🐳 <strong>Docker</strong> = Magic sealed box. Same everywhere.</div>
+      <div class="bubble blue">☸️ <strong>K8s</strong> = Orchestra conductor for containers.</div>
+      <div class="bubble orange">🏗️ <strong>Terraform</strong> = Infra from code. Not clicks.</div>
+      <div class="bubble purple">🤖 <strong>Jenkins</strong> = Robot factory. Build on every push.</div>
+      <div class="bubble green">📦 <strong>ECR</strong> = Private image warehouse on AWS.</div>
+      <div class="bubble blue">🌊 <strong>ArgoCD</strong> = Temple guardian. Git = source of truth.</div>
+      <div class="bubble yellow">⚓ <strong>Helm</strong> = apt-get for Kubernetes.</div>
+      <div class="bubble green">📊 <strong>Grafana</strong> = The dashboard. 4 golden signals.</div>
+      <div class="bubble orange">🔍 <strong>SonarQube</strong> = Code police. SAST scanner.</div>
+      <div class="bubble red">🛡️ <strong>Trivy/OWASP</strong> = Security guards for image + deps.</div>
+    </div>
+  </div>
+
+  <div class="comic-panel">
+    <div class="panel-title" style="color:var(--orange)">💼 ONE SENTENCE INTERVIEW ANSWER</div>
+    <div class="bubble yellow" style="font-size:16px;line-height:1.7">
+      "In my project, I built a full DevSecOps pipeline where a developer's git push triggers Jenkins CI — which runs SonarQube static analysis, OWASP dependency check, builds a Docker image, scans it with Trivy, and pushes it to AWS ECR. The Jenkins pipeline then updates the Kubernetes deployment manifest in GitHub, which ArgoCD — running inside EKS — detects and automatically syncs to the cluster. MongoDB data persists via EBS PersistentVolumes. The entire cluster and Jenkins server were provisioned via Terraform as IaC. Prometheus and Grafana installed via Helm provide full observability on the 4 golden signals."
+    </div>
+    <div class="memory">Practice saying this out loud 5 times. Interviewers will be impressed. This answer covers IaC, CI, security, CD, GitOps, K8s, monitoring — every major DevOps domain in 3 sentences.</div>
+  </div>
+
+  <div class="scene-nav">
+    <button class="next-btn" style="background:var(--blue)" onclick="goScene(1)">↩ RESTART</button>
+    <button class="next-btn" onclick="window.scrollTo(0,0)">⬆ TOP</button>
+  </div>
+</div>
+
+</div><!-- end scenes -->
+
+<!-- PROGRESS BAR -->
+<div class="progress-bar" id="progress-bar" style="display:none">
+  <div class="prog-dot" id="dot-1" onclick="goScene(1)" title="Ep1: DevOps"></div>
+  <div class="prog-dot" id="dot-2" onclick="goScene(2)" title="Ep2: Docker"></div>
+  <div class="prog-dot" id="dot-3" onclick="goScene(3)" title="Ep3: K8s"></div>
+  <div class="prog-dot" id="dot-4" onclick="goScene(4)" title="Ep4: Terraform"></div>
+  <div class="prog-dot" id="dot-5" onclick="goScene(5)" title="Ep5: Jenkins"></div>
+  <div class="prog-dot" id="dot-6" onclick="goScene(6)" title="Ep6: ECR+EKS"></div>
+  <div class="prog-dot" id="dot-7" onclick="goScene(7)" title="Ep7: ArgoCD"></div>
+  <div class="prog-dot" id="dot-8" onclick="goScene(8)" title="Ep8: Helm"></div>
+  <div class="prog-dot" id="dot-9" onclick="goScene(9)" title="Ep9: Monitoring"></div>
+  <div class="prog-dot" id="dot-10" onclick="goScene(10)" title="Ep10: Full Picture"></div>
+  <div class="prog-dot" id="dot-final" onclick="goScene('final')" title="🏆 Badge"></div>
+  <span class="prog-label" id="prog-label">Ep 1/10</span>
+</div>
+
+<button class="top-btn" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Back to top">↑</button>
+
+<script>
+let currentScene = null;
+const sceneOrder = [1,2,3,4,5,6,7,8,9,10,'final'];
+
+function startAdventure() {
+  document.getElementById('title-screen').style.display = 'none';
+  document.getElementById('scenes').classList.add('active');
+  document.getElementById('progress-bar').style.display = 'flex';
+  goScene(1);
+}
+
+function goScene(n) {
+  // Hide all scenes
+  document.querySelectorAll('.scene').forEach(s => s.classList.remove('active'));
+  // Show requested
+  const target = document.getElementById('scene-' + n);
+  if (target) {
+    target.classList.add('active');
+    currentScene = n;
+    updateProgress(n);
+    window.scrollTo({top:0, behavior:'smooth'});
+  }
+}
+
+function updateProgress(n) {
+  document.querySelectorAll('.prog-dot').forEach(d => {
+    d.classList.remove('active','done');
+  });
+  const idx = sceneOrder.indexOf(n);
+  for (let i = 0; i < idx; i++) {
+    const dot = document.getElementById('dot-' + sceneOrder[i]);
+    if (dot) dot.classList.add('done');
+  }
+  const activeDot = document.getElementById('dot-' + n);
+  if (activeDot) activeDot.classList.add('active');
+
+  const label = document.getElementById('prog-label');
+  if (n === 'final') {
+    label.textContent = '🏆 COMPLETE!';
+  } else {
+    label.textContent = 'Ep ' + n + '/10';
+  }
+}
+
+// Add staggered animation delays to pipeline steps
+document.querySelectorAll('.pipe-step').forEach((el, i) => {
+  el.style.animationDelay = (i * 0.08) + 's';
+});
+document.querySelectorAll('.pod').forEach((el, i) => {
+  el.style.animationDelay = (i * 0.1) + 's';
+});
+</script>
+</body>
+</html>

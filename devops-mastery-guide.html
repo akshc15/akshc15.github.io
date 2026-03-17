@@ -1,0 +1,1474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DevOps Zero to Hero — M4 Master Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700&family=Bebas+Neue&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #060910;
+    --bg2: #0c1018;
+    --panel: #101520;
+    --border: #1e2840;
+    --accent: #00e5ff;
+    --accent2: #ff6b35;
+    --accent3: #7c3aed;
+    --green: #00ff88;
+    --yellow: #ffd60a;
+    --red: #ff4444;
+    --text: #e2e8f0;
+    --muted: #64748b;
+    --mono: 'JetBrains Mono', monospace;
+    --display: 'Bebas Neue', sans-serif;
+    --body: 'DM Sans', sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--body);
+    font-size: 15px;
+    line-height: 1.7;
+  }
+
+  /* HERO */
+  .hero {
+    background: linear-gradient(135deg, #060910 0%, #0a0f1e 50%, #060910 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 60px 40px 50px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -100px; right: -100px;
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(0,229,255,0.06) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero::after {
+    content: '';
+    position: absolute;
+    bottom: -80px; left: 20%;
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(124,58,237,0.05) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(0,229,255,0.08);
+    border: 1px solid rgba(0,229,255,0.25);
+    color: var(--accent);
+    font-family: var(--mono);
+    font-size: 11px;
+    padding: 5px 14px; border-radius: 20px;
+    margin-bottom: 20px;
+    letter-spacing: 0.05em;
+  }
+  .hero-badge::before { content: '●'; animation: blink 1.5s infinite; }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+  .hero h1 {
+    font-family: var(--display);
+    font-size: clamp(42px, 6vw, 80px);
+    line-height: 0.95;
+    letter-spacing: 0.02em;
+    margin-bottom: 16px;
+  }
+  .hero h1 .line1 { color: var(--text); display: block; }
+  .hero h1 .line2 { color: var(--accent); display: block; }
+  .hero h1 .line3 { color: var(--accent2); display: block; }
+
+  .hero-sub {
+    color: var(--muted);
+    font-size: 16px;
+    max-width: 600px;
+    margin-bottom: 30px;
+  }
+
+  .tech-pills {
+    display: flex; flex-wrap: wrap; gap: 8px;
+    margin-bottom: 30px;
+  }
+  .pill {
+    font-family: var(--mono);
+    font-size: 11px;
+    padding: 4px 12px;
+    border-radius: 4px;
+    border: 1px solid;
+    letter-spacing: 0.03em;
+  }
+  .pill-blue { color: var(--accent); border-color: rgba(0,229,255,0.3); background: rgba(0,229,255,0.05); }
+  .pill-orange { color: var(--accent2); border-color: rgba(255,107,53,0.3); background: rgba(255,107,53,0.05); }
+  .pill-purple { color: #a78bfa; border-color: rgba(167,139,250,0.3); background: rgba(167,139,250,0.05); }
+  .pill-green { color: var(--green); border-color: rgba(0,255,136,0.3); background: rgba(0,255,136,0.05); }
+  .pill-yellow { color: var(--yellow); border-color: rgba(255,214,10,0.3); background: rgba(255,214,10,0.05); }
+
+  .stats-row {
+    display: flex; gap: 30px; flex-wrap: wrap;
+  }
+  .stat { text-align: center; }
+  .stat-num {
+    font-family: var(--display);
+    font-size: 32px;
+    color: var(--accent);
+    line-height: 1;
+  }
+  .stat-label {
+    font-size: 11px;
+    color: var(--muted);
+    font-family: var(--mono);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  /* NAV */
+  .nav {
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+    padding: 0 40px;
+    display: flex; gap: 0;
+    overflow-x: auto;
+    position: sticky; top: 0; z-index: 100;
+  }
+  .nav a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 500;
+    padding: 14px 18px;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+    white-space: nowrap;
+    font-family: var(--mono);
+  }
+  .nav a:hover { color: var(--accent); border-bottom-color: var(--accent); }
+
+  /* MAIN */
+  .container { max-width: 1100px; margin: 0 auto; padding: 0 40px; }
+  .section { padding: 50px 0; border-bottom: 1px solid var(--border); }
+  .section:last-child { border-bottom: none; }
+
+  .section-header {
+    display: flex; align-items: center; gap: 16px;
+    margin-bottom: 30px;
+  }
+  .section-num {
+    font-family: var(--display);
+    font-size: 48px;
+    color: var(--border);
+    line-height: 1;
+    min-width: 60px;
+  }
+  .section-title {
+    font-family: var(--display);
+    font-size: 28px;
+    letter-spacing: 0.03em;
+    color: var(--text);
+  }
+  .section-subtitle { color: var(--muted); font-size: 14px; margin-top: 2px; }
+
+  /* CONCEPT BOX */
+  .concept-box {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: 8px;
+    padding: 20px 24px;
+    margin-bottom: 20px;
+  }
+  .concept-box.orange { border-left-color: var(--accent2); }
+  .concept-box.purple { border-left-color: #7c3aed; }
+  .concept-box.green { border-left-color: var(--green); }
+  .concept-box.yellow { border-left-color: var(--yellow); }
+
+  .concept-title {
+    font-family: var(--mono);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--accent);
+    margin-bottom: 8px;
+  }
+  .concept-box.orange .concept-title { color: var(--accent2); }
+  .concept-box.purple .concept-title { color: #a78bfa; }
+  .concept-box.green .concept-title { color: var(--green); }
+  .concept-box.yellow .concept-title { color: var(--yellow); }
+
+  /* STEPS */
+  .step {
+    display: grid;
+    grid-template-columns: 50px 1fr;
+    gap: 0 20px;
+    margin-bottom: 10px;
+    position: relative;
+  }
+  .step:not(:last-child) .step-line {
+    position: absolute;
+    left: 24px; top: 40px; bottom: -10px;
+    width: 2px;
+    background: linear-gradient(to bottom, var(--border), transparent);
+  }
+  .step-num {
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    background: var(--panel);
+    border: 2px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--accent);
+    flex-shrink: 0;
+    margin-top: 4px;
+  }
+  .step-body {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin-bottom: 10px;
+  }
+  .step-title {
+    font-weight: 700;
+    font-size: 15px;
+    margin-bottom: 6px;
+    color: var(--text);
+  }
+  .step-desc { color: var(--muted); font-size: 14px; }
+  .step-desc strong { color: var(--text); }
+
+  /* CODE BLOCK */
+  .code-block {
+    background: #080c14;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 16px 20px;
+    font-family: var(--mono);
+    font-size: 13px;
+    overflow-x: auto;
+    margin: 12px 0;
+    position: relative;
+  }
+  .code-block .cb-label {
+    position: absolute;
+    top: 8px; right: 12px;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+  }
+  .code-block .comment { color: #4a5568; }
+  .code-block .cmd { color: var(--accent); }
+  .code-block .flag { color: var(--accent2); }
+  .code-block .string { color: var(--green); }
+  .code-block .keyword { color: #a78bfa; }
+
+  /* ARCH DIAGRAM */
+  .arch-diagram {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 30px;
+    margin-bottom: 24px;
+    text-align: center;
+  }
+  .arch-row {
+    display: flex; align-items: center; justify-content: center;
+    gap: 0; margin-bottom: 0;
+    flex-wrap: wrap;
+  }
+  .arch-box {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 16px;
+    font-family: var(--mono);
+    font-size: 12px;
+    text-align: center;
+    min-width: 90px;
+  }
+  .arch-box .icon { font-size: 18px; display: block; margin-bottom: 4px; }
+  .arch-box .label { color: var(--muted); font-size: 10px; display: block; }
+  .arch-arrow {
+    color: var(--muted);
+    font-size: 16px;
+    padding: 0 6px;
+    flex-shrink: 0;
+  }
+  .arch-section-title {
+    font-family: var(--mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    margin-bottom: 12px;
+  }
+  .arch-layer {
+    background: rgba(255,255,255,0.02);
+    border: 1px dashed var(--border);
+    border-radius: 10px;
+    padding: 16px;
+    margin-bottom: 10px;
+  }
+
+  /* TOOL CARDS */
+  .tools-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+  .tool-card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+    transition: border-color 0.2s;
+  }
+  .tool-card:hover { border-color: var(--accent); }
+  .tool-icon { font-size: 24px; margin-bottom: 8px; }
+  .tool-name { font-weight: 700; font-size: 14px; margin-bottom: 4px; }
+  .tool-desc { color: var(--muted); font-size: 12px; }
+  .tool-role {
+    margin-top: 8px;
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  /* INTERVIEW Q */
+  .interview-card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin-bottom: 12px;
+    overflow: hidden;
+  }
+  .interview-q {
+    padding: 14px 20px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    display: flex; justify-content: space-between; align-items: center;
+    user-select: none;
+  }
+  .interview-q:hover { background: rgba(0,229,255,0.04); }
+  .interview-q .tag {
+    font-family: var(--mono);
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 3px;
+    background: rgba(0,229,255,0.1);
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-right: 8px;
+    flex-shrink: 0;
+  }
+  .interview-a {
+    padding: 0 20px 14px;
+    color: var(--muted);
+    font-size: 14px;
+    border-top: 1px solid var(--border);
+    display: none;
+  }
+  .interview-a.open { display: block; padding-top: 14px; }
+  .interview-a code {
+    font-family: var(--mono);
+    font-size: 12px;
+    background: rgba(0,229,255,0.08);
+    color: var(--accent);
+    padding: 1px 6px;
+    border-radius: 3px;
+  }
+
+  /* WARNING / TIP */
+  .tip {
+    display: flex; gap: 12px; align-items: flex-start;
+    background: rgba(0,255,136,0.05);
+    border: 1px solid rgba(0,255,136,0.2);
+    border-radius: 8px;
+    padding: 14px 16px;
+    margin-bottom: 16px;
+    font-size: 14px;
+  }
+  .tip.warn {
+    background: rgba(255,214,10,0.05);
+    border-color: rgba(255,214,10,0.2);
+  }
+  .tip.danger {
+    background: rgba(255,68,68,0.05);
+    border-color: rgba(255,68,68,0.2);
+  }
+  .tip-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+  .tip-text { color: var(--muted); }
+  .tip-text strong { color: var(--text); }
+
+  /* PHASE BADGE */
+  .phase-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: var(--mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 4px 12px;
+    border-radius: 4px;
+    margin-bottom: 16px;
+  }
+  .phase-1 { background: rgba(0,229,255,0.08); color: var(--accent); border: 1px solid rgba(0,229,255,0.2); }
+  .phase-2 { background: rgba(255,107,53,0.08); color: var(--accent2); border: 1px solid rgba(255,107,53,0.2); }
+  .phase-3 { background: rgba(124,58,237,0.08); color: #a78bfa; border: 1px solid rgba(124,58,237,0.2); }
+  .phase-4 { background: rgba(0,255,136,0.08); color: var(--green); border: 1px solid rgba(0,255,136,0.2); }
+  .phase-5 { background: rgba(255,214,10,0.08); color: var(--yellow); border: 1px solid rgba(255,214,10,0.2); }
+
+  h3 { font-size: 17px; font-weight: 700; margin-bottom: 12px; color: var(--text); }
+  h4 { font-size: 14px; font-weight: 700; color: var(--muted); margin-bottom: 8px; font-family: var(--mono); text-transform: uppercase; letter-spacing: 0.05em; }
+  p { color: var(--muted); margin-bottom: 12px; }
+  ul { color: var(--muted); padding-left: 20px; margin-bottom: 12px; }
+  ul li { margin-bottom: 4px; font-size: 14px; }
+  ul li strong { color: var(--text); }
+
+  .two-col {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+    margin-bottom: 16px;
+  }
+  @media(max-width:700px) { .two-col { grid-template-columns:1fr; } }
+
+  .divider {
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--border), transparent);
+    margin: 24px 0;
+  }
+
+  /* CHECKLIST */
+  .checklist { list-style: none; padding: 0; }
+  .checklist li {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(30,40,64,0.5);
+    font-size: 14px;
+    color: var(--muted);
+  }
+  .checklist li::before {
+    content: '○';
+    color: var(--border);
+    font-size: 12px;
+    margin-top: 3px;
+    flex-shrink: 0;
+  }
+  .checklist li strong { color: var(--text); }
+
+  .footer {
+    background: var(--bg2);
+    border-top: 1px solid var(--border);
+    padding: 30px 40px;
+    text-align: center;
+    color: var(--muted);
+    font-size: 13px;
+    font-family: var(--mono);
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-badge">M4 Mac · DevOps Zero to Hero · 2026</div>
+  <h1>
+    <span class="line1">DEVOPS</span>
+    <span class="line2">ZERO TO HERO</span>
+    <span class="line3">MASTER GUIDE</span>
+  </h1>
+  <p class="hero-sub">End-to-End Kubernetes Three-Tier DevSecOps on AWS — complete guide built for someone who knows Linux & Cloud. Every click. Every command. Every concept.</p>
+  <div class="tech-pills">
+    <span class="pill pill-blue">AWS EKS</span>
+    <span class="pill pill-orange">Terraform</span>
+    <span class="pill pill-purple">Jenkins</span>
+    <span class="pill pill-green">ArgoCD</span>
+    <span class="pill pill-yellow">Prometheus + Grafana</span>
+    <span class="pill pill-blue">Docker</span>
+    <span class="pill pill-orange">SonarQube</span>
+    <span class="pill pill-purple">Helm</span>
+    <span class="pill pill-green">Kubernetes</span>
+    <span class="pill pill-yellow">OWASP / Trivy</span>
+  </div>
+  <div class="stats-row">
+    <div class="stat"><div class="stat-num">10+</div><div class="stat-label">Tools Mastered</div></div>
+    <div class="stat"><div class="stat-num">5</div><div class="stat-label">Project Phases</div></div>
+    <div class="stat"><div class="stat-num">3</div><div class="stat-label">App Tiers</div></div>
+    <div class="stat"><div class="stat-num">∞</div><div class="stat-label">Interview Ready</div></div>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav class="nav">
+  <a href="#concepts">Concepts</a>
+  <a href="#architecture">Architecture</a>
+  <a href="#phase1">Phase 1: AWS</a>
+  <a href="#phase2">Phase 2: IaC</a>
+  <a href="#phase3">Phase 3: CI/CD</a>
+  <a href="#phase4">Phase 4: GitOps</a>
+  <a href="#phase5">Phase 5: Monitor</a>
+  <a href="#interview">Interview Prep</a>
+  <a href="#checklist">Checklist</a>
+</nav>
+
+<div class="container">
+
+<!-- ==================== SECTION 0: CONCEPTS ==================== -->
+<div class="section" id="concepts">
+  <div class="section-header">
+    <div class="section-num">00</div>
+    <div>
+      <div class="section-title">CONCEPTS — What the Heck is All This?</div>
+      <div class="section-subtitle">Plain English explanations before you touch a single command</div>
+    </div>
+  </div>
+
+  <div class="tip">
+    <span class="tip-icon">💡</span>
+    <div class="tip-text"><strong>Your mental model matters more than memorizing commands.</strong> Every tool here solves a specific pain. Learn the "WHY" first — the "HOW" becomes obvious.</div>
+  </div>
+
+  <div class="two-col">
+    <div class="concept-box">
+      <div class="concept-title">🏗️ What is "Three-Tier" App?</div>
+      Think of it as 3 separate layers: <strong>Frontend</strong> (React — what users see in browser), <strong>Backend</strong> (Node.js — the business logic, API), and <strong>Database</strong> (MongoDB — stores all data). They run independently and talk to each other over a network. This is how ALL real-world production apps are structured.
+    </div>
+    <div class="concept-box orange">
+      <div class="concept-title">🐳 What is Docker?</div>
+      Imagine packing your app + all its dependencies into a sealed box (container) that runs identically everywhere — your Mac, AWS, anywhere. No more "works on my machine" problems. A <strong>Dockerfile</strong> is the recipe. An <strong>image</strong> is the built box. A <strong>container</strong> is the running box.
+    </div>
+  </div>
+
+  <div class="two-col">
+    <div class="concept-box purple">
+      <div class="concept-title">⚙️ What is Kubernetes (K8s)?</div>
+      You have 50 containers running. Who restarts them if they crash? Who scales them under load? Who routes traffic? Kubernetes is the <strong>orchestrator</strong> — it manages fleets of containers. AWS EKS is just Kubernetes hosted on AWS so you don't manage the control plane yourself.
+    </div>
+    <div class="concept-box green">
+      <div class="concept-title">🏗️ What is Terraform?</div>
+      Instead of clicking around AWS console to create servers, you write code files (HCL language) describing what infrastructure you want. Terraform reads those files and creates/destroys/updates your AWS resources. This is <strong>Infrastructure as Code (IaC)</strong> — your infra is version-controlled, repeatable, and reviewable.
+    </div>
+  </div>
+
+  <div class="two-col">
+    <div class="concept-box yellow">
+      <div class="concept-title">🔄 What is CI/CD (Jenkins)?</div>
+      Every time a developer pushes code, you want it automatically tested, scanned for security issues, built into a Docker image, and deployed. <strong>Jenkins</strong> is the automation server that runs these "pipelines" for you. CI = Continuous Integration (build+test). CD = Continuous Deployment (release).
+    </div>
+    <div class="concept-box">
+      <div class="concept-title">🌊 What is GitOps (ArgoCD)?</div>
+      Instead of manually running <code>kubectl apply</code> to deploy, you commit Kubernetes manifests to Git. <strong>ArgoCD</strong> watches your Git repo and automatically syncs the cluster to match what's in Git. Git becomes the <strong>single source of truth</strong> for your cluster state.
+    </div>
+  </div>
+
+  <div class="two-col">
+    <div class="concept-box orange">
+      <div class="concept-title">🔐 What is DevSecOps?</div>
+      Traditional DevOps = build fast, deploy fast. DevSecOps = build fast, deploy fast, <em>securely</em>. We embed security scanning at every step: <strong>SonarQube</strong> (code quality/vulnerabilities), <strong>OWASP Dependency Check</strong> (known vulnerable packages), <strong>Trivy</strong> (container image vulnerabilities). Security is not a gate at the end — it's baked in.
+    </div>
+    <div class="concept-box purple">
+      <div class="concept-title">📊 Prometheus + Grafana?</div>
+      <strong>Prometheus</strong> scrapes metrics from your app and cluster every few seconds (CPU, memory, HTTP request rates, error rates). <strong>Grafana</strong> is the beautiful dashboard that visualizes those metrics. Together they answer: "Is my app healthy right now?" <strong>Helm</strong> is the Kubernetes package manager — like apt/brew but for K8s apps.
+    </div>
+  </div>
+</div>
+
+<!-- ==================== SECTION 1: ARCHITECTURE ==================== -->
+<div class="section" id="architecture">
+  <div class="section-header">
+    <div class="section-num">01</div>
+    <div>
+      <div class="section-title">ARCHITECTURE — The Big Picture</div>
+      <div class="section-subtitle">Understand the full flow before building anything</div>
+    </div>
+  </div>
+
+  <div class="arch-diagram">
+    <div class="arch-section-title">Developer Workflow → Production</div>
+    <div class="arch-layer">
+      <div class="arch-section-title">👨‍💻 Developer (Your M4 Mac)</div>
+      <div class="arch-row">
+        <div class="arch-box"><span class="icon">📝</span>Write Code<span class="label">React/Node/Mongo</span></div>
+        <span class="arch-arrow">→</span>
+        <div class="arch-box"><span class="icon">🐙</span>Git Push<span class="label">GitHub</span></div>
+      </div>
+    </div>
+    <div style="text-align:center;color:#4a5568;margin:6px 0;">↓ Triggers Webhook</div>
+    <div class="arch-layer">
+      <div class="arch-section-title">⚙️ CI Pipeline (Jenkins on AWS EC2)</div>
+      <div class="arch-row">
+        <div class="arch-box"><span class="icon">🔍</span>SonarQube<span class="label">Code Scan</span></div>
+        <span class="arch-arrow">→</span>
+        <div class="arch-box"><span class="icon">🛡️</span>OWASP<span class="label">Dep. Check</span></div>
+        <span class="arch-arrow">→</span>
+        <div class="arch-box"><span class="icon">🐳</span>Docker Build<span class="label">Image</span></div>
+        <span class="arch-arrow">→</span>
+        <div class="arch-box"><span class="icon">🔎</span>Trivy<span class="label">Image Scan</span></div>
+        <span class="arch-arrow">→</span>
+        <div class="arch-box"><span class="icon">📦</span>Push ECR<span class="label">AWS Registry</span></div>
+      </div>
+    </div>
+    <div style="text-align:center;color:#4a5568;margin:6px 0;">↓ Updates K8s manifest in Git</div>
+    <div class="arch-layer">
+      <div class="arch-section-title">🌊 CD / GitOps (ArgoCD on EKS)</div>
+      <div class="arch-row">
+        <div class="arch-box"><span class="icon">🐙</span>GitHub<span class="label">K8s Manifests</span></div>
+        <span class="arch-arrow">→</span>
+        <div class="arch-box"><span class="icon">🌊</span>ArgoCD<span class="label">Watches Repo</span></div>
+        <span class="arch-arrow">→</span>
+        <div class="arch-box"><span class="icon">⚙️</span>AWS EKS<span class="label">K8s Cluster</span></div>
+      </div>
+    </div>
+    <div style="text-align:center;color:#4a5568;margin:6px 0;">↓ Cluster runs your app</div>
+    <div class="arch-layer">
+      <div class="arch-section-title">🏃 Running on EKS</div>
+      <div class="arch-row">
+        <div class="arch-box"><span class="icon">⚛️</span>Frontend<span class="label">React Pod</span></div>
+        <span class="arch-arrow">+</span>
+        <div class="arch-box"><span class="icon">🟢</span>Backend<span class="label">Node.js Pod</span></div>
+        <span class="arch-arrow">+</span>
+        <div class="arch-box"><span class="icon">🍃</span>Database<span class="label">MongoDB Pod</span></div>
+        <span class="arch-arrow">+</span>
+        <div class="arch-box"><span class="icon">📊</span>Monitor<span class="label">Prometheus/Grafana</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tools-grid">
+    <div class="tool-card">
+      <div class="tool-icon">🏗️</div>
+      <div class="tool-name">Terraform</div>
+      <div class="tool-desc">Creates your Jenkins EC2 + EKS cluster automatically via code</div>
+      <div class="tool-role">Infrastructure as Code</div>
+    </div>
+    <div class="tool-card">
+      <div class="tool-icon">🐳</div>
+      <div class="tool-name">Docker</div>
+      <div class="tool-desc">Packages frontend & backend into container images</div>
+      <div class="tool-role">Containerization</div>
+    </div>
+    <div class="tool-card">
+      <div class="tool-icon">⚙️</div>
+      <div class="tool-name">Jenkins</div>
+      <div class="tool-desc">Automation server that runs your CI pipeline on every code push</div>
+      <div class="tool-role">CI Orchestration</div>
+    </div>
+    <div class="tool-card">
+      <div class="tool-icon">📦</div>
+      <div class="tool-name">AWS ECR</div>
+      <div class="tool-desc">Private Docker image registry on AWS — stores your built images</div>
+      <div class="tool-role">Image Registry</div>
+    </div>
+    <div class="tool-card">
+      <div class="tool-icon">☸️</div>
+      <div class="tool-name">AWS EKS</div>
+      <div class="tool-desc">Managed Kubernetes cluster — runs all your app containers</div>
+      <div class="tool-role">Container Orchestration</div>
+    </div>
+    <div class="tool-card">
+      <div class="tool-icon">🌊</div>
+      <div class="tool-name">ArgoCD</div>
+      <div class="tool-desc">GitOps CD tool — syncs cluster state to what's in your Git repo</div>
+      <div class="tool-role">GitOps / CD</div>
+    </div>
+    <div class="tool-card">
+      <div class="tool-icon">🔍</div>
+      <div class="tool-name">SonarQube</div>
+      <div class="tool-desc">Scans source code for bugs, smells, security vulnerabilities</div>
+      <div class="tool-role">Code Quality / SAST</div>
+    </div>
+    <div class="tool-card">
+      <div class="tool-icon">⚓</div>
+      <div class="tool-name">Helm</div>
+      <div class="tool-desc">K8s package manager — install Prometheus/Grafana with one command</div>
+      <div class="tool-role">K8s Packaging</div>
+    </div>
+    <div class="tool-card">
+      <div class="tool-icon">📈</div>
+      <div class="tool-name">Prometheus</div>
+      <div class="tool-desc">Time-series metrics collection from cluster & applications</div>
+      <div class="tool-role">Metrics / Alerting</div>
+    </div>
+    <div class="tool-card">
+      <div class="tool-icon">📊</div>
+      <div class="tool-name">Grafana</div>
+      <div class="tool-desc">Dashboard UI to visualize Prometheus metrics beautifully</div>
+      <div class="tool-role">Observability</div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== PHASE 1: AWS SETUP ==================== -->
+<div class="section" id="phase1">
+  <div class="section-header">
+    <div class="section-num">02</div>
+    <div>
+      <div class="section-title">PHASE 1 — AWS Account + IAM Setup</div>
+      <div class="section-subtitle">The foundation. Done wrong = everything breaks.</div>
+    </div>
+  </div>
+  <div class="phase-badge phase-1">⚡ Phase 1 · Prerequisites</div>
+
+  <div class="tip warn">
+    <span class="tip-icon">⚠️</span>
+    <div class="tip-text"><strong>Free tier won't fully cover this project.</strong> EKS + EC2 t3.medium will cost ~$3–8/day. Always destroy resources when not learning. Budget ~$50 total if you work efficiently. Keep AWS Cost Explorer open.</div>
+  </div>
+
+  <h3>Step 1.1 — Create AWS Account</h3>
+  <div class="step">
+    <div><div class="step-num">1</div><div class="step-line"></div></div>
+    <div class="step-body">
+      <div class="step-title">Go to aws.amazon.com → Create an AWS Account</div>
+      <div class="step-desc">Click <strong>"Create an AWS Account"</strong> (top right). Enter your email, create a password, account name (e.g. "my-devops-lab"). Choose <strong>Personal account</strong>. Enter credit card (required even for free tier). Choose <strong>Basic Support (Free)</strong>. Verify your phone number via OTP. You'll land on the AWS Console.</div>
+    </div>
+  </div>
+  <div class="step">
+    <div><div class="step-num">2</div><div class="step-line"></div></div>
+    <div class="step-body">
+      <div class="step-title">Secure your Root Account (CRITICAL)</div>
+      <div class="step-desc">Click your name (top right) → <strong>Security Credentials</strong> → Enable <strong>MFA (Multi-Factor Authentication)</strong>. Use Google Authenticator or Authy. <em>Never use root for daily work.</em></div>
+    </div>
+  </div>
+  <div class="step">
+    <div><div class="step-num">3</div><div class="step-line"></div></div>
+    <div class="step-body">
+      <div class="step-title">Create IAM User (your working account)</div>
+      <div class="step-desc">Go to <strong>IAM service</strong> → Left menu → <strong>Users</strong> → <strong>Create user</strong>. Name: <code>devops-admin</code>. Check <strong>"Provide user access to the AWS Management Console"</strong>. Attach policy: <strong>AdministratorAccess</strong> (for learning — in real jobs you'd use least privilege). Click through to create. <strong>Download the CSV with credentials</strong> — you can't see these again.</div>
+    </div>
+  </div>
+  <div class="step">
+    <div><div class="step-num">4</div><div class="step-line"></div></div>
+    <div class="step-body">
+      <div class="step-title">Create Access Keys (for CLI/Terraform)</div>
+      <div class="step-desc">In IAM → Users → <code>devops-admin</code> → <strong>Security credentials tab</strong> → <strong>Create access key</strong>. Choose <strong>"CLI"</strong>. Note down <strong>Access Key ID</strong> and <strong>Secret Access Key</strong>. These are like a username/password for programmatic access.</div>
+    </div>
+  </div>
+  <div class="step">
+    <div><div class="step-num">5</div></div>
+    <div class="step-body">
+      <div class="step-title">Install tools on your M4 Mac</div>
+      <div class="step-desc">Open Terminal on your M4 and run each block:</div>
+      <div class="code-block">
+        <span class="cb-label">Terminal — M4 Mac</span>
+        <span class="comment"># Install Homebrew first (Mac package manager)</span><br>
+        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"<br><br>
+        <span class="comment"># Install AWS CLI</span><br>
+        brew install awscli<br><br>
+        <span class="comment"># Install Terraform</span><br>
+        brew tap hashicorp/tap && brew install hashicorp/tap/terraform<br><br>
+        <span class="comment"># Install kubectl (Kubernetes CLI)</span><br>
+        brew install kubectl<br><br>
+        <span class="comment"># Install eksctl (EKS helper CLI)</span><br>
+        brew install eksctl<br><br>
+        <span class="comment"># Install Helm (K8s package manager)</span><br>
+        brew install helm<br><br>
+        <span class="comment"># Install Git</span><br>
+        brew install git
+      </div>
+      <div class="code-block">
+        <span class="cb-label">Configure AWS CLI with your IAM keys</span>
+        aws configure<br>
+        <span class="comment"># It asks 4 things:</span><br>
+        <span class="comment"># AWS Access Key ID: [paste your key]</span><br>
+        <span class="comment"># AWS Secret Access Key: [paste your secret]</span><br>
+        <span class="comment"># Default region name: us-east-1</span><br>
+        <span class="comment"># Default output format: json</span><br><br>
+        <span class="comment"># Verify it works:</span><br>
+        aws sts get-caller-identity
+      </div>
+    </div>
+  </div>
+
+  <div class="concept-box green">
+    <div class="concept-title">🧠 What Just Happened?</div>
+    You created a non-root IAM user for safety, gave it admin access, and configured the AWS CLI with credentials. Now every <code>terraform apply</code> or <code>aws</code> command on your Mac will talk to your AWS account automatically. The region <code>us-east-1</code> (North Virginia) is cheapest and most feature-rich.
+  </div>
+
+  <h3>Step 1.2 — Fork the Project Repository</h3>
+  <div class="step">
+    <div><div class="step-num">1</div><div class="step-line"></div></div>
+    <div class="step-body">
+      <div class="step-title">Fork on GitHub</div>
+      <div class="step-desc">Go to <a href="https://github.com/AmanPathak-DevOps/End-to-End-Kubernetes-Three-Tier-DevSecOps-Project" style="color:var(--accent)">the project repo</a> → Click <strong>"Fork"</strong> (top right) → <strong>Create fork</strong>. This creates your own copy you can modify.</div>
+    </div>
+  </div>
+  <div class="step">
+    <div><div class="step-num">2</div></div>
+    <div class="step-body">
+      <div class="step-title">Clone to your M4 Mac</div>
+      <div class="code-block">
+        git clone https://github.com/YOUR-USERNAME/End-to-End-Kubernetes-Three-Tier-DevSecOps-Project.git<br>
+        cd End-to-End-Kubernetes-Three-Tier-DevSecOps-Project<br>
+        ls -la
+      </div>
+      <div class="step-desc">You'll see folders: <strong>Application-Code</strong> (React + Node app), <strong>Jenkins-Server-TF</strong> (Terraform for Jenkins EC2), <strong>Jenkins-Pipeline-Code</strong> (Jenkinsfiles), <strong>Kubernetes-Manifests-file</strong> (K8s YAML files).</div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== PHASE 2: TERRAFORM / IaC ==================== -->
+<div class="section" id="phase2">
+  <div class="section-header">
+    <div class="section-num">03</div>
+    <div>
+      <div class="section-title">PHASE 2 — Terraform Infrastructure Setup</div>
+      <div class="section-subtitle">Provision Jenkins server + EKS cluster with code — not clicks</div>
+    </div>
+  </div>
+  <div class="phase-badge phase-2">🏗️ Phase 2 · Infrastructure as Code</div>
+
+  <div class="concept-box orange">
+    <div class="concept-title">🧠 Terraform Core Concepts</div>
+    <strong>Provider</strong> = tells Terraform "talk to AWS". <strong>Resource</strong> = a thing you want (EC2, VPC, EKS). <strong>State file</strong> = Terraform's memory of what exists. <strong>terraform init</strong> = download providers. <strong>terraform plan</strong> = preview changes. <strong>terraform apply</strong> = actually create resources. <strong>terraform destroy</strong> = delete everything (SAVE MONEY!).
+  </div>
+
+  <h3>Step 2.1 — Deploy Jenkins Server via Terraform</h3>
+  <div class="step">
+    <div><div class="step-num">1</div><div class="step-line"></div></div>
+    <div class="step-body">
+      <div class="step-title">Understand what the Terraform code creates</div>
+      <div class="step-desc">Open <code>Jenkins-Server-TF/</code> in your editor. It creates: an <strong>EC2 instance</strong> (t2.large — Jenkins needs memory), a <strong>Security Group</strong> (firewall rules — opens port 22 for SSH, 8080 for Jenkins, 9000 for SonarQube), an <strong>IAM Role</strong> (so Jenkins can talk to AWS services). It also runs a <strong>user_data script</strong> that auto-installs Jenkins, Docker, SonarQube, Trivy, Terraform, kubectl on launch.</div>
+    </div>
+  </div>
+  <div class="step">
+    <div><div class="step-num">2</div><div class="step-line"></div></div>
+    <div class="step-body">
+      <div class="step-title">Create an S3 bucket for Terraform state (best practice)</div>
+      <div class="step-desc">S3 stores your terraform.tfstate so multiple people/machines can share it. Do this ONCE:</div>
+      <div class="code-block">
+        <span class="comment"># Create S3 bucket (replace YOUR-UNIQUE-NAME — must be globally unique)</span><br>
+        aws s3 mb s3://my-devops-tfstate-2026-YOUR-UNIQUE-NAME <span class="flag">--region</span> us-east-1<br><br>
+        <span class="comment"># Enable versioning (so you can roll back state)</span><br>
+        aws s3api put-bucket-versioning <span class="flag">--bucket</span> my-devops-tfstate-2026-YOUR-UNIQUE-NAME \<br>
+          <span class="flag">--versioning-configuration</span> Status=Enabled
+      </div>
+    </div>
+  </div>
+  <div class="step">
+    <div><div class="step-num">3</div><div class="step-line"></div></div>
+    <div class="step-body">
+      <div class="step-title">Create an EC2 Key Pair (to SSH into Jenkins)</div>
+      <div class="step-desc">In AWS Console → <strong>EC2</strong> → Left menu → <strong>Key Pairs</strong> → <strong>Create key pair</strong>. Name: <code>devops-key</code>, Format: <code>.pem</code>. The .pem file downloads automatically. Move it and secure it:</div>
+      <div class="code-block">
+        mv ~/Downloads/devops-key.pem ~/.ssh/<br>
+        chmod 400 ~/.ssh/devops-key.pem
+      </div>
+    </div>
+  </div>
+  <div class="step">
+    <div><div class="step-num">4</div><div class="step-line"></div></div>
+    <div class="step-body">
+      <div class="step-title">Run Terraform to create Jenkins server</div>
+      <div class="code-block">
+        cd Jenkins-Server-TF/<br><br>
+        <span class="comment"># Initialize — downloads AWS provider plugin</span><br>
+        terraform init<br><br>
+        <span class="comment"># Preview what will be created (READ THIS carefully)</span><br>
+        terraform plan<br><br>
+        <span class="comment"># Create it (type 'yes' when prompted)</span><br>
+        terraform apply<br><br>
+        <span class="comment"># After ~3-5 minutes, note the EC2 public IP in output</span>
+      </div>
+    </div>
+  </div>
+  <div class="step">
+    <div><div class="step-num">5</div></div>
+    <div class="step-body">
+      <div class="step-title">SSH into Jenkins server & verify setup</div>
+      <div class="code-block">
+        ssh -i ~/.ssh/devops-key.pem ubuntu@&lt;EC2-PUBLIC-IP&gt;<br><br>
+        <span class="comment"># Check Jenkins is running</span><br>
+        sudo systemctl status jenkins<br><br>
+        <span class="comment"># Get initial Jenkins admin password</span><br>
+        sudo cat /var/lib/jenkins/secrets/initialAdminPassword<br><br>
+        <span class="comment"># Copy this password — you'll need it in browser</span>
+      </div>
+      <div class="step-desc">Open browser: <code>http://&lt;EC2-IP&gt;:8080</code> → paste the password → Install <strong>suggested plugins</strong> → Create admin user.</div>
+    </div>
+  </div>
+
+  <h3>Step 2.2 — Create EKS Cluster with eksctl</h3>
+  <div class="tip">
+    <span class="tip-icon">💡</span>
+    <div class="tip-text"><strong>EKS = your Kubernetes cluster on AWS.</strong> It takes 15–20 minutes to create. This is where your React, Node.js, MongoDB, ArgoCD, and Prometheus will all run as containers (pods).</div>
+  </div>
+  <div class="step">
+    <div><div class="step-num">1</div><div class="step-line"></div></div>
+    <div class="step-body">
+      <div class="step-title">Create the EKS cluster (run from your M4 Mac)</div>
+      <div class="code-block">
+        eksctl create cluster \<br>
+          <span class="flag">--name</span> <span class="string">three-tier-cluster</span> \<br>
+          <span class="flag">--region</span> <span class="string">us-east-1</span> \<br>
+          <span class="flag">--node-type</span> <span class="string">t3.medium</span> \<br>
+          <span class="flag">--nodes</span> 2 \<br>
+          <span class="flag">--nodes-min</span> 2 \<br>
+          <span class="flag">--nodes-max</span> 4 \<br>
+          <span class="flag">--managed</span><br><br>
+        <span class="comment"># Takes 15-20 minutes. Grab coffee ☕</span><br>
+        <span class="comment"># This creates: VPC, Subnets, IAM Roles, EC2 worker nodes, EKS control plane</span>
+      </div>
+    </div>
+  </div>
+  <div class="step">
+    <div><div class="step-num">2</div></div>
+    <div class="step-body">
+      <div class="step-title">Connect kubectl to your new cluster</div>
+      <div class="code-block">
+        <span class="comment"># Update kubeconfig so kubectl talks to your EKS cluster</span><br>
+        aws eks update-kubeconfig <span class="flag">--region</span> us-east-1 <span class="flag">--name</span> three-tier-cluster<br><br>
+        <span class="comment"># Verify nodes are running</span><br>
+        kubectl get nodes<br>
+        <span class="comment"># Should show 2 nodes in "Ready" state</span>
+      </div>
+    </div>
+  </div>
+
+  <h3>Step 2.3 — Set Up AWS ECR (Private Image Registry)</h3>
+  <div class="step">
+    <div><div class="step-num">1</div></div>
+    <div class="step-body">
+      <div class="step-title">Create ECR repositories for frontend and backend</div>
+      <div class="step-desc">AWS Console → <strong>ECR</strong> (Elastic Container Registry) → <strong>Create repository</strong>. Create two: one named <code>frontend</code>, one named <code>backend</code>. Choose <strong>Private</strong>. Note the repository URIs — they look like: <code>123456789.dkr.ecr.us-east-1.amazonaws.com/frontend</code></div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== PHASE 3: CI/CD ==================== -->
+<div class="section" id="phase3">
+  <div class="section-header">
+    <div class="section-num">04</div>
+    <div>
+      <div class="section-title">PHASE 3 — Jenkins CI/CD Pipeline</div>
+      <div class="section-subtitle">Automate: test → scan → build → push → deploy on every git push</div>
+    </div>
+  </div>
+  <div class="phase-badge phase-3">⚙️ Phase 3 · Continuous Integration</div>
+
+  <div class="concept-box purple">
+    <div class="concept-title">🧠 Jenkinsfile — The Pipeline as Code</div>
+    A <strong>Jenkinsfile</strong> is a Groovy script that defines your pipeline stages. It lives in your Git repo. Jenkins reads it and executes each stage: Checkout Code → SonarQube Analysis → OWASP Check → Docker Build → Trivy Scan → Push to ECR → Update K8s manifest. This is <strong>Pipeline as Code</strong> — your CI/CD process is version-controlled.
+  </div>
+
+  <h3>Step 3.1 — Configure Jenkins Plugins & Tools</h3>
+  <div class="step">
+    <div><div class="step-num">1</div><div class="step-line"></div></div>
+    <div class="step-body">
+      <div class="step-title">Install required Jenkins plugins</div>
+      <div class="step-desc">In Jenkins → <strong>Manage Jenkins</strong> → <strong>Plugins</strong> → <strong>Available plugins</strong>. Search and install each: <strong>Docker Pipeline</strong>, <strong>Amazon ECR</strong>, <strong>AWS Credentials</strong>, <strong>SonarQube Scanner</strong>, <strong>OWASP Dependency-Check</strong>, <strong>NodeJS</strong>, <strong>Pipeline: AWS Steps</strong>. Click <strong>Install without restart</strong>.</div>
+    </div>
+  </div>
+  <div class="step">
+    <div><div class="step-num">2</div><div class="step-line"></div></div>
+    <div class="step-body">
+      <div class="step-title">Configure AWS Credentials in Jenkins</div>
+      <div class="step-desc">Jenkins → <strong>Manage Jenkins</strong> → <strong>Credentials</strong> → <strong>Global</strong> → <strong>Add Credentials</strong>. Kind: <strong>AWS Credentials</strong>. ID: <code>aws-creds</code>. Paste your Access Key ID and Secret Access Key from IAM. This lets Jenkins push to ECR.</div>
+    </div>
+  </div>
+  <div class="step">
+    <div><div class="step-num">3</div><div class="step-line"></div></div>
+    <div class="step-body">
+      <div class="step-title">Configure SonarQube</div>
+      <div class="step-desc">SonarQube runs on same EC2 at port 9000. Open <code>http://&lt;EC2-IP&gt;:9000</code>. Default login: <code>admin/admin</code>. Change password. Then: <strong>Administration</strong> → <strong>Security</strong> → <strong>Users</strong> → Generate a token. Copy it. In Jenkins → <strong>Manage Jenkins</strong> → <strong>System</strong> → <strong>SonarQube servers</strong> → Add server URL <code>http://&lt;EC2-IP&gt;:9000</code> and paste the token as a credential.</div>
+    </div>
+  </div>
+  <div class="step">
+    <div><div class="step-num">4</div></div>
+    <div class="step-body">
+      <div class="step-title">Add GitHub credential to Jenkins</div>
+      <div class="step-desc">Jenkins → Credentials → Add. Kind: <strong>Username with password</strong>. Username: your GitHub username. Password: a GitHub <strong>Personal Access Token</strong> (not your real password). Generate token at: GitHub → Settings → Developer settings → Personal access tokens → Tokens (classic) → Generate new token → check <code>repo</code> scope.</div>
+    </div>
+  </div>
+
+  <h3>Step 3.2 — The Jenkins Pipeline Stages (Explained)</h3>
+  <div class="code-block">
+    <span class="cb-label">Jenkinsfile — Frontend Pipeline (simplified walkthrough)</span>
+    <span class="keyword">pipeline</span> {<br>
+    &nbsp;&nbsp;<span class="keyword">agent</span> any<br>
+    &nbsp;&nbsp;<span class="keyword">stages</span> {<br><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">stage</span>(<span class="string">'Checkout'</span>) {<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Pull your code from GitHub</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;}<br><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">stage</span>(<span class="string">'SonarQube Analysis'</span>) {<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Scan source code → sends report to SonarQube dashboard</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// FAIL pipeline if quality gate fails (critical bugs found)</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;}<br><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">stage</span>(<span class="string">'OWASP Dependency Check'</span>) {<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Scan package.json for known CVEs in npm packages</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// e.g. "you're using lodash 4.17.0 which has CVE-2021-xxxx"</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;}<br><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">stage</span>(<span class="string">'Docker Build'</span>) {<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// docker build -t frontend:${BUILD_NUMBER} .</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Creates a Docker image from your Dockerfile</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;}<br><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">stage</span>(<span class="string">'Trivy Image Scan'</span>) {<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// trivy image --severity HIGH,CRITICAL frontend:tag</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Scans the BUILT IMAGE for OS/library vulnerabilities</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;}<br><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">stage</span>(<span class="string">'Push to ECR'</span>) {<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Tag image with ECR URI and push</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// aws ecr get-login-password | docker login</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// docker push 123456789.dkr.ecr.us-east-1.amazonaws.com/frontend:tag</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;}<br><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">stage</span>(<span class="string">'Update K8s Manifest'</span>) {<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Update image tag in deployment.yaml in your Git repo</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// git commit && git push → ArgoCD detects this and redeploys</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+    &nbsp;&nbsp;}<br>
+    }
+  </div>
+
+  <h3>Step 3.3 — Create Jenkins Pipeline Jobs</h3>
+  <div class="step">
+    <div><div class="step-num">1</div><div class="step-line"></div></div>
+    <div class="step-body">
+      <div class="step-title">Create Frontend Pipeline</div>
+      <div class="step-desc">Jenkins dashboard → <strong>New Item</strong> → Name: <code>frontend-pipeline</code> → <strong>Pipeline</strong> → OK. In config: <strong>Pipeline</strong> section → Definition: <strong>Pipeline script from SCM</strong> → SCM: <strong>Git</strong> → Repo URL: your forked repo → Branch: <code>*/main</code> → Script Path: <code>Jenkins-Pipeline-Code/Jenkinsfile-Frontend</code>. Click <strong>Save</strong>.</div>
+    </div>
+  </div>
+  <div class="step">
+    <div><div class="step-num">2</div><div class="step-line"></div></div>
+    <div class="step-body">
+      <div class="step-title">Create Backend Pipeline (same process)</div>
+      <div class="step-desc">Repeat for <code>backend-pipeline</code> → Script Path: <code>Jenkins-Pipeline-Code/Jenkinsfile-Backend</code>.</div>
+    </div>
+  </div>
+  <div class="step">
+    <div><div class="step-num">3</div></div>
+    <div class="step-body">
+      <div class="step-title">Set up GitHub Webhook (auto-trigger on push)</div>
+      <div class="step-desc">In your GitHub repo → <strong>Settings</strong> → <strong>Webhooks</strong> → <strong>Add webhook</strong>. Payload URL: <code>http://&lt;JENKINS-EC2-IP&gt;:8080/github-webhook/</code>. Content type: <code>application/json</code>. Event: <strong>Just the push event</strong>. Add webhook. Now every git push triggers your pipeline automatically.</div>
+    </div>
+  </div>
+
+  <div class="tip">
+    <span class="tip-icon">✅</span>
+    <div class="tip-text"><strong>Test it!</strong> Make a small code change in <code>Application-Code/frontend/src/</code>, commit and push. Watch Jenkins run automatically. Check SonarQube dashboard for the scan report. Check ECR for the new image. This is the moment it all clicks.</div>
+  </div>
+</div>
+
+<!-- ==================== PHASE 4: GITOPS / ARGOCD ==================== -->
+<div class="section" id="phase4">
+  <div class="section-header">
+    <div class="section-num">05</div>
+    <div>
+      <div class="section-title">PHASE 4 — ArgoCD GitOps Deployment</div>
+      <div class="section-subtitle">Deploy your app to Kubernetes — Git is the source of truth</div>
+    </div>
+  </div>
+  <div class="phase-badge phase-4">🌊 Phase 4 · GitOps / CD</div>
+
+  <div class="concept-box green">
+    <div class="concept-title">🧠 How ArgoCD Works</div>
+    ArgoCD runs inside your EKS cluster. It watches a Git repo (your Kubernetes-Manifests-file folder). When the Jenkins pipeline updates the image tag in <code>deployment.yaml</code> and pushes to Git, ArgoCD detects the change within seconds and automatically runs <code>kubectl apply</code> on your cluster. Zero manual deployment. <strong>Git commit = production deploy.</strong>
+  </div>
+
+  <h3>Step 4.1 — Install ArgoCD on EKS</h3>
+  <div class="step">
+    <div><div class="step-num">1</div><div class="step-line"></div></div>
+    <div class="step-body">
+      <div class="step-title">Install ArgoCD via kubectl</div>
+      <div class="code-block">
+        <span class="comment"># Create a namespace for ArgoCD</span><br>
+        kubectl create namespace argocd<br><br>
+        <span class="comment"># Install ArgoCD using official manifests</span><br>
+        kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml<br><br>
+        <span class="comment"># Watch until all pods are Running (takes 2-3 min)</span><br>
+        kubectl get pods -n argocd -w
+      </div>
+    </div>
+  </div>
+  <div class="step">
+    <div><div class="step-num">2</div><div class="step-line"></div></div>
+    <div class="step-body">
+      <div class="step-title">Expose ArgoCD UI via LoadBalancer</div>
+      <div class="code-block">
+        <span class="comment"># Change service type to LoadBalancer (gets a public AWS ELB)</span><br>
+        kubectl patch svc argocd-server -n argocd -p '{"spec": {"type": "LoadBalancer"}}'<br><br>
+        <span class="comment"># Get the public URL (wait 1-2 min for ELB to provision)</span><br>
+        kubectl get svc argocd-server -n argocd<br>
+        <span class="comment"># Note the EXTERNAL-IP — that's your ArgoCD URL</span>
+      </div>
+    </div>
+  </div>
+  <div class="step">
+    <div><div class="step-num">3</div><div class="step-line"></div></div>
+    <div class="step-body">
+      <div class="step-title">Get initial ArgoCD password & log in</div>
+      <div class="code-block">
+        <span class="comment"># Get initial admin password (it's stored as a K8s secret)</span><br>
+        kubectl -n argocd get secret argocd-initial-admin-secret \<br>
+          -o jsonpath="{.data.password}" | base64 -d
+      </div>
+      <div class="step-desc">Open browser → <code>https://&lt;EXTERNAL-IP&gt;</code> → username: <code>admin</code> → paste password. You're in!</div>
+    </div>
+  </div>
+
+  <h3>Step 4.2 — Create ArgoCD Applications</h3>
+  <div class="step">
+    <div><div class="step-num">1</div><div class="step-line"></div></div>
+    <div class="step-body">
+      <div class="step-title">Create namespaces for your app</div>
+      <div class="code-block">
+        kubectl create namespace three-tier<br>
+        kubectl create namespace monitoring
+      </div>
+    </div>
+  </div>
+  <div class="step">
+    <div><div class="step-num">2</div><div class="step-line"></div></div>
+    <div class="step-body">
+      <div class="step-title">Configure ECR image pull secret</div>
+      <div class="step-desc">EKS needs permission to pull images from your private ECR. Run on Jenkins EC2 or your Mac:</div>
+      <div class="code-block">
+        <span class="comment"># Get ECR login token and create K8s secret</span><br>
+        kubectl create secret docker-registry ecr-secret \<br>
+          <span class="flag">--docker-server</span>=&lt;ACCOUNT-ID&gt;.dkr.ecr.us-east-1.amazonaws.com \<br>
+          <span class="flag">--docker-username</span>=AWS \<br>
+          <span class="flag">--docker-password</span>=$(aws ecr get-login-password <span class="flag">--region</span> us-east-1) \<br>
+          -n three-tier
+      </div>
+    </div>
+  </div>
+  <div class="step">
+    <div><div class="step-num">3</div></div>
+    <div class="step-body">
+      <div class="step-title">Create ArgoCD Application for Frontend, Backend, Database</div>
+      <div class="step-desc">In ArgoCD UI → <strong>+ New App</strong>. For Frontend: Application Name: <code>frontend</code>. Project: <code>default</code>. Sync Policy: <strong>Automatic</strong>. Repository URL: your GitHub repo. Revision: <code>HEAD</code>. Path: <code>Kubernetes-Manifests-file/Frontend</code>. Cluster URL: <code>https://kubernetes.default.svc</code>. Namespace: <code>three-tier</code>. Click <strong>Create</strong>. Repeat for Backend and Database.</div>
+    </div>
+  </div>
+  <div class="step">
+    <div><div class="step-num">4</div></div>
+    <div class="step-body">
+      <div class="step-title">Set up AWS Load Balancer Controller</div>
+      <div class="step-desc">The app needs an internet-facing load balancer to route traffic. Install the AWS LB Controller:</div>
+      <div class="code-block">
+        <span class="comment"># Add the Helm chart repo</span><br>
+        helm repo add eks https://aws.github.io/eks-charts<br>
+        helm repo update<br><br>
+        <span class="comment"># Install (replace YOUR-CLUSTER-NAME and ACCOUNT-ID)</span><br>
+        helm install aws-load-balancer-controller eks/aws-load-balancer-controller \<br>
+          -n kube-system \<br>
+          <span class="flag">--set</span> clusterName=three-tier-cluster \<br>
+          <span class="flag">--set</span> serviceAccount.create=false \<br>
+          <span class="flag">--set</span> serviceAccount.name=aws-load-balancer-controller<br><br>
+        <span class="comment"># Verify</span><br>
+        kubectl get deployment -n kube-system aws-load-balancer-controller
+      </div>
+    </div>
+  </div>
+
+  <div class="tip">
+    <span class="tip-icon">🎉</span>
+    <div class="tip-text"><strong>At this point your app is LIVE on the internet!</strong> Get the frontend service's external IP/URL with <code>kubectl get svc -n three-tier</code>. Open in browser. You'll see the React app talking to Node.js talking to MongoDB — all running in Kubernetes on AWS.</div>
+  </div>
+</div>
+
+<!-- ==================== PHASE 5: MONITORING ==================== -->
+<div class="section" id="phase5">
+  <div class="section-header">
+    <div class="section-num">06</div>
+    <div>
+      <div class="section-title">PHASE 5 — Monitoring with Prometheus + Grafana</div>
+      <div class="section-subtitle">Observe everything — cluster health, app performance, resource usage</div>
+    </div>
+  </div>
+  <div class="phase-badge phase-5">📊 Phase 5 · Observability</div>
+
+  <h3>Step 5.1 — Install Prometheus + Grafana via Helm</h3>
+  <div class="concept-box yellow">
+    <div class="concept-title">🧠 Why Helm here?</div>
+    Prometheus + Grafana require 10+ Kubernetes YAML files (Deployments, Services, ConfigMaps, RBAC roles, ServiceMonitors...). Helm wraps all of this into one installable "chart" — like an app package. <strong>kube-prometheus-stack</strong> is the industry-standard chart that installs everything pre-configured.
+  </div>
+  <div class="step">
+    <div><div class="step-num">1</div><div class="step-line"></div></div>
+    <div class="step-body">
+      <div class="step-title">Add Prometheus Helm repo and install</div>
+      <div class="code-block">
+        <span class="comment"># Add the repo</span><br>
+        helm repo add prometheus-community https://prometheus-community.github.io/helm-charts<br>
+        helm repo update<br><br>
+        <span class="comment"># Install kube-prometheus-stack (includes Prometheus + Grafana + AlertManager)</span><br>
+        helm install prometheus prometheus-community/kube-prometheus-stack \<br>
+          -n monitoring \<br>
+          <span class="flag">--set</span> grafana.service.type=LoadBalancer<br><br>
+        <span class="comment"># Watch pods come up</span><br>
+        kubectl get pods -n monitoring -w
+      </div>
+    </div>
+  </div>
+  <div class="step">
+    <div><div class="step-num">2</div><div class="step-line"></div></div>
+    <div class="step-body">
+      <div class="step-title">Get Grafana URL and log in</div>
+      <div class="code-block">
+        <span class="comment"># Get the LoadBalancer URL for Grafana</span><br>
+        kubectl get svc -n monitoring | grep grafana<br><br>
+        <span class="comment"># Default credentials:</span><br>
+        <span class="comment"># Username: admin</span><br>
+        <span class="comment"># Password: prom-operator</span>
+      </div>
+      <div class="step-desc">Open Grafana in browser. Go to <strong>Dashboards</strong> → Import → Dashboard ID <code>15760</code> (Kubernetes cluster overview). You'll see live CPU, memory, pod counts, network traffic for your entire EKS cluster.</div>
+    </div>
+  </div>
+  <div class="step">
+    <div><div class="step-num">3</div></div>
+    <div class="step-body">
+      <div class="step-title">Explore key Grafana dashboards</div>
+      <div class="step-desc">Import these popular dashboard IDs: <strong>15760</strong> — Kubernetes cluster monitoring. <strong>13770</strong> — Node exporter. <strong>7249</strong> — Node.js application metrics. These give you instant professional dashboards with zero configuration.</div>
+    </div>
+  </div>
+
+  <h3>🧹 Step 5.2 — Teardown (SAVE MONEY — DO THIS after each session)</h3>
+  <div class="tip danger">
+    <span class="tip-icon">💸</span>
+    <div class="tip-text"><strong>EKS alone costs ~$0.10/hour just for the control plane + EC2 node costs. Always destroy when done.</strong> You can recreate in 20 min from Terraform code.</div>
+  </div>
+  <div class="code-block">
+    <span class="comment"># Delete EKS cluster (15-20 min)</span><br>
+    eksctl delete cluster <span class="flag">--name</span> three-tier-cluster <span class="flag">--region</span> us-east-1<br><br>
+    <span class="comment"># Destroy Jenkins EC2 server</span><br>
+    cd Jenkins-Server-TF/ && terraform destroy<br><br>
+    <span class="comment"># Verify in AWS Console → EC2 → no instances running</span><br>
+    <span class="comment"># Check Billing → Cost Explorer to confirm</span>
+  </div>
+</div>
+
+<!-- ==================== INTERVIEW PREP ==================== -->
+<div class="section" id="interview">
+  <div class="section-header">
+    <div class="section-num">07</div>
+    <div>
+      <div class="section-title">INTERVIEW PREP — Crack Every Question</div>
+      <div class="section-subtitle">Real questions they'll ask + sharp answers. Click each to expand.</div>
+    </div>
+  </div>
+
+  <div class="tip">
+    <span class="tip-icon">🎯</span>
+    <div class="tip-text"><strong>Strategy:</strong> Every answer should reference THIS project. "In the project I built..." is 10x more powerful than a textbook answer. Interviewers want evidence of doing, not knowing.</div>
+  </div>
+
+  <h3>Kubernetes Questions</h3>
+
+  <div class="interview-card">
+    <div class="interview-q" onclick="toggle(this)">
+      <span><span class="tag">K8s</span>What is the difference between a Pod, Deployment, and Service?</span>
+      <span>+</span>
+    </div>
+    <div class="interview-a">
+      A <code>Pod</code> is the smallest unit in K8s — one or more containers sharing network and storage. It's ephemeral (can die anytime). A <code>Deployment</code> manages Pods — it ensures the desired number are running, handles rolling updates, and recreates pods if they crash. A <code>Service</code> is a stable network endpoint that load balances traffic to pods (which have changing IPs). In my project, the frontend ran as a Deployment of 2 replicas behind a LoadBalancer Service to expose it to the internet.
+    </div>
+  </div>
+
+  <div class="interview-card">
+    <div class="interview-q" onclick="toggle(this)">
+      <span><span class="tag">K8s</span>How does Kubernetes handle a rolling update without downtime?</span>
+      <span>+</span>
+    </div>
+    <div class="interview-a">
+      When you update the image in a Deployment, K8s uses a RollingUpdate strategy: it starts a new pod with the new image, waits for it to become Ready (passes readiness probe), then terminates one old pod. It repeats this until all pods are updated. <code>maxSurge: 1</code> and <code>maxUnavailable: 0</code> means at any point, you have full capacity. In my project, ArgoCD triggered this automatically when Jenkins updated the image tag in the manifest file.
+    </div>
+  </div>
+
+  <div class="interview-card">
+    <div class="interview-q" onclick="toggle(this)">
+      <span><span class="tag">K8s</span>What is a ConfigMap vs Secret? How did you use them?</span>
+      <span>+</span>
+    </div>
+    <div class="interview-a">
+      A <code>ConfigMap</code> stores non-sensitive config (env vars, config files) as plaintext. A <code>Secret</code> stores sensitive data (passwords, API keys) as base64-encoded values. In production you'd also encrypt secrets at rest. In my project, MongoDB connection strings were stored as K8s Secrets, injected into the Node.js backend pod as environment variables. This avoids hardcoding credentials in code.
+    </div>
+  </div>
+
+  <div class="interview-card">
+    <div class="interview-q" onclick="toggle(this)">
+      <span><span class="tag">K8s</span>What is a PersistentVolume? Why does MongoDB need it?</span>
+      <span>+</span>
+    </div>
+    <div class="interview-a">
+      Container storage is ephemeral — when a pod dies, its data is gone. A <code>PersistentVolume (PV)</code> is a piece of storage (like an AWS EBS volume) provisioned independently. A <code>PersistentVolumeClaim (PVC)</code> is a request for storage by a pod. MongoDB absolutely needs a PVC because if the pod restarts without persistent storage, all your database data is lost. AWS EKS uses the EBS CSI driver to automatically provision EBS volumes when a PVC is created.
+    </div>
+  </div>
+
+  <div class="divider"></div>
+  <h3>CI/CD & Jenkins Questions</h3>
+
+  <div class="interview-card">
+    <div class="interview-q" onclick="toggle(this)">
+      <span><span class="tag">CI/CD</span>What's the difference between CI and CD?</span>
+      <span>+</span>
+    </div>
+    <div class="interview-a">
+      <code>CI (Continuous Integration)</code> is the practice of automatically building, testing, and scanning code on every commit. The goal is to catch bugs fast. <code>CD (Continuous Delivery)</code> means the software is always in a deployable state. <code>Continuous Deployment</code> takes it further — every passing build is automatically deployed to production with no human approval. In my project, Jenkins handled CI (build+scan) and ArgoCD handled CD (auto-sync to cluster).
+    </div>
+  </div>
+
+  <div class="interview-card">
+    <div class="interview-q" onclick="toggle(this)">
+      <span><span class="tag">CI/CD</span>How does your Jenkins pipeline ensure security?</span>
+      <span>+</span>
+    </div>
+    <div class="interview-a">
+      Three layers: (1) <code>SonarQube SAST</code> — static analysis of source code for vulnerabilities and code smells. Pipeline fails if quality gate doesn't pass. (2) <code>OWASP Dependency Check</code> — scans npm/package.json for known CVEs in third-party libraries. (3) <code>Trivy image scan</code> — scans the built Docker image for OS-level and package-level vulnerabilities. If CRITICAL vulnerabilities are found, the pipeline can be configured to fail, blocking deployment of vulnerable images.
+    </div>
+  </div>
+
+  <div class="divider"></div>
+  <h3>Terraform / IaC Questions</h3>
+
+  <div class="interview-card">
+    <div class="interview-q" onclick="toggle(this)">
+      <span><span class="tag">IaC</span>What is Terraform state? Why store it in S3?</span>
+      <span>+</span>
+    </div>
+    <div class="interview-a">
+      Terraform state (<code>terraform.tfstate</code>) is a JSON file that maps your Terraform config to real AWS resources. Without it, Terraform doesn't know what it already created. Storing state locally is fine for personal use but in teams, storing it in S3 with DynamoDB locking enables: (1) shared access by multiple engineers, (2) state versioning/history, (3) locking to prevent two people running <code>terraform apply</code> simultaneously which could corrupt state.
+    </div>
+  </div>
+
+  <div class="interview-card">
+    <div class="interview-q" onclick="toggle(this)">
+      <span><span class="tag">IaC</span>What happens if you run terraform apply twice?</span>
+      <span>+</span>
+    </div>
+    <div class="interview-a">
+      Terraform is <strong>idempotent</strong> — it compares the desired state (your .tf files) with the current state (tfstate) and only makes changes if there's a diff. If nothing changed in your code, running apply again does nothing. This is a key benefit — you can safely re-run apply to ensure your infrastructure matches your code at any time.
+    </div>
+  </div>
+
+  <div class="divider"></div>
+  <h3>DevSecOps / Monitoring Questions</h3>
+
+  <div class="interview-card">
+    <div class="interview-q" onclick="toggle(this)">
+      <span><span class="tag">GitOps</span>What is GitOps? Why is it better than imperative deployments?</span>
+      <span>+</span>
+    </div>
+    <div class="interview-a">
+      GitOps means Git is the single source of truth for both application code AND infrastructure state. ArgoCD watches the Git repo — if the cluster drifts from what Git says (e.g. someone manually ran kubectl), ArgoCD detects and corrects it. Benefits over imperative: (1) Full audit trail — every deployment is a Git commit with author/timestamp. (2) Easy rollback — just revert the commit. (3) No SSH/kubectl access needed for developers. (4) Separation of CI (Jenkins) and CD (ArgoCD).
+    </div>
+  </div>
+
+  <div class="interview-card">
+    <div class="interview-q" onclick="toggle(this)">
+      <span><span class="tag">Monitor</span>What metrics would you alert on for a production app?</span>
+      <span>+</span>
+    </div>
+    <div class="interview-a">
+      In Prometheus/Grafana I'd alert on: (1) <code>Pod crash-looping</code> — container restart count > 5 in 10 min. (2) <code>High CPU/Memory</code> — node CPU > 80% for 5 min. (3) <code>HTTP error rate</code> — 5xx responses > 1% of total requests. (4) <code>High latency</code> — p99 response time > 2 seconds. (5) <code>PVC usage</code> — MongoDB disk > 80%. AlertManager (part of kube-prometheus-stack) can send these to Slack, PagerDuty, or email.
+    </div>
+  </div>
+
+  <div class="interview-card">
+    <div class="interview-q" onclick="toggle(this)">
+      <span><span class="tag">Docker</span>What's the difference between COPY and ADD in Dockerfile? ENTRYPOINT vs CMD?</span>
+      <span>+</span>
+    </div>
+    <div class="interview-a">
+      <code>COPY</code> simply copies files from host to container — use this always unless you need ADD's extra features. <code>ADD</code> can additionally unpack tar archives and fetch URLs — but this makes Dockerfiles unpredictable. <code>CMD</code> provides the default command that can be overridden at runtime (<code>docker run myimage bash</code>). <code>ENTRYPOINT</code> sets the fixed executable — CMD then provides default arguments to it. Use ENTRYPOINT when the container IS a specific command (e.g. a Node.js server) and CMD for its default flags.
+    </div>
+  </div>
+</div>
+
+<!-- ==================== FINAL CHECKLIST ==================== -->
+<div class="section" id="checklist">
+  <div class="section-header">
+    <div class="section-num">08</div>
+    <div>
+      <div class="section-title">PROJECT CHECKLIST — Tick Every Box</div>
+      <div class="section-subtitle">Use this to track progress. Each item = interview talking point.</div>
+    </div>
+  </div>
+
+  <div class="two-col">
+    <div>
+      <h4>📋 Setup & Prerequisites</h4>
+      <ul class="checklist">
+        <li><strong>AWS account created, root MFA enabled</strong></li>
+        <li><strong>IAM user with AdministratorAccess created</strong></li>
+        <li><strong>AWS CLI configured on M4 Mac</strong></li>
+        <li><strong>Terraform, kubectl, eksctl, helm installed</strong></li>
+        <li><strong>Project repo forked and cloned</strong></li>
+        <li><strong>GitHub PAT created for Jenkins</strong></li>
+        <li><strong>EC2 Key Pair created and secured</strong></li>
+      </ul>
+
+      <h4>🏗️ Infrastructure</h4>
+      <ul class="checklist">
+        <li><strong>Terraform deployed Jenkins EC2 successfully</strong></li>
+        <li><strong>Jenkins accessible at EC2-IP:8080</strong></li>
+        <li><strong>SonarQube accessible at EC2-IP:9000</strong></li>
+        <li><strong>EKS cluster created (2 nodes Ready)</strong></li>
+        <li><strong>kubectl connected to EKS</strong></li>
+        <li><strong>ECR repos created for frontend/backend</strong></li>
+      </ul>
+    </div>
+    <div>
+      <h4>⚙️ CI/CD Pipeline</h4>
+      <ul class="checklist">
+        <li><strong>Jenkins plugins installed</strong></li>
+        <li><strong>AWS credentials in Jenkins</strong></li>
+        <li><strong>SonarQube token configured in Jenkins</strong></li>
+        <li><strong>GitHub webhook set up</strong></li>
+        <li><strong>Frontend pipeline runs on code push</strong></li>
+        <li><strong>Backend pipeline runs on code push</strong></li>
+        <li><strong>Image pushed to ECR successfully</strong></li>
+        <li><strong>Trivy + OWASP scan reports visible</strong></li>
+      </ul>
+
+      <h4>🚀 Deployment & Monitoring</h4>
+      <ul class="checklist">
+        <li><strong>ArgoCD installed and accessible</strong></li>
+        <li><strong>ArgoCD apps created for all 3 tiers</strong></li>
+        <li><strong>App running and accessible in browser</strong></li>
+        <li><strong>MongoDB data persists across pod restarts</strong></li>
+        <li><strong>Prometheus stack installed via Helm</strong></li>
+        <li><strong>Grafana dashboards showing cluster metrics</strong></li>
+        <li><strong>End-to-end: code push → auto deploy confirmed</strong></li>
+        <li><strong>All resources destroyed to save cost</strong></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="concept-box green">
+    <div class="concept-title">🏆 You're Interview Ready When You Can Answer These Out Loud:</div>
+    "Walk me through what happens from a developer pushing code to it being live in production in your project." — You should be able to narrate the entire flow: Git push → Webhook → Jenkins → SonarQube/OWASP/Trivy → Docker Build → ECR → Manifest update → ArgoCD detects → K8s rolling deploy → Prometheus starts scraping → visible in Grafana. This one narrative covers 80% of what DevOps interviews test.
+  </div>
+</div>
+
+</div><!-- end container -->
+
+<div class="footer">
+  <div>Built for M4 Mac · AWS EKS · DevSecOps Zero to Hero · 2026</div>
+  <div style="margin-top:8px;color:#2d3a52">Always destroy your AWS resources after each session → <code style="color:#4a5568">terraform destroy</code> + <code style="color:#4a5568">eksctl delete cluster</code></div>
+</div>
+
+<script>
+function toggle(el) {
+  const answer = el.nextElementSibling;
+  const icon = el.querySelector('span:last-child');
+  if (answer.classList.contains('open')) {
+    answer.classList.remove('open');
+    icon.textContent = '+';
+  } else {
+    answer.classList.add('open');
+    icon.textContent = '−';
+  }
+}
+</script>
+</body>
+</html>
