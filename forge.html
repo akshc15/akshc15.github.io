@@ -1,0 +1,1952 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Playground — DevOps Learning</title>
+<link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --void:#ffffff;
+  --space:#f8f9fc;
+  --deep:#f0f2f8;
+  --panel:#ffffff;
+  --card:#f8f9fc;
+  --border:#e8ebf4;
+  --border2:#d4d9ee;
+  --cyan:#0071e3;
+  --cyan-glow:rgba(0,102,255,0.12);
+  --lime:#34c759;
+  --amber:#ff9f0a;
+  --purple:#5e5ce6;
+  
+  --red:#ff3b30;
+  --neon:#00d4ff;
+  --text:#0a0e1a;
+  --text2:#1a1f3a;
+  --muted:#6b7280;
+  --muted2:#9ca3af;
+  --sys:-apple-system,BlinkMacSystemFont,'SF Pro Display','Helvetica Neue',Arial,sans-serif;
+  --code:'Fira Code',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  background:var(--void);
+  color:var(--text);
+  font-family:var(--sys);
+  overflow-x:hidden;
+}
+
+
+
+/* ── FLOATING ORBS ── */
+.orb{
+  position:fixed;border-radius:50%;
+  filter:blur(80px);pointer-events:none;z-index:0;
+  animation:orbFloat var(--d,20s) ease-in-out infinite alternate;
+}
+@keyframes orbFloat{
+  from{transform:translate(0,0) scale(1);}
+  to{transform:translate(var(--tx,30px),var(--ty,-30px)) scale(1.1);}
+}
+.orb1{width:600px;height:600px;background:rgba(0,113,227,0.04);top:-200px;right:-100px;--d:25s;--tx:-40px;--ty:40px;}
+.orb2{width:500px;height:500px;background:rgba(94,92,230,0.03);bottom:-150px;left:-100px;--d:30s;--tx:50px;--ty:-30px;}
+.orb3{width:300px;height:300px;background:rgba(52,199,89,0.03);top:50%;left:50%;--d:20s;--tx:-20px;--ty:20px;}
+
+/* ── NAV ── */
+.nav{
+  position:sticky;top:0;z-index:500;
+  background:rgba(255,255,255,0.85);
+  backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+  padding:0 40px;
+  display:flex;align-items:center;gap:0;
+}
+.nav-brand{
+  font-family:var(--sys);font-weight:600;font-size:20px;font-weight:900;
+  color:var(--cyan);letter-spacing:.12em;
+  margin-right:40px;padding:16px 0;flex-shrink:0;
+  position:relative;
+}
+
+.nav-links{display:flex;flex:1;overflow-x:auto;}
+.nav a{
+  font-family:var(--code);font-size:12px;
+  letter-spacing:.04em;color:var(--muted);
+  text-decoration:none;padding:16px 16px;
+  border-bottom:2px solid transparent;
+  transition:all .2s;white-space:nowrap;
+}
+.nav a:hover{color:var(--cyan);border-bottom-color:var(--cyan);}
+.nav-right{
+  display:flex;align-items:center;gap:12px;
+  padding:0 0 0 20px;flex-shrink:0;
+}
+.xp-badge{
+  display:flex;align-items:center;gap:6px;
+  background:linear-gradient(135deg,rgba(0,102,255,0.08),rgba(124,58,237,0.08));
+  border:1px solid rgba(0,102,255,0.2);
+  border-radius:50px;padding:6px 16px;
+  font-family:var(--code);font-size:12px;
+  color:var(--cyan);font-weight:600;
+}
+.streak-badge{
+  display:flex;align-items:center;gap:5px;
+  background:rgba(255,140,0,0.08);
+  border:1px solid rgba(255,140,0,0.2);
+  border-radius:50px;padding:6px 14px;
+  font-family:var(--code);font-size:12px;
+  color:var(--amber);font-weight:600;
+}
+
+/* ── HERO ── */
+.hero{
+  position:relative;z-index:1;
+  min-height:100vh;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  text-align:center;padding:80px 24px 60px;
+}
+
+.hero-eyebrow{
+  display:inline-flex;align-items:center;gap:8px;
+  font-family:var(--code);font-size:11px;
+  letter-spacing:.15em;text-transform:uppercase;
+  color:var(--cyan);
+  background:rgba(0,113,227,0.04);
+  border:1px solid rgba(0,102,255,0.2);
+  padding:6px 18px;border-radius:100px;
+  margin-bottom:28px;
+  animation:fadeUp .6s both;
+}
+.hero-eyebrow::before{
+  content:'';width:6px;height:6px;border-radius:50%;
+  background:var(--cyan);animation:blink 1.5s infinite;
+}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+
+.hero-title{
+  font-family:var(--sys);font-weight:600;
+  font-size:clamp(52px,10vw,110px);
+  font-weight:900;
+  line-height:.95;
+  letter-spacing:.04em;
+  margin-bottom:16px;
+  animation:fadeUp .6s .1s both;
+}
+.hero-title .t-forge{
+  display:block;
+  color:var(--text);
+}
+
+
+.hero-desc{
+  font-size:17px;color:var(--muted);
+  max-width:560px;margin:0 auto 44px;
+  line-height:1.7;font-weight:400;
+  animation:fadeUp .6s .2s both;
+}
+.hero-desc strong{color:var(--text2);font-weight:700;}
+
+/* ANIMATED TERMINAL */
+.hero-terminal{
+  background:var(--text2);
+  border-radius:16px;
+  overflow:hidden;
+  max-width:580px;width:100%;
+  margin:0 auto 44px;
+  box-shadow:0 40px 80px rgba(0,0,0,0.12),0 0 0 1px rgba(0,0,0,0.06);
+  animation:fadeUp .6s .3s both;
+}
+.ht-bar{
+  background:#1a1f3a;
+  padding:12px 18px;
+  display:flex;align-items:center;gap:8px;
+}
+.ht-dot{width:12px;height:12px;border-radius:50%;}
+.ht-r{background:#ff5f57;}.ht-y{background:#febc2e;}.ht-g{background:#28c840;}
+.ht-title{
+  font-family:var(--code);font-size:11px;
+  color:rgba(255,255,255,0.3);margin-left:8px;
+}
+.ht-body{
+  padding:20px 24px;
+  font-family:var(--code);font-size:13px;
+  line-height:2;text-align:left;
+  min-height:160px;
+}
+.ht-line{opacity:0;display:block;animation:lineIn .3s both;}
+@keyframes lineIn{from{opacity:0;transform:translateX(-8px)}to{opacity:1;transform:translateX(0)}}
+.ht-prompt{color:#4a9fff;}
+.ht-cmd{color:#e8eeff;}
+.ht-out{color:#39ff14;}
+.ht-comment{color:#2d3a55;}
+.ht-cursor{
+  display:inline-block;width:8px;height:14px;
+  background:var(--cyan);margin-left:2px;
+  animation:cursorBlink .8s infinite;vertical-align:text-bottom;
+}
+@keyframes cursorBlink{0%,49%{opacity:1}50%,100%{opacity:0}}
+
+/* CTA BUTTONS */
+.hero-cta{
+  display:flex;gap:14px;flex-wrap:wrap;justify-content:center;
+  animation:fadeUp .6s .4s both;
+  margin-bottom:60px;
+}
+.btn-primary{
+  display:inline-flex;align-items:center;gap:10px;
+  background:var(--cyan);color:white;
+  font-family:var(--sys);font-weight:600;font-size:14px;
+  letter-spacing:.06em;
+  padding:14px 32px;border-radius:10px;
+  text-decoration:none;
+  box-shadow:0 8px 30px rgba(0,102,255,0.3);
+  transition:all .25s;border:none;cursor:pointer;
+}
+.btn-primary:hover{
+  transform:translateY(-3px);
+  box-shadow:0 16px 40px rgba(0,102,255,0.4);
+}
+.btn-secondary{
+  display:inline-flex;align-items:center;gap:10px;
+  background:transparent;color:var(--text2);
+  font-family:var(--sys);font-weight:600;font-size:14px;
+  letter-spacing:.06em;
+  padding:14px 32px;border-radius:10px;
+  text-decoration:none;
+  border:1.5px solid var(--border2);
+  transition:all .25s;cursor:pointer;
+}
+.btn-secondary:hover{border-color:var(--cyan);color:var(--cyan);}
+
+/* STATS ROW */
+.stats-row{
+  display:flex;gap:0;
+  border:1px solid var(--border);
+  border-radius:14px;
+  overflow:hidden;
+  max-width:700px;width:100%;
+  background:var(--panel);
+  box-shadow:0 4px 20px rgba(0,0,0,0.04);
+  animation:fadeUp .6s .5s both;
+}
+.stat-item{
+  flex:1;padding:20px 16px;text-align:center;
+  border-right:1px solid var(--border);
+}
+.stat-item:last-child{border-right:none;}
+.stat-num{
+  font-family:var(--sys);font-weight:600;font-size:28px;font-weight:900;
+  color:var(--cyan);line-height:1;margin-bottom:4px;
+}
+.stat-label{
+  font-family:var(--code);font-size:10px;
+  text-transform:uppercase;letter-spacing:.08em;
+  color:var(--muted2);
+}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+
+/* ══════════════════════════════
+   TRACKS SECTION
+══════════════════════════════ */
+.section{
+  position:relative;z-index:1;
+  padding:80px 0;
+  border-top:1px solid var(--border);
+}
+.container{max-width:1120px;margin:0 auto;padding:0 40px;}
+
+.sec-eyebrow{
+  font-family:var(--code);font-size:11px;
+  letter-spacing:.15em;text-transform:uppercase;
+  color:var(--cyan);margin-bottom:12px;display:block;
+}
+.sec-title{
+  font-family:var(--sys);font-weight:600;
+  font-size:clamp(28px,4vw,44px);
+  font-weight:700;letter-spacing:.02em;
+  color:var(--text);margin-bottom:8px;line-height:1.1;
+}
+.sec-desc{color:var(--muted);font-size:15px;max-width:520px;line-height:1.7;}
+
+/* TRACK CARDS */
+.tracks-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(320px,1fr));
+  gap:16px;
+  margin-top:40px;
+}
+.track-card{
+  background:var(--panel);
+  border:1.5px solid var(--border);
+  border-radius:20px;
+  padding:28px;
+  text-decoration:none;
+  transition:all .3s cubic-bezier(.34,1.56,.64,1);
+  position:relative;overflow:hidden;
+  display:block;
+}
+.track-card::before{
+  content:'';position:absolute;inset:0;
+  background:var(--track-glow,transparent);
+  opacity:0;transition:opacity .3s;border-radius:18px;
+}
+.track-card:hover{
+  transform:translateY(-6px);
+  border-color:var(--track-color,var(--cyan));
+  box-shadow:0 20px 60px var(--track-shadow,rgba(0,102,255,0.12));
+}
+.track-card:hover::before{opacity:1;}
+
+.track-icon-wrap{
+  width:56px;height:56px;border-radius:14px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:26px;margin-bottom:16px;
+  background:var(--track-bg,rgba(0,102,255,0.08));
+  border:1px solid var(--track-border,rgba(0,102,255,0.15));
+}
+.track-name{
+  font-family:var(--sys);font-weight:600;font-size:20px;
+  font-weight:700;letter-spacing:.04em;
+  color:var(--text);margin-bottom:6px;
+}
+.track-desc{
+  color:var(--muted);font-size:13px;
+  line-height:1.6;margin-bottom:16px;
+}
+.track-meta{
+  display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+}
+.track-missions{
+  font-family:var(--code);font-size:11px;
+  color:var(--track-color,var(--cyan));
+  background:var(--track-bg,rgba(0,102,255,0.08));
+  border:1px solid var(--track-border,rgba(0,102,255,0.15));
+  padding:3px 10px;border-radius:5px;
+}
+.track-level{
+  font-family:var(--code);font-size:11px;
+  color:var(--muted2);
+}
+.track-progress-bar{
+  margin-top:14px;height:3px;
+  background:var(--border);border-radius:3px;
+  overflow:hidden;
+}
+.track-progress-fill{
+  height:100%;border-radius:3px;
+  background:linear-gradient(to right,var(--track-color,var(--cyan)),var(--track-color2,var(--purple)));
+  transition:width .8s ease;
+}
+.track-arrow{
+  position:absolute;top:28px;right:28px;
+  font-size:18px;color:var(--muted2);
+  transition:all .3s;
+}
+.track-card:hover .track-arrow{
+  color:var(--track-color,var(--cyan));
+  transform:translate(3px,-3px);
+}
+
+/* VM CONTROL PANEL */
+.vm-panel{
+  background:linear-gradient(135deg,var(--text2) 0%,#0f1225 100%);
+  border-radius:20px;
+  padding:32px;
+  margin-top:40px;
+  position:relative;overflow:hidden;
+}
+.vm-panel::before{
+  content:'';position:absolute;inset:0;
+  background:
+    radial-gradient(ellipse at 20% 50%,rgba(0,102,255,0.15) 0%,transparent 60%),
+    radial-gradient(ellipse at 80% 50%,rgba(124,58,237,0.12) 0%,transparent 60%);
+  pointer-events:none;
+}
+.vm-header{
+  display:flex;align-items:center;justify-content:space-between;
+  flex-wrap:wrap;gap:16px;margin-bottom:24px;position:relative;z-index:1;
+}
+.vm-title{
+  font-family:var(--sys);font-weight:600;font-size:18px;
+  color:white;letter-spacing:.05em;
+}
+.vm-status{
+  display:flex;align-items:center;gap:8px;
+  font-family:var(--code);font-size:12px;
+}
+.vm-dot{
+  width:8px;height:8px;border-radius:50%;
+  animation:vmPulse 2s infinite;
+}
+.vm-dot.off{background:#ff2d55;animation:none;}
+.vm-dot.on{background:#39ff14;}
+.vm-dot.starting{background:#ffb300;}
+@keyframes vmPulse{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(57,255,20,0.4)}50%{opacity:.8;box-shadow:0 0 0 6px transparent}}
+
+.vm-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));
+  gap:12px;margin-bottom:24px;position:relative;z-index:1;
+}
+.vm-stat{
+  background:rgba(255,255,255,0.05);
+  border:1px solid rgba(255,255,255,0.08);
+  border-radius:10px;padding:14px 16px;
+}
+.vm-stat-label{
+  font-family:var(--code);font-size:10px;
+  text-transform:uppercase;letter-spacing:.08em;
+  color:rgba(255,255,255,0.3);margin-bottom:4px;
+}
+.vm-stat-val{
+  font-family:var(--sys);font-weight:600;font-size:18px;
+  color:white;font-weight:700;
+}
+
+.vm-controls{
+  display:flex;gap:10px;flex-wrap:wrap;
+  position:relative;z-index:1;
+}
+.vm-btn{
+  font-family:var(--sys);font-weight:600;font-size:12px;
+  letter-spacing:.06em;padding:10px 24px;
+  border-radius:8px;cursor:pointer;
+  transition:all .2s;border:1.5px solid;
+}
+.vm-btn-start{
+  background:rgba(57,255,20,0.1);
+  border-color:rgba(57,255,20,0.3);
+  color:#39ff14;
+}
+.vm-btn-start:hover{background:rgba(57,255,20,0.2);}
+.vm-btn-stop{
+  background:rgba(255,45,85,0.1);
+  border-color:rgba(255,45,85,0.3);
+  color:#ff2d55;
+}
+.vm-btn-stop:hover{background:rgba(255,45,85,0.2);}
+.vm-btn-connect{
+  background:rgba(0,102,255,0.1);
+  border-color:rgba(0,102,255,0.3);
+  color:#4d9fff;
+}
+.vm-btn-connect:hover{background:rgba(0,102,255,0.2);}
+.vm-btn-cost{
+  background:rgba(255,140,0,0.1);
+  border-color:rgba(255,140,0,0.3);
+  color:#ffb300;
+}
+
+.vm-cmd{
+  background:rgba(0,0,0,0.4);
+  border:1px solid rgba(255,255,255,0.06);
+  border-radius:8px;padding:10px 14px;
+  font-family:var(--code);font-size:12px;
+  color:rgba(255,255,255,0.5);margin-top:12px;
+  position:relative;z-index:1;
+  display:flex;align-items:center;gap:10px;
+}
+.vm-cmd span{color:#39ff14;}
+.copy-btn{
+  margin-left:auto;font-family:var(--code);font-size:10px;
+  color:rgba(255,255,255,0.3);cursor:pointer;
+  background:rgba(255,255,255,0.05);
+  border:1px solid rgba(255,255,255,0.08);
+  border-radius:4px;padding:2px 8px;
+  transition:all .2s;
+}
+.copy-btn:hover{color:white;background:rgba(255,255,255,0.1);}
+
+/* ══════════════════════════════
+   LEARNING PATH — MISSIONS
+══════════════════════════════ */
+.path-section{
+  position:relative;z-index:1;
+  padding:80px 0;border-top:1px solid var(--border);
+}
+
+.missions-list{
+  display:flex;flex-direction:column;gap:0;
+  max-width:760px;margin:40px auto 0;
+  position:relative;
+}
+.missions-list::before{
+  content:'';position:absolute;
+  left:28px;top:0;bottom:0;width:2px;
+  background:linear-gradient(to bottom,var(--cyan),var(--purple),var(--lime),transparent);
+  opacity:.3;
+}
+
+.mission{
+  display:grid;grid-template-columns:60px 1fr;
+  gap:0 20px;position:relative;
+  animation:fadeUp .4s both;
+}
+.mission-icon{
+  width:56px;height:56px;border-radius:50%;
+  background:var(--panel);
+  border:2px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  font-size:20px;flex-shrink:0;
+  position:relative;z-index:1;
+  margin-top:8px;
+  transition:all .3s;
+}
+.mission:hover .mission-icon{
+  border-color:var(--cyan);
+  box-shadow:0 0 20px rgba(0,102,255,0.2);
+}
+.mission-icon.done{
+  background:rgba(0,200,81,0.1);
+  border-color:var(--lime);
+}
+.mission-icon.locked{opacity:.4;}
+
+.mission-body{
+  background:var(--panel);
+  border:1.5px solid var(--border);
+  border-radius:14px;padding:18px 22px;
+  margin-bottom:10px;
+  transition:all .25s;cursor:pointer;
+}
+.mission-body:hover{
+  border-color:rgba(0,102,255,0.3);
+  box-shadow:0 4px 20px rgba(0,102,255,0.06);
+}
+.mission-body.done{
+  border-color:rgba(0,200,81,0.2);
+  background:rgba(0,200,81,0.02);
+}
+.mission-body.locked{opacity:.5;cursor:default;}
+
+.mission-top{
+  display:flex;align-items:center;
+  justify-content:space-between;gap:12px;
+  margin-bottom:6px;
+}
+.mission-num{
+  font-family:var(--code);font-size:10px;
+  color:var(--muted2);letter-spacing:.06em;
+}
+.mission-status{
+  font-family:var(--code);font-size:10px;
+  padding:2px 10px;border-radius:5px;
+}
+.ms-done{color:var(--lime);background:rgba(0,200,81,0.08);border:1px solid rgba(0,200,81,0.2);}
+.ms-active{color:var(--cyan);background:rgba(0,102,255,0.08);border:1px solid rgba(0,102,255,0.2);}
+.ms-locked{color:var(--muted2);background:rgba(0,0,0,0.04);border:1px solid var(--border);}
+
+.mission-title{
+  font-family:var(--exo);font-size:15px;
+  font-weight:700;color:var(--text);
+  margin-bottom:4px;
+}
+.mission-desc{
+  font-size:13px;color:var(--muted);line-height:1.5;
+}
+.mission-xp{
+  display:inline-flex;align-items:center;gap:4px;
+  font-family:var(--code);font-size:10px;
+  color:var(--amber);margin-top:8px;
+}
+
+/* ══════════════════════════════
+   INTERACTIVE MISSION MODAL
+══════════════════════════════ */
+.modal-overlay{
+  position:fixed;inset:0;z-index:2000;
+  background:rgba(0,0,0,0.5);
+  backdrop-filter:blur(8px);
+  display:flex;align-items:center;justify-content:center;
+  padding:20px;
+  opacity:0;pointer-events:none;
+  transition:opacity .3s;
+}
+.modal-overlay.open{opacity:1;pointer-events:all;}
+
+.modal{
+  background:white;
+  border:1.5px solid var(--border);
+  border-radius:24px;
+  max-width:860px;width:100%;
+  max-height:90vh;overflow:hidden;
+  display:flex;flex-direction:column;
+  box-shadow:0 40px 100px rgba(0,0,0,0.2);
+  transform:scale(.95) translateY(20px);
+  transition:all .3s cubic-bezier(.34,1.56,.64,1);
+}
+.modal-overlay.open .modal{transform:scale(1) translateY(0);}
+
+.modal-header{
+  padding:24px 28px 20px;
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:flex-start;gap:16px;
+  flex-shrink:0;
+}
+.modal-close{
+  margin-left:auto;width:32px;height:32px;
+  border-radius:8px;border:1.5px solid var(--border);
+  background:transparent;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  font-size:16px;color:var(--muted);flex-shrink:0;
+  transition:all .2s;
+}
+.modal-close:hover{border-color:var(--red);color:var(--red);}
+
+.modal-body{
+  overflow-y:auto;flex:1;
+  padding:28px;
+}
+.modal-title{
+  font-family:var(--sys);font-weight:600;font-size:20px;
+  font-weight:700;color:var(--text);
+}
+.modal-track{
+  font-family:var(--code);font-size:11px;
+  color:var(--cyan);letter-spacing:.06em;
+  margin-top:4px;
+}
+
+/* MISSION STEPS */
+.m-steps{display:flex;flex-direction:column;gap:16px;}
+.m-step{
+  background:var(--space);
+  border:1.5px solid var(--border);
+  border-radius:14px;padding:20px;
+}
+.m-step.active-step{
+  border-color:rgba(0,102,255,0.3);
+  background:rgba(0,102,255,0.02);
+}
+.m-step.done-step{
+  border-color:rgba(0,200,81,0.2);
+  background:rgba(0,200,81,0.02);
+}
+.m-step-num{
+  display:flex;align-items:center;gap:10px;
+  margin-bottom:10px;
+}
+.m-step-dot{
+  width:24px;height:24px;border-radius:50%;
+  background:var(--cyan);color:white;
+  font-family:var(--sys);font-weight:600;font-size:11px;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;
+}
+.done-step .m-step-dot{background:var(--lime);}
+.m-step-title{font-weight:700;font-size:14px;}
+.m-step-desc{color:var(--muted);font-size:13px;line-height:1.6;margin-bottom:12px;}
+.m-step-desc strong{color:var(--text2);}
+
+/* CODE BLOCK IN MISSION */
+.m-code{
+  background:var(--text2);
+  border-radius:10px;overflow:hidden;
+  margin:10px 0;
+}
+.m-code-bar{
+  background:#0f1225;
+  padding:10px 16px;
+  display:flex;align-items:center;gap:8px;
+}
+.m-code-dot{width:10px;height:10px;border-radius:50%;}
+.m-code-body{
+  padding:14px 18px;
+  font-family:var(--code);font-size:12.5px;
+  line-height:1.8;overflow-x:auto;
+}
+.mc{color:#2d3a55;}.mk{color:#b06fff;}
+.ms{color:#39ff14;}.mf{color:#ffb300;}
+.mcmd{color:#4d9fff;}.mout{color:rgba(255,255,255,0.4);}
+
+/* RUN BUTTON */
+.run-btn{
+  display:inline-flex;align-items:center;gap:8px;
+  background:linear-gradient(135deg,var(--cyan),var(--purple));
+  color:white;font-family:var(--sys);font-weight:600;font-size:12px;
+  letter-spacing:.05em;padding:10px 22px;
+  border-radius:8px;border:none;cursor:pointer;
+  transition:all .25s;margin-top:8px;
+  box-shadow:0 4px 15px rgba(0,102,255,0.25);
+}
+.run-btn:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(0,102,255,0.35);}
+
+/* VERIFY */
+.verify-box{
+  background:rgba(52,199,89,0.03);
+  border:1.5px solid rgba(0,200,81,0.2);
+  border-radius:10px;padding:14px 16px;
+  margin-top:10px;display:none;
+}
+.verify-box.show{display:block;}
+.verify-title{
+  font-family:var(--code);font-size:11px;
+  letter-spacing:.08em;text-transform:uppercase;
+  color:var(--lime);margin-bottom:6px;
+}
+.verify-desc{font-size:13px;color:var(--muted);line-height:1.6;}
+.verify-desc strong{color:var(--text2);}
+
+/* QUIZ IN MISSION */
+.m-quiz{margin-top:14px;}
+.m-quiz-q{font-weight:700;font-size:14px;margin-bottom:10px;}
+.m-opts{display:flex;flex-direction:column;gap:7px;}
+.m-opt{
+  display:flex;align-items:center;gap:12px;
+  background:var(--space);border:1.5px solid var(--border);
+  border-radius:8px;padding:11px 15px;cursor:pointer;
+  font-size:13px;color:var(--muted);transition:all .2s;
+  text-align:left;width:100%;
+}
+.m-opt:hover{border-color:var(--cyan);color:var(--text);}
+.m-opt.correct{border-color:var(--lime)!important;background:rgba(0,200,81,0.06)!important;color:var(--lime)!important;}
+.m-opt.wrong{border-color:var(--red)!important;background:rgba(255,45,85,0.06)!important;color:var(--red)!important;}
+.m-opt-l{
+  width:24px;height:24px;border-radius:50%;
+  background:var(--border);flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--sys);font-weight:600;font-size:10px;color:var(--muted);
+  transition:all .2s;
+}
+.m-opt:hover .m-opt-l{background:var(--cyan);color:white;}
+.m-opt.correct .m-opt-l{background:var(--lime);color:white;}
+.m-opt.wrong .m-opt-l{background:var(--red);color:white;}
+
+/* MODAL FOOTER */
+.modal-footer{
+  padding:20px 28px;
+  border-top:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  flex-shrink:0;gap:12px;flex-wrap:wrap;
+}
+.modal-xp{
+  font-family:var(--code);font-size:12px;
+  color:var(--amber);
+}
+.modal-nav{display:flex;gap:10px;}
+.modal-btn{
+  font-family:var(--sys);font-weight:600;font-size:12px;
+  letter-spacing:.04em;padding:9px 22px;
+  border-radius:8px;cursor:pointer;transition:all .2s;
+  border:1.5px solid;
+}
+.mb-prev{border-color:var(--border2);color:var(--muted);background:transparent;}
+.mb-prev:hover{border-color:var(--text);color:var(--text);}
+.mb-next{
+  border-color:var(--cyan);color:white;
+  background:var(--cyan);
+  box-shadow:0 4px 15px rgba(0,102,255,0.25);
+}
+.mb-next:hover{transform:translateY(-1px);box-shadow:0 8px 25px rgba(0,102,255,0.35);}
+.mb-next:disabled{opacity:.4;cursor:default;transform:none;box-shadow:none;}
+
+/* ══════════════════════════════
+   60-DAY PLAN
+══════════════════════════════ */
+.plan-section{
+  position:relative;z-index:1;
+  padding:80px 0;border-top:1px solid var(--border);
+}
+.weeks-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(240px,1fr));
+  gap:12px;margin-top:40px;
+}
+.week-card{
+  background:var(--panel);
+  border:1.5px solid var(--border);
+  border-radius:14px;padding:20px;
+  transition:all .25s;
+}
+.week-card:hover{
+  border-color:rgba(0,102,255,0.25);
+  transform:translateY(-2px);
+}
+.week-num{
+  font-family:var(--sys);font-weight:600;font-size:11px;
+  letter-spacing:.1em;color:var(--cyan);
+  text-transform:uppercase;margin-bottom:6px;
+}
+.week-title{font-weight:700;font-size:14px;margin-bottom:6px;}
+.week-desc{color:var(--muted);font-size:12px;line-height:1.6;}
+.week-days{
+  display:flex;gap:4px;margin-top:10px;flex-wrap:wrap;
+}
+.week-day{
+  width:20px;height:20px;border-radius:4px;
+  background:var(--border);
+  transition:all .2s;cursor:default;
+}
+.week-day.done{background:var(--lime);}
+.week-day.today{background:var(--cyan);}
+
+/* ══════════════════════════════
+   VM SETUP GUIDE
+══════════════════════════════ */
+.setup-section{
+  position:relative;z-index:1;
+  padding:80px 0;border-top:1px solid var(--border);
+  background:linear-gradient(180deg,transparent,rgba(0,102,255,0.02));
+}
+.setup-cards{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:16px;margin-top:40px;
+}
+@media(max-width:640px){.setup-cards{grid-template-columns:1fr;}}
+
+.setup-card{
+  background:var(--panel);
+  border:1.5px solid var(--border);
+  border-radius:16px;padding:24px;
+}
+.setup-card-title{
+  font-family:var(--sys);font-weight:600;font-size:15px;
+  font-weight:700;margin-bottom:14px;
+  display:flex;align-items:center;gap:10px;
+}
+.sc-icon{font-size:20px;}
+
+.setup-steps{display:flex;flex-direction:column;gap:8px;}
+.ss{
+  display:flex;gap:10px;align-items:flex-start;
+  font-size:13px;color:var(--muted);
+  padding:8px 12px;
+  background:var(--space);border-radius:8px;
+}
+.ss-n{
+  width:20px;height:20px;border-radius:50%;
+  background:var(--cyan);color:white;
+  font-family:var(--sys);font-weight:600;font-size:10px;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;margin-top:1px;
+}
+.ss strong{color:var(--text2);}
+
+/* TERMINAL SNIPPET */
+.t-snip{
+  background:var(--text2);
+  border-radius:10px;overflow:hidden;
+  margin-top:10px;
+}
+.ts-bar{
+  background:#0f1225;padding:8px 14px;
+  display:flex;align-items:center;gap:6px;
+}
+.ts-dot{width:9px;height:9px;border-radius:50%;}
+.ts-body{
+  padding:12px 16px;
+  font-family:var(--code);font-size:12px;
+  line-height:1.9;
+}
+.tsp{color:#4d9fff;}.tsc{color:#2d3a55;}.tsg{color:#39ff14;}
+
+/* ══════════════════════════════
+   PROGRESS DASHBOARD
+══════════════════════════════ */
+.progress-section{
+  position:relative;z-index:1;
+  padding:80px 0;border-top:1px solid var(--border);
+}
+.progress-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(180px,1fr));
+  gap:12px;margin-top:32px;
+}
+.prog-card{
+  background:var(--panel);
+  border:1.5px solid var(--border);
+  border-radius:14px;padding:18px;
+  text-align:center;transition:all .25s;
+}
+.prog-card:hover{transform:translateY(-2px);}
+.prog-icon{font-size:32px;margin-bottom:8px;display:block;}
+.prog-name{font-weight:700;font-size:13px;margin-bottom:8px;}
+.prog-bar-wrap{
+  height:4px;background:var(--border);
+  border-radius:4px;overflow:hidden;margin-bottom:6px;
+}
+.prog-bar-fill{height:100%;border-radius:4px;}
+.prog-pct{
+  font-family:var(--code);font-size:11px;
+  color:var(--muted2);
+}
+
+/* ══════════════════════════════
+   FOOTER
+══════════════════════════════ */
+footer{
+  position:relative;z-index:1;
+  background:var(--text2);
+  padding:40px;text-align:center;
+}
+footer .f-logo{
+  font-family:var(--sys);font-weight:600;font-size:24px;
+  font-weight:900;letter-spacing:.12em;
+  color:var(--cyan);margin-bottom:8px;
+}
+footer p{
+  font-family:var(--code);font-size:12px;
+  color:rgba(255,255,255,0.3);margin-bottom:16px;
+}
+footer a{color:rgba(255,255,255,0.5);text-decoration:none;margin:0 12px;}
+footer a:hover{color:var(--cyan);}
+
+/* ══════════════════════════════
+   INFO + UTIL
+══════════════════════════════ */
+.info{
+  display:flex;gap:10px;border-radius:10px;
+  padding:14px 16px;margin:12px 0;
+  font-size:13px;line-height:1.6;
+}
+.info.cyan{background:rgba(0,102,255,0.05);border:1px solid rgba(0,102,255,0.15);}
+.info.lime{background:rgba(0,200,81,0.05);border:1px solid rgba(0,200,81,0.15);}
+.info.amber{background:rgba(255,140,0,0.05);border:1px solid rgba(255,140,0,0.15);}
+.info-icon{font-size:16px;flex-shrink:0;margin-top:1px;}
+.info-text{color:var(--muted);}
+.info-text strong{color:var(--text2);}
+.tag{
+  display:inline-block;font-family:var(--code);font-size:10px;
+  padding:2px 8px;border-radius:4px;
+  background:rgba(0,102,255,0.08);
+  border:1px solid rgba(0,102,255,0.15);
+  color:var(--cyan);margin:2px;
+}
+
+::-webkit-scrollbar{width:5px;height:5px;}
+::-webkit-scrollbar-track{background:var(--space);}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px;}
+</style>
+</head>
+<body>
+
+<div class="orb orb1"></div>
+<div class="orb orb2"></div>
+<div class="orb orb3"></div>
+
+<!-- ══════════ NAV ══════════ -->
+<nav class="nav">
+  <div class="nav-brand" style="font-size:17px;font-weight:700;letter-spacing:-.01em;">Playground</div>
+  <div class="nav-links">
+    <a href="#tracks">Tracks</a>
+    <a href="#missions">Missions</a>
+    <a href="#vm-setup">Cloud VM</a>
+    <a href="#plan">60-Day Plan</a>
+    <a href="#progress">Progress</a>
+    <a href="index.html">← Portal</a>
+  </div>
+  <div class="nav-right">
+    <div class="xp-badge">⚡ <span id="nav-xp">0</span> XP</div>
+    <div class="streak-badge">🔥 <span id="nav-streak">0</span> days</div>
+  </div>
+</nav>
+
+<!-- ══════════ HERO ══════════ -->
+<section class="hero">
+  <div class="hero-eyebrow">DevOps · Cloud-Powered · Free</div>
+
+  <h1 class="hero-title">
+    <span class="t-forge">Playground.</span>
+  </h1>
+
+  <p class="hero-desc">
+    Learn Docker, Kubernetes, Terraform, Ansible, Linux and Git.<br>
+    Real commands on your cloud VM. Progress saved automatically.
+  </p>
+
+  <!-- ANIMATED TERMINAL -->
+  <div class="hero-terminal">
+    <div class="ht-bar">
+      <div class="ht-dot ht-r"></div>
+      <div class="ht-dot ht-y"></div>
+      <div class="ht-dot ht-g"></div>
+      <span class="ht-title">playground ~ docker track</span>
+    </div>
+    <div class="ht-body" id="terminal-demo">
+      <span class="ht-line" style="animation-delay:.5s">
+        <span class="ht-prompt">forge@vm:~$</span>
+        <span class="ht-cmd"> docker run hello-world</span>
+      </span>
+      <span class="ht-line" style="animation-delay:1.2s">
+        <span class="ht-out">Hello from Docker!</span>
+      </span>
+      <span class="ht-line" style="animation-delay:1.8s">
+        <span class="ht-out">✓ Mission 01 Complete! +50 XP earned 🎉</span>
+      </span>
+      <span class="ht-line" style="animation-delay:2.4s">
+        <span class="ht-prompt">forge@vm:~$</span>
+        <span class="ht-cmd"> kubectl get pods -n dream-chat</span>
+      </span>
+      <span class="ht-line" style="animation-delay:3.0s">
+        <span class="ht-out">NAME                    READY   STATUS    RESTARTS</span>
+      </span>
+      <span class="ht-line" style="animation-delay:3.5s">
+        <span class="ht-out">backend-pod-7d9f8b-xxx  1/1     Running   0</span>
+      </span>
+      <span class="ht-line" style="animation-delay:4.0s">
+        <span class="ht-prompt">forge@vm:~$</span>
+        <span class="ht-cursor"></span>
+      </span>
+    </div>
+  </div>
+
+  <div class="hero-cta">
+    <button class="btn-primary" onclick="openMission('docker','m1')">
+      Start Learning
+    </button>
+    <a href="#tracks" class="btn-secondary">
+      Explore All Tracks →
+    </a>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat-item">
+      <div class="stat-num">90+</div>
+      <div class="stat-label">Missions</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">6</div>
+      <div class="stat-label">Tracks</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">60</div>
+      <div class="stat-label">Day Plan</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">₹0</div>
+      <div class="stat-label">Cost</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">∞</div>
+      <div class="stat-label">Retries</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ TRACKS ══════════ -->
+<section class="section" id="tracks">
+  <div class="container">
+    <span class="sec-eyebrow">// learning tracks</span>
+    <h2 class="sec-title">Choose Your Track</h2>
+    <p class="sec-desc">Each track takes you from absolute zero to interview-ready. Complete them in order for maximum impact.</p>
+
+    <div class="tracks-grid">
+      <!-- LINUX -->
+      <a href="forge-linux.html" class="track-card"
+        style="--track-color:#ff8c00;--track-glow:radial-gradient(ellipse at 0% 0%,rgba(255,140,0,0.08),transparent 60%);--track-shadow:rgba(255,140,0,0.1);--track-bg:rgba(255,140,0,0.06);--track-border:rgba(255,140,0,0.15);--track-color2:#ffb300;">
+        <span class="track-arrow">↗</span>
+        <div class="track-icon-wrap">🐧</div>
+        <div class="track-name">Linux & Bash</div>
+        <div class="track-desc">Master the foundation. File system, permissions, bash scripting, systemd, cron, networking — the language every server speaks.</div>
+        <div class="track-meta">
+          <span class="track-missions">15 Missions</span>
+          <span class="track-level">Start here first</span>
+        </div>
+        <div class="track-progress-bar">
+          <div class="track-progress-fill" id="prog-linux" style="width:0%"></div>
+        </div>
+      </a>
+
+      <!-- GIT -->
+      <a href="forge-linux.html#git" class="track-card"
+        style="--track-color:#e91e8c;--track-glow:radial-gradient(ellipse at 0% 0%,rgba(233,30,140,0.08),transparent 60%);--track-shadow:rgba(233,30,140,0.1);--track-bg:rgba(233,30,140,0.06);--track-border:rgba(233,30,140,0.15);--track-color2:#ff49a8;">
+        <span class="track-arrow">↗</span>
+        <div class="track-icon-wrap">🐙</div>
+        <div class="track-name">Git & GitHub</div>
+        <div class="track-desc">Branching, merging, PRs, GitHub Actions CI/CD. How real teams collaborate. Never push to main again — the right way.</div>
+        <div class="track-meta">
+          <span class="track-missions" style="color:#e91e8c;background:rgba(233,30,140,0.06);border-color:rgba(233,30,140,0.15);">12 Missions</span>
+          <span class="track-level">Week 1–2</span>
+        </div>
+        <div class="track-progress-bar">
+          <div class="track-progress-fill" id="prog-git" style="width:0%;background:linear-gradient(to right,#e91e8c,#ff49a8)"></div>
+        </div>
+      </a>
+
+      <!-- DOCKER -->
+      <a href="forge-docker.html" class="track-card"
+        style="--track-color:#0066ff;--track-glow:radial-gradient(ellipse at 0% 0%,rgba(0,102,255,0.08),transparent 60%);--track-shadow:rgba(0,102,255,0.1);--track-bg:rgba(0,102,255,0.06);--track-border:rgba(0,102,255,0.15);--track-color2:#4d9fff;">
+        <span class="track-arrow">↗</span>
+        <div class="track-icon-wrap">🐳</div>
+        <div class="track-name">Docker</div>
+        <div class="track-desc">Containers from scratch. Dockerfiles, images, volumes, networks, Compose. Build the DreamChat app and containerize it completely.</div>
+        <div class="track-meta">
+          <span class="track-missions">15 Missions</span>
+          <span class="track-level">Week 2–3</span>
+        </div>
+        <div class="track-progress-bar">
+          <div class="track-progress-fill" id="prog-docker" style="width:0%"></div>
+        </div>
+      </a>
+
+      <!-- KUBERNETES -->
+      <a href="forge-kubernetes.html" class="track-card"
+        style="--track-color:#00c851;--track-glow:radial-gradient(ellipse at 0% 0%,rgba(0,200,81,0.08),transparent 60%);--track-shadow:rgba(0,200,81,0.1);--track-bg:rgba(0,200,81,0.06);--track-border:rgba(0,200,81,0.15);--track-color2:#39ff14;">
+        <span class="track-arrow">↗</span>
+        <div class="track-icon-wrap">☸️</div>
+        <div class="track-name">Kubernetes</div>
+        <div class="track-desc">Pods, Deployments, Services, Ingress, HPA, RBAC. Deploy DreamChat to GKE. Watch it auto-scale under load. Real production K8s.</div>
+        <div class="track-meta">
+          <span class="track-missions" style="color:#00c851;background:rgba(0,200,81,0.06);border-color:rgba(0,200,81,0.15);">18 Missions</span>
+          <span class="track-level">Week 3–5</span>
+        </div>
+        <div class="track-progress-bar">
+          <div class="track-progress-fill" id="prog-k8s" style="width:0%;background:linear-gradient(to right,#00c851,#39ff14)"></div>
+        </div>
+      </a>
+
+      <!-- TERRAFORM -->
+      <a href="forge-terraform.html" class="track-card"
+        style="--track-color:#7c3aed;--track-glow:radial-gradient(ellipse at 0% 0%,rgba(124,58,237,0.08),transparent 60%);--track-shadow:rgba(124,58,237,0.1);--track-bg:rgba(124,58,237,0.06);--track-border:rgba(124,58,237,0.15);--track-color2:#b06fff;">
+        <span class="track-arrow">↗</span>
+        <div class="track-icon-wrap">🏗️</div>
+        <div class="track-name">Terraform</div>
+        <div class="track-desc">Infrastructure as Code. Write HCL, provision GCP/AWS, manage state, use modules. Destroy and recreate entire environments in minutes.</div>
+        <div class="track-meta">
+          <span class="track-missions" style="color:#7c3aed;background:rgba(124,58,237,0.06);border-color:rgba(124,58,237,0.15);">14 Missions</span>
+          <span class="track-level">Week 5–7</span>
+        </div>
+        <div class="track-progress-bar">
+          <div class="track-progress-fill" id="prog-tf" style="width:0%;background:linear-gradient(to right,#7c3aed,#b06fff)"></div>
+        </div>
+      </a>
+
+      <!-- ANSIBLE -->
+      <a href="forge-terraform.html#ansible" class="track-card"
+        style="--track-color:#ff2d55;--track-glow:radial-gradient(ellipse at 0% 0%,rgba(255,45,85,0.08),transparent 60%);--track-shadow:rgba(255,45,85,0.1);--track-bg:rgba(255,45,85,0.06);--track-border:rgba(255,45,85,0.15);--track-color2:#ff6b8a;">
+        <span class="track-arrow">↗</span>
+        <div class="track-icon-wrap">📜</div>
+        <div class="track-name">Ansible</div>
+        <div class="track-desc">Automate server configuration. Playbooks, roles, vault, dynamic inventory. Configure 100 servers with one command from your Mac.</div>
+        <div class="track-meta">
+          <span class="track-missions" style="color:#ff2d55;background:rgba(255,45,85,0.06);border-color:rgba(255,45,85,0.15);">12 Missions</span>
+          <span class="track-level">Week 7–8</span>
+        </div>
+        <div class="track-progress-bar">
+          <div class="track-progress-fill" id="prog-ansible" style="width:0%;background:linear-gradient(to right,#ff2d55,#ff6b8a)"></div>
+        </div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ MISSIONS PREVIEW ══════════ -->
+<section class="path-section" id="missions">
+  <div class="container">
+    <span class="sec-eyebrow">// docker track — missions</span>
+    <h2 class="sec-title">Mission Map</h2>
+    <p class="sec-desc">Every mission is a hands-on challenge. Learn the concept, run it on your cloud VM, verify it works, earn XP. Progress saved automatically.</p>
+
+    <div class="missions-list">
+
+      <div class="mission" style="animation-delay:.05s">
+        <div><div class="mission-icon done">✅</div></div>
+        <div class="mission-body done" onclick="openMission('docker','m1')">
+          <div class="mission-top">
+            <span class="mission-num">DOCKER · MISSION 01</span>
+            <span class="mission-status ms-done">COMPLETE</span>
+          </div>
+          <div class="mission-title">Your First Container</div>
+          <div class="mission-desc">Run hello-world container. Understand what a container actually is. See Docker pull, create, start in action.</div>
+          <div class="mission-xp">⚡ +50 XP · 🕐 15 min</div>
+        </div>
+      </div>
+
+      <div class="mission" style="animation-delay:.1s">
+        <div><div class="mission-icon" style="border-color:var(--cyan)">🐳</div></div>
+        <div class="mission-body active-step" onclick="openMission('docker','m2')">
+          <div class="mission-top">
+            <span class="mission-num">DOCKER · MISSION 02</span>
+            <span class="mission-status ms-active">IN PROGRESS</span>
+          </div>
+          <div class="mission-title">Write Your First Dockerfile</div>
+          <div class="mission-desc">Package the DreamChat backend into a Docker image. Multi-stage build. Non-root user. Health check. Best practices from day one.</div>
+          <div class="mission-xp">⚡ +80 XP · 🕐 25 min</div>
+        </div>
+      </div>
+
+      <div class="mission" style="animation-delay:.15s">
+        <div><div class="mission-icon">🌐</div></div>
+        <div class="mission-body" onclick="openMission('docker','m3')">
+          <div class="mission-top">
+            <span class="mission-num">DOCKER · MISSION 03</span>
+            <span class="mission-status ms-locked">LOCKED</span>
+          </div>
+          <div class="mission-title">Container Networking Deep Dive</div>
+          <div class="mission-desc">Why containers can't talk via localhost. Bridge networks, host networks, custom networks. Connect frontend to backend the right way.</div>
+          <div class="mission-xp">⚡ +90 XP · 🕐 30 min</div>
+        </div>
+      </div>
+
+      <div class="mission" style="animation-delay:.2s">
+        <div><div class="mission-icon">💾</div></div>
+        <div class="mission-body" onclick="openMission('docker','m4')">
+          <div class="mission-top">
+            <span class="mission-num">DOCKER · MISSION 04</span>
+            <span class="mission-status ms-locked">LOCKED</span>
+          </div>
+          <div class="mission-title">Volumes — Persistent Data</div>
+          <div class="mission-desc">Kill a MongoDB container and restart it. Lose all data — then fix it with volumes. Never lose data again. Named volumes vs bind mounts.</div>
+          <div class="mission-xp">⚡ +80 XP · 🕐 20 min</div>
+        </div>
+      </div>
+
+      <div class="mission" style="animation-delay:.25s">
+        <div><div class="mission-icon">📦</div></div>
+        <div class="mission-body" onclick="openMission('docker','m5')">
+          <div class="mission-top">
+            <span class="mission-num">DOCKER · MISSION 05</span>
+            <span class="mission-status ms-locked">LOCKED</span>
+          </div>
+          <div class="mission-title">Docker Compose — Full App Stack</div>
+          <div class="mission-desc">Deploy DreamChat frontend + backend + MongoDB with a single docker-compose.yml. One command brings up the entire app.</div>
+          <div class="mission-xp">⚡ +120 XP · 🕐 40 min</div>
+        </div>
+      </div>
+
+      <div class="mission" style="animation-delay:.3s">
+        <div><div class="mission-icon">☸️</div></div>
+        <div class="mission-body" onclick="openMission('k8s','m1')">
+          <div class="mission-top">
+            <span class="mission-num">KUBERNETES · MISSION 01</span>
+            <span class="mission-status ms-locked">LOCKED</span>
+          </div>
+          <div class="mission-title">Your First Pod</div>
+          <div class="mission-desc">Deploy DreamChat backend as a K8s Pod on GKE. Understand the difference between Pod, Deployment, ReplicaSet.</div>
+          <div class="mission-xp">⚡ +100 XP · 🕐 35 min</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ CLOUD VM CONTROL ══════════ -->
+<section class="section" id="vm-setup">
+  <div class="container">
+    <span class="sec-eyebrow">// cloud vm</span>
+    <h2 class="sec-title">Your Cloud Playground</h2>
+    <p class="sec-desc">All missions run on YOUR GCP VM. Start it when you learn, stop it when done. Costs ₹0 using free credit. Everything runs in the cloud — not your Mac.</p>
+
+    <div class="vm-panel">
+      <div class="vm-header">
+        <div>
+          <div class="vm-title">🖥️ forge-playground-vm</div>
+          <div style="font-family:var(--code);font-size:11px;color:rgba(255,255,255,0.3);margin-top:4px;">GCP · us-central1 · e2-standard-2 · Ubuntu 22.04</div>
+        </div>
+        <div class="vm-status">
+          <div class="vm-dot off" id="vm-dot"></div>
+          <span style="color:rgba(255,255,255,0.5);font-family:var(--code);font-size:12px;" id="vm-status-text">STOPPED</span>
+        </div>
+      </div>
+
+      <div class="vm-grid">
+        <div class="vm-stat">
+          <div class="vm-stat-label">Cost Today</div>
+          <div class="vm-stat-val" id="vm-cost">₹0.00</div>
+        </div>
+        <div class="vm-stat">
+          <div class="vm-stat-label">Uptime</div>
+          <div class="vm-stat-val" id="vm-uptime">0h 0m</div>
+        </div>
+        <div class="vm-stat">
+          <div class="vm-stat-label">GCP Credit Left</div>
+          <div class="vm-stat-val" id="vm-credit">$300.00</div>
+        </div>
+        <div class="vm-stat">
+          <div class="vm-stat-label">Missions Done</div>
+          <div class="vm-stat-val" id="vm-missions">0</div>
+        </div>
+      </div>
+
+      <div class="vm-controls">
+        <button class="vm-btn vm-btn-start" onclick="vmAction('start')">▶ Start VM</button>
+        <button class="vm-btn vm-btn-stop" onclick="vmAction('stop')">⏹ Stop VM</button>
+        <button class="vm-btn vm-btn-connect" onclick="vmAction('connect')">⚡ Connect VS Code</button>
+        <button class="vm-btn vm-btn-cost">💰 Cost = ₹0 (free tier)</button>
+      </div>
+
+      <div class="vm-cmd">
+        <span class="tsp">$</span>
+        <span style="color:rgba(255,255,255,0.4)">gcloud compute instances start forge-playground-vm --zone=us-central1-a</span>
+        <span class="copy-btn" onclick="copyCmd(this,'gcloud compute instances start forge-playground-vm --zone=us-central1-a')">copy</span>
+      </div>
+      <div class="vm-cmd">
+        <span class="tsp">$</span>
+        <span style="color:rgba(255,255,255,0.4)">gcloud compute instances stop forge-playground-vm --zone=us-central1-a</span>
+        <span class="copy-btn" onclick="copyCmd(this,'gcloud compute instances stop forge-playground-vm --zone=us-central1-a')">copy</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ VM SETUP GUIDE ══════════ -->
+<section class="setup-section">
+  <div class="container">
+    <span class="sec-eyebrow">// first time setup</span>
+    <h2 class="sec-title">Set Up in 15 Minutes</h2>
+    <p class="sec-desc">Do this ONCE. Then every day: start VM → learn → stop VM → go to sleep.</p>
+
+    <div class="setup-cards">
+      <div class="setup-card">
+        <div class="setup-card-title"><span class="sc-icon">☁️</span> Create GCP Account</div>
+        <div class="setup-steps">
+          <div class="ss"><div class="ss-n">1</div><div>Go to <strong>cloud.google.com/free</strong> → click <strong>Get started for free</strong></div></div>
+          <div class="ss"><div class="ss-n">2</div><div>Sign in with Google → Country: India → Add card (verification only — <strong>not charged</strong>)</div></div>
+          <div class="ss"><div class="ss-n">3</div><div>You get <strong>$300 free credit</strong> valid 90 days — enough for this entire journey</div></div>
+          <div class="ss"><div class="ss-n">4</div><div>Go to <strong>console.cloud.google.com</strong> → you're in!</div></div>
+        </div>
+      </div>
+
+      <div class="setup-card">
+        <div class="setup-card-title"><span class="sc-icon">🖥️</span> Create Forge VM</div>
+        <div class="t-snip">
+          <div class="ts-bar">
+            <div class="ts-dot" style="background:#ff5f57"></div>
+            <div class="ts-dot" style="background:#febc2e"></div>
+            <div class="ts-dot" style="background:#28c840"></div>
+          </div>
+          <div class="ts-body">
+<span class="tsc"># Run this in GCP Cloud Shell</span><br>
+<span class="tsp">$</span> <span class="tsg">gcloud compute instances create</span> forge-playground-vm \<br>
+&nbsp;&nbsp;--machine-type=e2-standard-2 \<br>
+&nbsp;&nbsp;--image-family=ubuntu-2204-lts \<br>
+&nbsp;&nbsp;--image-project=ubuntu-os-cloud \<br>
+&nbsp;&nbsp;--boot-disk-size=50GB \<br>
+&nbsp;&nbsp;--zone=us-central1-a \<br>
+&nbsp;&nbsp;--tags=http-server,https-server<br><br>
+<span class="tsc"># Takes 60 seconds. VM is ready!</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="setup-card">
+        <div class="setup-card-title"><span class="sc-icon">💻</span> Connect VS Code</div>
+        <div class="setup-steps">
+          <div class="ss"><div class="ss-n">1</div><div>Install <strong>Remote-SSH</strong> extension in VS Code on your Mac</div></div>
+          <div class="ss"><div class="ss-n">2</div><div>Press <strong>Cmd+Shift+P</strong> → Remote-SSH: Connect to Host → add new host</div></div>
+          <div class="ss"><div class="ss-n">3</div><div>Type: <code style="background:rgba(0,0,0,0.06);padding:1px 5px;border-radius:3px;font-family:var(--code)">ssh -i ~/.ssh/forge-key YOUR-VM-IP</code></div></div>
+          <div class="ss"><div class="ss-n">4</div><div>New VS Code window opens — you're coding <strong>on the cloud VM!</strong></div></div>
+        </div>
+      </div>
+
+      <div class="setup-card">
+        <div class="setup-card-title"><span class="sc-icon">⚙️</span> Install All Tools</div>
+        <div class="t-snip">
+          <div class="ts-bar">
+            <div class="ts-dot" style="background:#ff5f57"></div>
+            <div class="ts-dot" style="background:#febc2e"></div>
+            <div class="ts-dot" style="background:#28c840"></div>
+          </div>
+          <div class="ts-body">
+<span class="tsc"># Run ONCE on your VM terminal</span><br>
+<span class="tsp">$</span> <span class="tsg">curl -fsSL</span> https://get.docker.com | sudo sh<br>
+<span class="tsp">$</span> <span class="tsg">sudo snap install</span> terraform --classic<br>
+<span class="tsp">$</span> <span class="tsg">sudo apt install</span> ansible git -y<br>
+<span class="tsp">$</span> <span class="tsg">curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash</span><br>
+<span class="tsg"><br>✅ All tools ready. Start Mission 01!</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ 60-DAY PLAN ══════════ -->
+<section class="plan-section" id="plan">
+  <div class="container">
+    <span class="sec-eyebrow">// 60-day battle plan</span>
+    <h2 class="sec-title">Your Path to 30 LPA</h2>
+    <p class="sec-desc">Follow this plan exactly. One mission per day minimum. Complete all 90 missions in 60 days and you'll crack any DevOps interview.</p>
+
+    <div class="weeks-grid">
+      <div class="week-card">
+        <div class="week-num">Week 1–2 · Days 1–14</div>
+        <div class="week-title">Linux + Git Foundations</div>
+        <div class="week-desc">File system, permissions, bash, SSH, git branching, GitHub PRs, GitHub Actions first pipeline</div>
+        <div class="week-days" id="days-1-14"></div>
+      </div>
+      <div class="week-card">
+        <div class="week-num">Week 3–4 · Days 15–28</div>
+        <div class="week-title">Docker Mastery</div>
+        <div class="week-desc">Dockerfile, images, volumes, networks, Compose. Containerize DreamChat completely. Trivy security scanning.</div>
+        <div class="week-days" id="days-15-28"></div>
+      </div>
+      <div class="week-card">
+        <div class="week-num">Week 5–6 · Days 29–42</div>
+        <div class="week-title">Kubernetes Production</div>
+        <div class="week-desc">GKE cluster, pods, deployments, services, ingress, HPA, RBAC. DreamChat live on K8s.</div>
+        <div class="week-days" id="days-29-42"></div>
+      </div>
+      <div class="week-card">
+        <div class="week-num">Week 7 · Days 43–49</div>
+        <div class="week-title">Terraform IaC</div>
+        <div class="week-desc">Provision GKE with Terraform. State management, modules, workspaces. One-command infra.</div>
+        <div class="week-days" id="days-43-49"></div>
+      </div>
+      <div class="week-card">
+        <div class="week-num">Week 8 · Days 50–56</div>
+        <div class="week-title">Ansible + CI/CD</div>
+        <div class="week-desc">Automate server config with Ansible. Full Jenkins + ArgoCD pipeline. GitOps deployment.</div>
+        <div class="week-days" id="days-50-56"></div>
+      </div>
+      <div class="week-card">
+        <div class="week-num">Final Week · Days 57–60</div>
+        <div class="week-title">Interview Prep + Polish</div>
+        <div class="week-desc">Mock interviews, system design, cost optimization, monitoring dashboards, portfolio polish.</div>
+        <div class="week-days" id="days-57-60"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ PROGRESS ══════════ -->
+<section class="progress-section" id="progress">
+  <div class="container">
+    <span class="sec-eyebrow">// your progress</span>
+    <h2 class="sec-title">Track Your Growth</h2>
+    <p class="sec-desc">Progress saved in your browser. Pick up exactly where you left off every day.</p>
+
+    <div style="display:flex;gap:16px;flex-wrap:wrap;margin-top:28px;margin-bottom:28px;">
+      <div style="background:var(--panel);border:1.5px solid var(--border);border-radius:14px;padding:20px 28px;text-align:center;flex:1;min-width:120px;">
+        <div style="font-family:var(--sys);font-weight:600;font-size:36px;color:var(--cyan);font-weight:900;" id="total-xp">0</div>
+        <div style="font-family:var(--code);font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted2);margin-top:4px;">Total XP</div>
+      </div>
+      <div style="background:var(--panel);border:1.5px solid var(--border);border-radius:14px;padding:20px 28px;text-align:center;flex:1;min-width:120px;">
+        <div style="font-family:var(--sys);font-weight:600;font-size:36px;color:var(--lime);font-weight:900;" id="total-done">0</div>
+        <div style="font-family:var(--code);font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted2);margin-top:4px;">Missions Done</div>
+      </div>
+      <div style="background:var(--panel);border:1.5px solid var(--border);border-radius:14px;padding:20px 28px;text-align:center;flex:1;min-width:120px;">
+        <div style="font-family:var(--sys);font-weight:600;font-size:36px;color:var(--amber);font-weight:900;" id="total-streak">0🔥</div>
+        <div style="font-family:var(--code);font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted2);margin-top:4px;">Day Streak</div>
+      </div>
+      <div style="background:var(--panel);border:1.5px solid var(--border);border-radius:14px;padding:20px 28px;text-align:center;flex:1;min-width:120px;">
+        <div style="font-family:var(--sys);font-weight:600;font-size:36px;color:var(--purple);font-weight:900;" id="total-pct">0%</div>
+        <div style="font-family:var(--code);font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted2);margin-top:4px;">Complete</div>
+      </div>
+    </div>
+
+    <div class="progress-grid">
+      <div class="prog-card">
+        <span class="prog-icon">🐧</span>
+        <div class="prog-name">Linux & Bash</div>
+        <div class="prog-bar-wrap"><div class="prog-bar-fill" id="pb-linux" style="width:0%;background:linear-gradient(to right,#ff8c00,#ffb300)"></div></div>
+        <div class="prog-pct" id="pt-linux">0 / 15</div>
+      </div>
+      <div class="prog-card">
+        <span class="prog-icon">🐙</span>
+        <div class="prog-name">Git & GitHub</div>
+        <div class="prog-bar-wrap"><div class="prog-bar-fill" id="pb-git" style="width:0%;background:linear-gradient(to right,#e91e8c,#ff49a8)"></div></div>
+        <div class="prog-pct" id="pt-git">0 / 12</div>
+      </div>
+      <div class="prog-card">
+        <span class="prog-icon">🐳</span>
+        <div class="prog-name">Docker</div>
+        <div class="prog-bar-wrap"><div class="prog-bar-fill" id="pb-docker" style="width:0%;background:linear-gradient(to right,#0066ff,#4d9fff)"></div></div>
+        <div class="prog-pct" id="pt-docker">0 / 15</div>
+      </div>
+      <div class="prog-card">
+        <span class="prog-icon">☸️</span>
+        <div class="prog-name">Kubernetes</div>
+        <div class="prog-bar-wrap"><div class="prog-bar-fill" id="pb-k8s" style="width:0%;background:linear-gradient(to right,#00c851,#39ff14)"></div></div>
+        <div class="prog-pct" id="pt-k8s">0 / 18</div>
+      </div>
+      <div class="prog-card">
+        <span class="prog-icon">🏗️</span>
+        <div class="prog-name">Terraform</div>
+        <div class="prog-bar-wrap"><div class="prog-bar-fill" id="pb-tf" style="width:0%;background:linear-gradient(to right,#7c3aed,#b06fff)"></div></div>
+        <div class="prog-pct" id="pt-tf">0 / 14</div>
+      </div>
+      <div class="prog-card">
+        <span class="prog-icon">📜</span>
+        <div class="prog-name">Ansible</div>
+        <div class="prog-bar-wrap"><div class="prog-bar-fill" id="pb-ansible" style="width:0%;background:linear-gradient(to right,#ff2d55,#ff6b8a)"></div></div>
+        <div class="prog-pct" id="pt-ansible">0 / 12</div>
+      </div>
+    </div>
+
+    <div style="margin-top:20px;text-align:center;">
+      <button onclick="resetProgress()" style="font-family:var(--code);font-size:11px;color:var(--muted2);background:transparent;border:1px solid var(--border2);padding:6px 16px;border-radius:6px;cursor:pointer;">Reset Progress</button>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ MISSION MODAL ══════════ -->
+<div class="modal-overlay" id="modal" onclick="closeModalOutside(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title" id="modal-title">Mission 01: Your First Container</div>
+        <div class="modal-track" id="modal-track">DOCKER · BEGINNER · +50 XP</div>
+      </div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+
+    <div class="modal-body" id="modal-body">
+      <!-- Content injected by JS -->
+    </div>
+
+    <div class="modal-footer">
+      <div class="modal-xp" id="modal-xp-display">⚡ Complete all steps to earn XP</div>
+      <div class="modal-nav">
+        <button class="modal-btn mb-prev" onclick="closeModal()">✕ Close</button>
+        <button class="modal-btn mb-next" id="modal-complete-btn" onclick="completeMission()" disabled>
+          Complete Mission →
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="f-logo" style="font-size:17px;font-weight:700;letter-spacing:0;">Playground</div>
+  <p>DevOps Learning · Built on GitHub Pages</p>
+  <div>
+    <a href="forge-docker.html">Docker Track</a>
+    <a href="forge-kubernetes.html">K8s Track</a>
+    <a href="forge-terraform.html">Terraform Track</a>
+    <a href="forge-linux.html">Linux Track</a>
+    <a href="dream-interview.html">Interview Quiz</a>
+    <a href="index.html">Portal</a>
+  </div>
+</footer>
+
+<script>
+// ══════════════════════════════════════
+// FORGE — STATE & PERSISTENCE
+// ══════════════════════════════════════
+const TRACKS={linux:15,git:12,docker:15,k8s:18,terraform:14,ansible:12};
+const TOTAL_MISSIONS=Object.values(TRACKS).reduce((a,b)=>a+b,0);
+
+let state=JSON.parse(localStorage.getItem('forge-state')||'{}');
+if(!state.xp) state={
+  xp:0,streak:0,lastDate:null,
+  done:{linux:[],git:[],docker:[],k8s:[],terraform:[],ansible:[]},
+  vmStartTime:null,vmTotalMins:0
+};
+
+function saveState(){localStorage.setItem('forge-state',JSON.stringify(state));}
+
+// ── UPDATE ALL UI ──
+function updateUI(){
+  const done=Object.values(state.done).reduce((a,b)=>a+b.length,0);
+  const pct=Math.round(done/TOTAL_MISSIONS*100);
+
+  document.getElementById('nav-xp').textContent=state.xp.toLocaleString();
+  document.getElementById('nav-streak').textContent=state.streak;
+  document.getElementById('total-xp').textContent=state.xp.toLocaleString();
+  document.getElementById('total-done').textContent=done;
+  document.getElementById('total-streak').textContent=state.streak+'🔥';
+  document.getElementById('total-pct').textContent=pct+'%';
+  document.getElementById('vm-missions').textContent=done;
+
+  // Track progress bars
+  Object.keys(TRACKS).forEach(t=>{
+    const d=state.done[t]?state.done[t].length:0;
+    const total=TRACKS[t];
+    const p=Math.round(d/total*100);
+    const bar=document.getElementById('pb-'+t)||document.getElementById('prog-'+t==='k8s'?'k8s':t);
+    if(document.getElementById('pb-'+t)) document.getElementById('pb-'+t).style.width=p+'%';
+    if(document.getElementById('pt-'+t)) document.getElementById('pt-'+t).textContent=d+' / '+total;
+  });
+
+  // Check streak
+  const today=new Date().toDateString();
+  if(state.lastDate!==today && done>0){
+    const yesterday=new Date(Date.now()-86400000).toDateString();
+    if(state.lastDate===yesterday) state.streak++;
+    else if(state.lastDate!==today) state.streak=1;
+    state.lastDate=today;
+    saveState();
+  }
+}
+
+// ── BUILD DAY DOTS ──
+function buildDayDots(){
+  const ranges={
+    'days-1-14':[1,14],'days-15-28':[15,28],
+    'days-29-42':[29,42],'days-43-49':[43,49],
+    'days-50-56':[50,56],'days-57-60':[57,60]
+  };
+  const today=new Date().getDay();
+  Object.entries(ranges).forEach(([id,[start,end]])=>{
+    const el=document.getElementById(id);
+    if(!el)return;
+    for(let i=start;i<=end;i++){
+      const d=document.createElement('div');
+      d.className='week-day';
+      const done=Object.values(state.done).reduce((a,b)=>a+b.length,0);
+      if(i<=(done)) d.classList.add('done');
+      el.appendChild(d);
+    }
+  });
+}
+
+// ══════════════════════════════════════
+// MISSION CONTENT
+// ══════════════════════════════════════
+const MISSIONS={
+  docker:{
+    m1:{
+      title:'Mission 01: Your First Container',
+      track:'DOCKER · BEGINNER · +50 XP',
+      xp:50,
+      content:`
+        <div class="m-steps">
+          <div class="m-step active-step">
+            <div class="m-step-num"><div class="m-step-dot">1</div><div class="m-step-title">What is a Container?</div></div>
+            <div class="m-step-desc">
+              <strong>Imagine a container is a sealed lunchbox.</strong> Inside: your app + Node.js + npm + every library it needs. Sealed shut. Runs identically on your Mac, your VM, AWS, Google Cloud — everywhere. No more "works on my machine" problems.<br><br>
+              Docker Image = the recipe + ingredients (frozen pizza). Container = the running pizza (in the oven). One image can run as 100 containers simultaneously.
+            </div>
+            <div class="m-code">
+              <div class="m-code-bar"><div class="m-code-dot" style="background:#ff5f57"></div><div class="m-code-dot" style="background:#febc2e"></div><div class="m-code-dot" style="background:#28c840"></div></div>
+              <div class="m-code-body">
+<span class="mc"># On your GCP VM terminal (VS Code integrated terminal)</span><br>
+<span class="mc"># Pull and run the hello-world image</span><br>
+<span class="mcmd">docker run</span> hello-world<br><br>
+<span class="mout"># You'll see:</span><br>
+<span class="ms">Hello from Docker!</span><br>
+<span class="ms">This message shows Docker is working correctly.</span>
+              </div>
+            </div>
+            <button class="run-btn" onclick="markStep(this,1)">▶ I ran this command</button>
+            <div class="verify-box" id="vbox-1">
+              <div class="verify-title">✅ What to look for</div>
+              <div class="verify-desc">You should see <strong>"Hello from Docker!"</strong> in your terminal. If you see it, Docker is installed and working. The image was pulled from Docker Hub (the public image warehouse) automatically!</div>
+            </div>
+          </div>
+
+          <div class="m-step">
+            <div class="m-step-num"><div class="m-step-dot">2</div><div class="m-step-title">See What Docker Did</div></div>
+            <div class="m-step-desc">Let's inspect what happened — Docker pulled the image, created a container, ran it, then stopped it.</div>
+            <div class="m-code">
+              <div class="m-code-bar"><div class="m-code-dot" style="background:#ff5f57"></div><div class="m-code-dot" style="background:#febc2e"></div><div class="m-code-dot" style="background:#28c840"></div></div>
+              <div class="m-code-body">
+<span class="mc"># See running containers</span><br>
+<span class="mcmd">docker ps</span><br>
+<span class="mout"># Empty — hello-world exited after printing</span><br><br>
+<span class="mc"># See ALL containers (including stopped)</span><br>
+<span class="mcmd">docker ps -a</span><br>
+<span class="mout">CONTAINER ID  IMAGE        STATUS</span><br>
+<span class="ms">abc123def456  hello-world  Exited (0)</span><br><br>
+<span class="mc"># See all downloaded images</span><br>
+<span class="mcmd">docker images</span><br>
+<span class="ms">REPOSITORY    TAG    SIZE</span><br>
+<span class="ms">hello-world   latest  13.3kB</span>
+              </div>
+            </div>
+            <button class="run-btn" onclick="markStep(this,2)">▶ I ran these commands</button>
+            <div class="verify-box" id="vbox-2">
+              <div class="verify-title">✅ Understanding the output</div>
+              <div class="verify-desc"><strong>docker ps</strong> = live containers. <strong>docker ps -a</strong> = all containers ever created. <strong>Exited (0)</strong> = finished successfully (exit code 0 = success in Linux). <strong>docker images</strong> = your local image cache.</div>
+            </div>
+          </div>
+
+          <div class="m-step">
+            <div class="m-step-num"><div class="m-step-dot">3</div><div class="m-step-title">Run nginx — A Real Web Server</div></div>
+            <div class="m-step-desc">Now run a real web server inside a container. nginx serves web pages. We'll map port 8080 on our VM to port 80 inside the container.</div>
+            <div class="m-code">
+              <div class="m-code-bar"><div class="m-code-dot" style="background:#ff5f57"></div><div class="m-code-dot" style="background:#febc2e"></div><div class="m-code-dot" style="background:#28c840"></div></div>
+              <div class="m-code-body">
+<span class="mc"># Run nginx in background (-d = detached)</span><br>
+<span class="mc"># Map VM port 8080 → container port 80</span><br>
+<span class="mcmd">docker run</span> <span class="mf">-d</span> <span class="mf">-p</span> <span class="ms">8080:80</span> <span class="mf">--name</span> my-nginx nginx<br><br>
+<span class="mc"># Check it's running</span><br>
+<span class="mcmd">docker ps</span><br>
+<span class="ms">CONTAINER ID  IMAGE  STATUS    PORTS</span><br>
+<span class="ms">xyz789abc123  nginx  Up 5s     0.0.0.0:8080->80/tcp</span><br><br>
+<span class="mc"># Test it from the VM</span><br>
+<span class="mcmd">curl</span> http://localhost:8080<br>
+<span class="ms"># Returns: Welcome to nginx!</span><br><br>
+<span class="mc"># Clean up when done</span><br>
+<span class="mcmd">docker stop</span> my-nginx && <span class="mcmd">docker rm</span> my-nginx
+              </div>
+            </div>
+            <button class="run-btn" onclick="markStep(this,3)">▶ I ran nginx!</button>
+            <div class="verify-box" id="vbox-3">
+              <div class="verify-title">✅ Mission Complete Check</div>
+              <div class="verify-desc">Did <code>curl http://localhost:8080</code> return HTML with "Welcome to nginx!"? That's a web server running inside a container on your cloud VM! Open your VM's external IP:8080 in your Mac browser to see it live!</div>
+            </div>
+          </div>
+
+          <div class="m-step">
+            <div class="m-step-num"><div class="m-step-dot">💡</div><div class="m-step-title">Quick Quiz — Lock in the knowledge</div></div>
+            <div class="m-quiz">
+              <div class="m-quiz-q">A container is running nginx. You run <code>docker stop container_id</code>. What happens to nginx?</div>
+              <div class="m-opts" id="q1-opts">
+                <button class="m-opt" onclick="quizAnswer(this,'A','B','q1')"><div class="m-opt-l">A</div> nginx keeps running — stop only pauses the container</button>
+                <button class="m-opt" onclick="quizAnswer(this,'B','B','q1')"><div class="m-opt-l">B</div> nginx stops — the container and everything inside it stops</button>
+                <button class="m-opt" onclick="quizAnswer(this,'C','B','q1')"><div class="m-opt-l">C</div> nginx moves to another container automatically</button>
+                <button class="m-opt" onclick="quizAnswer(this,'D','B','q1')"><div class="m-opt-l">D</div> nginx continues running in the background on the VM</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      `
+    },
+    m2:{
+      title:'Mission 02: Write Your First Dockerfile',
+      track:'DOCKER · BEGINNER · +80 XP',
+      xp:80,
+      content:`
+        <div class="m-steps">
+          <div class="m-step active-step">
+            <div class="m-step-num"><div class="m-step-dot">1</div><div class="m-step-title">Create the DreamChat Backend Dockerfile</div></div>
+            <div class="m-step-desc">
+              A <strong>Dockerfile</strong> is a recipe with instructions to build your image. Each line creates a new layer. Layers are cached — so if you only change your code, Docker reuses the npm install layer from before. <strong>This makes builds 10x faster!</strong>
+            </div>
+            <div class="m-code">
+              <div class="m-code-bar"><div class="m-code-dot" style="background:#ff5f57"></div><div class="m-code-dot" style="background:#febc2e"></div><div class="m-code-dot" style="background:#28c840"></div></div>
+              <div class="m-code-body">
+<span class="mc"># Create project folder</span><br>
+<span class="mcmd">mkdir</span> dream-chat && <span class="mcmd">cd</span> dream-chat<br>
+<span class="mcmd">mkdir</span> backend && <span class="mcmd">cd</span> backend<br><br>
+<span class="mc"># Create a simple Node.js server</span><br>
+<span class="mcmd">cat</span> > server.js << 'EOF'<br>
+<span class="mk">const</span> http = require(<span class="ms">'http'</span>);<br>
+<span class="mk">const</span> server = http.createServer((req, res) => {<br>
+&nbsp;&nbsp;res.end(<span class="ms">'Hello from DreamChat! 🚀'</span>);<br>
+});<br>
+server.listen(<span class="mf">3001</span>, () => console.log(<span class="ms">'Running!'</span>));<br>
+EOF<br><br>
+<span class="mc"># Create package.json</span><br>
+<span class="mcmd">npm init -y</span>
+              </div>
+            </div>
+            <button class="run-btn" onclick="markStep(this,1)">▶ Created the files</button>
+            <div class="verify-box" id="vbox-1">
+              <div class="verify-title">✅ Good</div>
+              <div class="verify-desc">You should have <strong>server.js</strong> and <strong>package.json</strong> in the backend folder.</div>
+            </div>
+          </div>
+
+          <div class="m-step">
+            <div class="m-step-num"><div class="m-step-dot">2</div><div class="m-step-title">Write the Dockerfile</div></div>
+            <div class="m-step-desc">Now create the Dockerfile. Notice we use <strong>multi-stage build</strong> and <strong>non-root user</strong> — best practices from day one!</div>
+            <div class="m-code">
+              <div class="m-code-bar"><div class="m-code-dot" style="background:#ff5f57"></div><div class="m-code-dot" style="background:#febc2e"></div><div class="m-code-dot" style="background:#28c840"></div></div>
+              <div class="m-code-body">
+<span class="mcmd">nano</span> Dockerfile<br><br>
+<span class="mc"># Paste this:</span><br>
+<span class="mc"># ── Stage 1: Install dependencies ──</span><br>
+<span class="mk">FROM</span> node:20-alpine <span class="mk">AS</span> builder<br>
+<span class="mk">WORKDIR</span> /app<br>
+<span class="mk">COPY</span> package*.json ./<br>
+<span class="mk">RUN</span> npm ci --only=production<br><br>
+<span class="mc"># ── Stage 2: Runtime image ──</span><br>
+<span class="mk">FROM</span> node:20-alpine<br>
+<span class="mc"># Security: non-root user</span><br>
+<span class="mk">RUN</span> addgroup -S app && adduser -S app -G app<br>
+<span class="mk">WORKDIR</span> /app<br>
+<span class="mk">COPY</span> --from=builder /app/node_modules ./node_modules<br>
+<span class="mk">COPY</span> . .<br>
+<span class="mk">USER</span> app<br>
+<span class="mk">EXPOSE</span> 3001<br>
+<span class="mk">CMD</span> ["node", "server.js"]
+              </div>
+            </div>
+            <button class="run-btn" onclick="markStep(this,2)">▶ Dockerfile created</button>
+            <div class="verify-box" id="vbox-2">
+              <div class="verify-title">✅ Why Each Line Matters</div>
+              <div class="verify-desc"><strong>FROM node:20-alpine</strong> = tiny 5MB base image (not 900MB Ubuntu!). <strong>WORKDIR</strong> = all commands run here. <strong>COPY package*.json first</strong> = layer cache trick (npm install only reruns if package.json changed). <strong>USER app</strong> = never run as root in prod.</div>
+            </div>
+          </div>
+
+          <div class="m-step">
+            <div class="m-step-num"><div class="m-step-dot">3</div><div class="m-step-title">Build + Run Your Image</div></div>
+            <div class="m-code">
+              <div class="m-code-bar"><div class="m-code-dot" style="background:#ff5f57"></div><div class="m-code-dot" style="background:#febc2e"></div><div class="m-code-dot" style="background:#28c840"></div></div>
+              <div class="m-code-body">
+<span class="mc"># Build the image</span><br>
+<span class="mcmd">docker build</span> <span class="mf">-t</span> dream-backend:v1 .<br>
+<span class="mout">Successfully built abc123  ← you'll see this</span><br><br>
+<span class="mc"># Check image size</span><br>
+<span class="mcmd">docker images</span> dream-backend<br>
+<span class="ms">dream-backend  v1  ~85MB  ← tiny!</span><br><br>
+<span class="mc"># Run it</span><br>
+<span class="mcmd">docker run</span> <span class="mf">-d -p</span> <span class="ms">3001:3001</span> <span class="mf">--name</span> backend dream-backend:v1<br><br>
+<span class="mc"># Test it</span><br>
+<span class="mcmd">curl</span> http://localhost:3001<br>
+<span class="ms">Hello from DreamChat! 🚀</span>
+              </div>
+            </div>
+            <button class="run-btn" onclick="markStep(this,3)">▶ App is running in Docker! 🎉</button>
+            <div class="verify-box" id="vbox-3">
+              <div class="verify-title">🎉 You just Dockerized an app!</div>
+              <div class="verify-desc">Your Node.js app is now running inside a Docker container on your cloud VM. The image is only ~85MB. It's secure (non-root user). It will run the same on any machine or cloud platform.</div>
+            </div>
+          </div>
+        </div>
+      `
+    }
+  }
+};
+
+let currentMission={track:null,id:null};
+let stepsCompleted=new Set();
+let quizAnswered=false;
+
+// ── OPEN MISSION MODAL ──
+function openMission(track,id){
+  const m=MISSIONS[track]?.[id];
+  if(!m)return;
+  currentMission={track,id};
+  stepsCompleted=new Set();
+  quizAnswered=false;
+
+  document.getElementById('modal-title').textContent=m.title;
+  document.getElementById('modal-track').textContent=m.track;
+  document.getElementById('modal-xp-display').textContent='⚡ +'+m.xp+' XP on completion';
+  document.getElementById('modal-body').innerHTML=m.content;
+  document.getElementById('modal-complete-btn').disabled=true;
+  document.getElementById('modal').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+
+function closeModal(){
+  document.getElementById('modal').classList.remove('open');
+  document.body.style.overflow='';
+}
+function closeModalOutside(e){
+  if(e.target.id==='modal') closeModal();
+}
+
+// ── MARK STEP DONE ──
+function markStep(btn,stepNum){
+  stepsCompleted.add(stepNum);
+  btn.style.display='none';
+  const vbox=document.getElementById('vbox-'+stepNum);
+  if(vbox) vbox.classList.add('show');
+  btn.closest('.m-step').classList.add('done-step');
+  btn.closest('.m-step').classList.remove('active-step');
+  checkMissionComplete();
+}
+
+// ── QUIZ ANSWER ──
+function quizAnswer(btn,chosen,correct,qId){
+  const opts=document.querySelectorAll('#'+qId+'-opts .m-opt');
+  const letters=['A','B','C','D'];
+  opts.forEach((o,i)=>{
+    o.style.pointerEvents='none';
+    if(letters[i]===correct) o.classList.add('correct');
+    else if(letters[i]===chosen && chosen!==correct) o.classList.add('wrong');
+    o.querySelector('.m-opt-l').style.background=
+      letters[i]===correct?'var(--lime)':
+      (letters[i]===chosen&&chosen!==correct)?'var(--red)':'var(--border)';
+    o.querySelector('.m-opt-l').style.color=
+      letters[i]===correct?'white':
+      (letters[i]===chosen&&chosen!==correct)?'white':'var(--muted)';
+  });
+  quizAnswered=true;
+  checkMissionComplete();
+}
+
+function checkMissionComplete(){
+  const m=MISSIONS[currentMission.track]?.[currentMission.id];
+  if(!m) return;
+  const totalSteps=3;
+  if(stepsCompleted.size>=2){
+    document.getElementById('modal-complete-btn').disabled=false;
+    document.getElementById('modal-xp-display').textContent='⚡ Ready to claim +'+m.xp+' XP!';
+  }
+}
+
+// ── COMPLETE MISSION ──
+function completeMission(){
+  const m=MISSIONS[currentMission.track]?.[currentMission.id];
+  if(!m) return;
+  const {track,id}=currentMission;
+
+  if(!state.done[track]) state.done[track]=[];
+  if(!state.done[track].includes(id)){
+    state.done[track].push(id);
+    state.xp+=m.xp;
+    state.lastDate=new Date().toDateString();
+    saveState();
+    updateUI();
+
+    document.getElementById('modal-complete-btn').textContent='✅ Mission Complete! +'+m.xp+' XP!';
+    document.getElementById('modal-complete-btn').style.background='var(--lime)';
+    document.getElementById('modal-complete-btn').style.borderColor='var(--lime)';
+    document.getElementById('modal-complete-btn').style.color='var(--text2)';
+
+    setTimeout(closeModal,1500);
+  } else {
+    closeModal();
+  }
+}
+
+// ── VM SIMULATION ──
+let vmRunning=false;
+let vmInterval=null;
+let vmMins=0;
+
+function vmAction(action){
+  if(action==='start'){
+    vmRunning=true;
+    document.getElementById('vm-dot').className='vm-dot on';
+    document.getElementById('vm-status-text').textContent='RUNNING';
+    vmInterval=setInterval(()=>{
+      vmMins++;
+      const h=Math.floor(vmMins/60);
+      const m=vmMins%60;
+      document.getElementById('vm-uptime').textContent=h+'h '+m+'m';
+      const cost=(vmMins*0.00056).toFixed(2);
+      document.getElementById('vm-cost').textContent='₹'+cost;
+    },1000);
+    showToast('✅ VM Starting... (~60 seconds)');
+  } else if(action==='stop'){
+    vmRunning=false;
+    clearInterval(vmInterval);
+    document.getElementById('vm-dot').className='vm-dot off';
+    document.getElementById('vm-status-text').textContent='STOPPED';
+    showToast('⏹ VM Stopped. Cost saved!');
+  } else if(action==='connect'){
+    showToast('💻 Open VS Code → Cmd+Shift+P → Remote-SSH: Connect to Host → forge-vm');
+  }
+}
+
+// ── COPY COMMAND ──
+function copyCmd(btn,text){
+  navigator.clipboard.writeText(text).then(()=>{
+    btn.textContent='copied!';
+    btn.style.color='var(--lime)';
+    setTimeout(()=>{btn.textContent='copy';btn.style.color='';},1500);
+  });
+}
+
+// ── TOAST ──
+function showToast(msg){
+  const t=document.createElement('div');
+  t.style.cssText=`
+    position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
+    background:var(--text2);color:white;
+    font-family:var(--code);font-size:13px;
+    padding:12px 24px;border-radius:10px;
+    box-shadow:0 8px 30px rgba(0,0,0,0.2);
+    z-index:9999;animation:fadeUp .3s both;
+    border:1px solid rgba(255,255,255,0.1);
+  `;
+  t.textContent=msg;
+  document.body.appendChild(t);
+  setTimeout(()=>t.remove(),3000);
+}
+
+// ── RESET ──
+function resetProgress(){
+  if(confirm('Reset all progress? This cannot be undone.')){
+    localStorage.removeItem('forge-state');
+    location.reload();
+  }
+}
+
+// ── INIT ──
+updateUI();
+buildDayDots();
+</script>
+</body>
+</html>
