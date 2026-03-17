@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FORGE · Docker Track — 15 Missions</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;600;700;800&family=Fira+Code:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --void:#ffffff;--space:#f8f9fc;--panel:#ffffff;
+  --border:#e8ebf4;--border2:#d4d9ee;
+  --track:#0066ff;--track2:#4d9fff;
+  --track-bg:rgba(0,102,255,0.06);
+  --track-border:rgba(0,102,255,0.15);
+  --lime:#00c851;--amber:#ff8c00;--red:#ff2d55;
+  --text:#0a0e1a;--text2:#1a1f3a;
+  --muted:#6b7280;--muted2:#9ca3af;
+  --orb:'Orbitron',sans-serif;
+  --exo:'Exo 2',sans-serif;
+  --code:'Fira Code',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--void);color:var(--text);font-family:var(--exo);overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(0,102,255,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(0,102,255,0.03) 1px,transparent 1px);background-size:44px 44px;pointer-events:none;z-index:0;}
+.orb{position:fixed;border-radius:50%;filter:blur(90px);pointer-events:none;z-index:0;}
+.orb1{width:500px;height:500px;background:rgba(0,102,255,0.05);top:-100px;right:-100px;animation:o1 20s ease-in-out infinite alternate;}
+.orb2{width:400px;height:400px;background:rgba(77,159,255,0.04);bottom:-100px;left:-100px;animation:o1 25s ease-in-out infinite alternate-reverse;}
+@keyframes o1{from{transform:translate(0,0)}to{transform:translate(30px,-30px)}}
+
+/* NAV */
+.nav{position:sticky;top:0;z-index:500;background:rgba(255,255,255,0.88);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:0 40px;display:flex;align-items:center;gap:0;}
+.nav-brand{font-family:var(--orb);font-size:18px;font-weight:900;color:var(--track);letter-spacing:.1em;margin-right:20px;padding:15px 0;flex-shrink:0;}
+.nav-track{display:flex;align-items:center;gap:8px;font-family:var(--code);font-size:12px;color:var(--muted);padding:15px 0;flex:1;}
+.track-pill{background:var(--track-bg);border:1px solid var(--track-border);color:var(--track);padding:3px 12px;border-radius:100px;font-family:var(--code);font-size:11px;}
+.nav-xp{display:flex;align-items:center;gap:8px;font-family:var(--code);font-size:12px;}
+.nav-xp-badge{background:rgba(0,102,255,0.08);border:1px solid rgba(0,102,255,0.2);border-radius:50px;padding:5px 14px;color:var(--track);}
+
+/* TRACK HERO */
+.track-hero{
+  position:relative;z-index:1;
+  padding:80px 40px 60px;
+  background:linear-gradient(135deg,rgba(0,102,255,0.03) 0%,transparent 60%);
+  border-bottom:1px solid var(--border);
+  max-width:1120px;margin:0 auto;
+}
+.th-badge{display:inline-flex;align-items:center;gap:8px;font-family:var(--code);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--track);background:var(--track-bg);border:1px solid var(--track-border);padding:5px 16px;border-radius:100px;margin-bottom:20px;}
+.th-title{font-family:var(--orb);font-size:clamp(36px,6vw,64px);font-weight:900;letter-spacing:.04em;margin-bottom:10px;background:linear-gradient(135deg,var(--track),var(--track2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.th-desc{color:var(--muted);font-size:15px;max-width:560px;line-height:1.7;margin-bottom:28px;}
+.th-stats{display:flex;gap:24px;flex-wrap:wrap;}
+.th-stat{text-align:center;}
+.th-stat-n{font-family:var(--orb);font-size:28px;font-weight:900;color:var(--track);}
+.th-stat-l{font-family:var(--code);font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted2);}
+
+/* MAIN LAYOUT */
+.main-layout{
+  max-width:1120px;margin:0 auto;
+  display:grid;grid-template-columns:280px 1fr;
+  gap:0;min-height:calc(100vh - 64px);
+}
+@media(max-width:768px){.main-layout{grid-template-columns:1fr;}}
+
+/* SIDEBAR */
+.sidebar{
+  border-right:1px solid var(--border);
+  padding:24px 0;
+  position:sticky;top:64px;
+  height:calc(100vh - 64px);
+  overflow-y:auto;background:var(--void);
+}
+.sidebar-title{font-family:var(--code);font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted2);padding:0 20px 12px;}
+.sidebar-mission{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 20px;cursor:pointer;
+  transition:all .2s;border-left:2px solid transparent;
+  text-decoration:none;
+}
+.sidebar-mission:hover{background:var(--space);border-left-color:var(--track);}
+.sidebar-mission.active{background:var(--track-bg);border-left-color:var(--track);}
+.sidebar-mission.done{border-left-color:var(--lime);}
+.sm-icon{font-size:16px;flex-shrink:0;}
+.sm-body{flex:1;min-width:0;}
+.sm-num{font-family:var(--code);font-size:9px;color:var(--muted2);letter-spacing:.05em;}
+.sm-title{font-size:12px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.sm-badge{font-family:var(--code);font-size:9px;padding:1px 7px;border-radius:3px;flex-shrink:0;}
+.smb-done{color:var(--lime);background:rgba(0,200,81,0.08);}
+.smb-active{color:var(--track);background:var(--track-bg);}
+.smb-locked{color:var(--muted2);background:rgba(0,0,0,0.04);}
+
+/* CONTENT AREA */
+.content{
+  padding:40px;
+  position:relative;z-index:1;
+}
+
+/* MISSION CARD */
+.mission-card{
+  background:var(--panel);
+  border:1.5px solid var(--border);
+  border-radius:20px;
+  overflow:hidden;
+  margin-bottom:24px;
+  display:none;
+}
+.mission-card.active{display:block;animation:slideIn .3s both;}
+@keyframes slideIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+
+.mc-header{
+  padding:24px 28px 20px;
+  border-bottom:1px solid var(--border);
+  background:linear-gradient(135deg,var(--track-bg),transparent);
+}
+.mc-top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px;}
+.mc-num{font-family:var(--code);font-size:11px;color:var(--track);letter-spacing:.08em;}
+.mc-xp{font-family:var(--code);font-size:11px;color:var(--amber);background:rgba(255,140,0,0.08);border:1px solid rgba(255,140,0,0.2);padding:2px 10px;border-radius:5px;}
+.mc-title{font-family:var(--orb);font-size:22px;font-weight:700;color:var(--text);margin-bottom:6px;}
+.mc-desc{color:var(--muted);font-size:14px;line-height:1.6;}
+
+.mc-body{padding:28px;}
+
+/* CONCEPT BLOCK */
+.concept{
+  display:flex;gap:16px;align-items:flex-start;
+  background:var(--space);border:1.5px solid var(--border);
+  border-radius:14px;padding:20px;margin-bottom:20px;
+}
+.concept-icon{font-size:36px;flex-shrink:0;}
+.concept-title{font-weight:700;font-size:14px;margin-bottom:6px;color:var(--text2);}
+.concept-desc{font-size:13px;color:var(--muted);line-height:1.7;}
+.concept-desc strong{color:var(--text2);}
+.concept-desc code{font-family:var(--code);font-size:11px;background:rgba(0,102,255,0.08);color:var(--track);padding:1px 6px;border-radius:3px;}
+
+/* STEP BLOCK */
+.step-block{
+  border:1.5px solid var(--border);
+  border-radius:14px;overflow:hidden;margin-bottom:14px;
+}
+.step-block.done-block{border-color:rgba(0,200,81,0.25);}
+.step-block-header{
+  display:flex;align-items:center;gap:12px;
+  padding:14px 18px;
+  background:var(--space);
+  border-bottom:1px solid var(--border);
+}
+.step-n{
+  width:28px;height:28px;border-radius:50%;
+  background:var(--track);color:white;
+  font-family:var(--orb);font-size:12px;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.done-block .step-n{background:var(--lime);}
+.step-h-title{font-weight:700;font-size:14px;flex:1;}
+.step-h-status{font-family:var(--code);font-size:10px;padding:2px 8px;border-radius:4px;}
+.shs-done{color:var(--lime);background:rgba(0,200,81,0.08);}
+.shs-todo{color:var(--muted2);background:rgba(0,0,0,0.04);}
+.step-block-body{padding:16px 18px;}
+.step-body-desc{font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:12px;}
+.step-body-desc strong{color:var(--text2);}
+
+/* TERMINAL */
+.term{background:var(--text2);border-radius:10px;overflow:hidden;margin:10px 0;}
+.term-bar{background:#0f1225;padding:10px 16px;display:flex;align-items:center;gap:7px;}
+.td{width:10px;height:10px;border-radius:50%;}
+.td-r{background:#ff5f57;}.td-y{background:#febc2e;}.td-g{background:#28c840;}
+.t-ttl{font-family:var(--code);font-size:10px;color:rgba(255,255,255,0.25);margin-left:6px;}
+.term-body{padding:14px 18px;font-family:var(--code);font-size:12.5px;line-height:1.9;overflow-x:auto;}
+.tc{color:#2d3a55;}.tk{color:#b06fff;}.ts{color:#39ff14;}.tf{color:#ffb300;}.tcmd{color:#4d9fff;}.tout{color:rgba(255,255,255,0.4);}
+
+/* RUN BTN */
+.run-btn{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,var(--track),var(--track2));color:white;font-family:var(--orb);font-size:12px;letter-spacing:.05em;padding:9px 20px;border-radius:8px;border:none;cursor:pointer;transition:all .25s;margin-top:8px;box-shadow:0 4px 15px rgba(0,102,255,0.2);}
+.run-btn:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(0,102,255,0.3);}
+.run-btn:disabled{opacity:.5;cursor:default;transform:none;}
+
+/* VERIFY */
+.verify{background:rgba(0,200,81,0.04);border:1.5px solid rgba(0,200,81,0.2);border-radius:10px;padding:14px 16px;margin-top:10px;display:none;}
+.verify.show{display:block;}
+.verify-ttl{font-family:var(--code);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--lime);margin-bottom:5px;}
+.verify-body{font-size:13px;color:var(--muted);line-height:1.6;}
+.verify-body strong{color:var(--text2);}
+.verify-body code{font-family:var(--code);font-size:11px;background:rgba(0,200,81,0.08);color:var(--lime);padding:1px 5px;border-radius:3px;}
+
+/* ERROR SECTION */
+.errors-section{background:rgba(255,45,85,0.03);border:1.5px solid rgba(255,45,85,0.12);border-radius:14px;padding:20px;margin-top:20px;}
+.err-ttl{font-family:var(--orb);font-size:14px;color:var(--red);margin-bottom:14px;}
+.err-item{margin-bottom:12px;}
+.err-msg{background:rgba(255,45,85,0.06);border:1px solid rgba(255,45,85,0.15);border-radius:8px;padding:10px 14px;font-family:var(--code);font-size:11px;color:var(--red);margin-bottom:6px;}
+.err-fix{background:rgba(0,200,81,0.04);border:1px solid rgba(0,200,81,0.15);border-radius:8px;padding:10px 14px;font-family:var(--code);font-size:11px;color:var(--lime);}
+
+/* QUIZ */
+.quiz-block{background:var(--space);border:1.5px solid var(--border);border-radius:14px;padding:20px;margin-top:16px;}
+.quiz-q{font-weight:700;font-size:14px;margin-bottom:12px;color:var(--text2);}
+.quiz-opts{display:flex;flex-direction:column;gap:7px;}
+.qopt{display:flex;align-items:center;gap:11px;background:white;border:1.5px solid var(--border);border-radius:8px;padding:11px 14px;cursor:pointer;font-size:13px;color:var(--muted);transition:all .2s;text-align:left;width:100%;}
+.qopt:hover{border-color:var(--track);color:var(--text);}
+.qopt.correct{border-color:var(--lime)!important;background:rgba(0,200,81,0.05)!important;color:var(--lime)!important;}
+.qopt.wrong{border-color:var(--red)!important;background:rgba(255,45,85,0.05)!important;color:var(--red)!important;}
+.ql{width:24px;height:24px;border-radius:50%;background:var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:var(--orb);font-size:10px;color:var(--muted);transition:all .2s;}
+.qopt:hover .ql{background:var(--track);color:white;}
+.qopt.correct .ql{background:var(--lime);color:white;}
+.qopt.wrong .ql{background:var(--red);color:white;}
+
+/* COMPLETE BTN */
+.complete-btn{
+  width:100%;padding:16px;
+  background:linear-gradient(135deg,var(--track),var(--track2));
+  color:white;font-family:var(--orb);font-size:15px;
+  letter-spacing:.06em;border:none;border-radius:12px;
+  cursor:pointer;transition:all .25s;margin-top:20px;
+  box-shadow:0 8px 30px rgba(0,102,255,0.2);
+  display:flex;align-items:center;justify-content:center;gap:10px;
+}
+.complete-btn:hover{transform:translateY(-2px);box-shadow:0 16px 40px rgba(0,102,255,0.3);}
+.complete-btn:disabled{opacity:.4;cursor:default;transform:none;box-shadow:none;}
+
+/* NAV ARROWS */
+.mission-nav{display:flex;gap:10px;justify-content:space-between;margin-top:20px;}
+.mnav-btn{font-family:var(--orb);font-size:12px;letter-spacing:.05em;padding:10px 24px;border-radius:8px;cursor:pointer;transition:all .2s;border:1.5px solid;text-decoration:none;display:inline-flex;align-items:center;gap:6px;}
+.mnav-prev{border-color:var(--border2);color:var(--muted);background:transparent;}
+.mnav-prev:hover{border-color:var(--text);color:var(--text);}
+.mnav-next{border-color:var(--track);color:white;background:var(--track);box-shadow:0 4px 15px rgba(0,102,255,0.2);}
+.mnav-next:hover{transform:translateY(-1px);box-shadow:0 8px 25px rgba(0,102,255,0.3);}
+
+/* INFO BOXES */
+.info{display:flex;gap:10px;border-radius:10px;padding:12px 14px;margin:10px 0;font-size:13px;line-height:1.6;}
+.ib-blue{background:rgba(0,102,255,0.04);border:1px solid rgba(0,102,255,0.12);}
+.ib-green{background:rgba(0,200,81,0.04);border:1px solid rgba(0,200,81,0.12);}
+.ib-amber{background:rgba(255,140,0,0.04);border:1px solid rgba(255,140,0,0.12);}
+.ii{font-size:16px;flex-shrink:0;margin-top:1px;}
+.it{color:var(--muted);}
+.it strong{color:var(--text2);}
+
+/* TAG */
+.tag{display:inline-block;font-family:var(--code);font-size:10px;padding:2px 8px;border-radius:4px;background:var(--track-bg);border:1px solid var(--track-border);color:var(--track);margin:2px;}
+
+footer{background:var(--text2);padding:30px 40px;text-align:center;font-family:var(--code);font-size:12px;color:rgba(255,255,255,0.3);}
+footer a{color:rgba(255,255,255,0.5);text-decoration:none;margin:0 10px;}
+footer a:hover{color:#4d9fff;}
+::-webkit-scrollbar{width:4px;height:4px;}::-webkit-scrollbar-track{background:var(--space);}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px;}
+</style>
+</head>
+<body>
+<div class="orb orb1"></div>
+<div class="orb orb2"></div>
+
+<nav class="nav">
+  <div class="nav-brand">FORGE</div>
+  <div class="nav-track">
+    <span>→</span>
+    <span class="track-pill">🐳 Docker Track</span>
+    <span>15 Missions · Week 2–3</span>
+  </div>
+  <div class="nav-xp">
+    <span class="nav-xp-badge">⚡ <span id="nav-xp">0</span> XP</span>
+    <a href="forge.html" style="font-family:var(--code);font-size:11px;color:var(--muted);text-decoration:none;padding:0 12px;">← All Tracks</a>
+  </div>
+</nav>
+
+<div class="track-hero">
+  <div class="th-badge">🐳 Docker Track · 15 Missions</div>
+  <h1 class="th-title">Docker Mastery</h1>
+  <p class="th-desc">From zero to containerizing a full production app. Every mission runs on your GCP VM. Complete this track and you can Dockerize anything.</p>
+  <div class="th-stats">
+    <div class="th-stat"><div class="th-stat-n">15</div><div class="th-stat-l">Missions</div></div>
+    <div class="th-stat"><div class="th-stat-n">+1,200</div><div class="th-stat-l">Total XP</div></div>
+    <div class="th-stat"><div class="th-stat-n">~8hrs</div><div class="th-stat-l">Total Time</div></div>
+    <div class="th-stat"><div class="th-stat-n">₹0</div><div class="th-stat-l">Cost</div></div>
+  </div>
+</div>
+
+<div class="main-layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-title">Missions</div>
+    <div class="sidebar-mission active" onclick="showMission(1)" id="sm-1">
+      <span class="sm-icon">✅</span>
+      <div class="sm-body"><div class="sm-num">M01</div><div class="sm-title">Your First Container</div></div>
+      <span class="sm-badge smb-done">done</span>
+    </div>
+    <div class="sidebar-mission" onclick="showMission(2)" id="sm-2">
+      <span class="sm-icon">🐳</span>
+      <div class="sm-body"><div class="sm-num">M02</div><div class="sm-title">Write a Dockerfile</div></div>
+      <span class="sm-badge smb-active">active</span>
+    </div>
+    <div class="sidebar-mission" onclick="showMission(3)" id="sm-3">
+      <span class="sm-icon">🏗️</span>
+      <div class="sm-body"><div class="sm-num">M03</div><div class="sm-title">Multi-Stage Builds</div></div>
+      <span class="sm-badge smb-locked">locked</span>
+    </div>
+    <div class="sidebar-mission" onclick="showMission(4)" id="sm-4">
+      <span class="sm-icon">🌐</span>
+      <div class="sm-body"><div class="sm-num">M04</div><div class="sm-title">Container Networking</div></div>
+      <span class="sm-badge smb-locked">locked</span>
+    </div>
+    <div class="sidebar-mission" onclick="showMission(5)" id="sm-5">
+      <span class="sm-icon">💾</span>
+      <div class="sm-body"><div class="sm-num">M05</div><div class="sm-title">Volumes & Data</div></div>
+      <span class="sm-badge smb-locked">locked</span>
+    </div>
+    <div class="sidebar-mission" onclick="showMission(6)" id="sm-6">
+      <span class="sm-icon">📦</span>
+      <div class="sm-body"><div class="sm-num">M06</div><div class="sm-title">Docker Compose</div></div>
+      <span class="sm-badge smb-locked">locked</span>
+    </div>
+    <div class="sidebar-mission" onclick="showMission(7)" id="sm-7">
+      <span class="sm-icon">🔐</span>
+      <div class="sm-body"><div class="sm-num">M07</div><div class="sm-title">Docker Security</div></div>
+      <span class="sm-badge smb-locked">locked</span>
+    </div>
+    <div class="sidebar-mission" onclick="showMission(8)" id="sm-8">
+      <span class="sm-icon">📤</span>
+      <div class="sm-body"><div class="sm-num">M08</div><div class="sm-title">Push to Registry</div></div>
+      <span class="sm-badge smb-locked">locked</span>
+    </div>
+    <div class="sidebar-mission" onclick="showMission(9)" id="sm-9">
+      <span class="sm-icon">🔍</span>
+      <div class="sm-body"><div class="sm-num">M09</div><div class="sm-title">Debug Containers</div></div>
+      <span class="sm-badge smb-locked">locked</span>
+    </div>
+    <div class="sidebar-mission" onclick="showMission(10)" id="sm-10">
+      <span class="sm-icon">🚀</span>
+      <div class="sm-body"><div class="sm-num">M10</div><div class="sm-title">DreamChat Full Stack</div></div>
+      <span class="sm-badge smb-locked">locked</span>
+    </div>
+    <div class="sidebar-mission" onclick="showMission(11)" id="sm-11">
+      <span class="sm-icon">⚡</span>
+      <div class="sm-body"><div class="sm-num">M11</div><div class="sm-title">Build Optimization</div></div>
+      <span class="sm-badge smb-locked">locked</span>
+    </div>
+    <div class="sidebar-mission" onclick="showMission(12)" id="sm-12">
+      <span class="sm-icon">📊</span>
+      <div class="sm-body"><div class="sm-num">M12</div><div class="sm-title">Container Monitoring</div></div>
+      <span class="sm-badge smb-locked">locked</span>
+    </div>
+    <div class="sidebar-mission" onclick="showMission(13)" id="sm-13">
+      <span class="sm-icon">🛡️</span>
+      <div class="sm-body"><div class="sm-num">M13</div><div class="sm-title">Trivy Security Scan</div></div>
+      <span class="sm-badge smb-locked">locked</span>
+    </div>
+    <div class="sidebar-mission" onclick="showMission(14)" id="sm-14">
+      <span class="sm-icon">🏭</span>
+      <div class="sm-body"><div class="sm-num">M14</div><div class="sm-title">Production Dockerfile</div></div>
+      <span class="sm-badge smb-locked">locked</span>
+    </div>
+    <div class="sidebar-mission" onclick="showMission(15)" id="sm-15">
+      <span class="sm-icon">🏆</span>
+      <div class="sm-body"><div class="sm-num">M15</div><div class="sm-title">Docker Track Boss</div></div>
+      <span class="sm-badge smb-locked">locked</span>
+    </div>
+  </aside>
+
+  <!-- CONTENT -->
+  <main class="content">
+
+    <!-- MISSION 1 -->
+    <div class="mission-card active" id="mc-1">
+      <div class="mc-header">
+        <div class="mc-top">
+          <span class="mc-num">DOCKER · MISSION 01</span>
+          <span class="mc-xp">⚡ +50 XP</span>
+        </div>
+        <div class="mc-title">Your First Container</div>
+        <div class="mc-desc">Run hello-world. Understand images vs containers. See Docker pull, create, start in real-time.</div>
+      </div>
+      <div class="mc-body">
+        <div class="concept">
+          <div class="concept-icon">🍕</div>
+          <div>
+            <div class="concept-title">Image vs Container — The Pizza Analogy</div>
+            <div class="concept-desc">
+              <strong>Docker Image</strong> = frozen pizza in a box. Recipe + ingredients, all sealed. You can make 10 pizzas from 1 box.<br><br>
+              <strong>Docker Container</strong> = pizza in the oven, running. When you <code>docker run</code>, Docker takes the frozen image and starts it as a live container.<br><br>
+              <strong>Docker Hub</strong> = the supermarket. Millions of pre-made images (nginx, node, ubuntu, postgres) that you can pull for free.
+            </div>
+          </div>
+        </div>
+
+        <div class="step-block" id="sb-1-1">
+          <div class="step-block-header">
+            <div class="step-n">1</div>
+            <div class="step-h-title">Run hello-world on your GCP VM</div>
+            <span class="step-h-status shs-todo" id="shs-1-1">todo</span>
+          </div>
+          <div class="step-block-body">
+            <div class="step-body-desc">Open your GCP VM terminal in VS Code → run this command:</div>
+            <div class="term">
+              <div class="term-bar"><div class="td td-r"></div><div class="td td-y"></div><div class="td td-g"></div><div class="t-ttl">forge@gcp-vm:~$</div></div>
+              <div class="term-body">
+<span class="tcmd">docker run</span> hello-world<br><br>
+<span class="tout"># Expected output:</span><br>
+<span class="ts">Hello from Docker!</span><br>
+<span class="ts">This message shows that your Docker installation appears to be working correctly.</span><br><br>
+<span class="tout"># What Docker did behind the scenes:</span><br>
+<span class="tc"># 1. Looked for hello-world image locally → not found</span><br>
+<span class="tc"># 2. Pulled it from Docker Hub → downloaded</span><br>
+<span class="tc"># 3. Created container from image</span><br>
+<span class="tc"># 4. Started container → it printed message → exited</span>
+              </div>
+            </div>
+            <button class="run-btn" onclick="doneStep('1-1',this)">▶ Done — I see "Hello from Docker!"</button>
+            <div class="verify" id="v-1-1">
+              <div class="verify-ttl">✅ Perfect!</div>
+              <div class="verify-body">Docker is working on your VM. The image was automatically pulled from Docker Hub. Notice how small it is — <strong>hello-world is only 13KB!</strong></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-block" id="sb-1-2">
+          <div class="step-block-header">
+            <div class="step-n">2</div>
+            <div class="step-h-title">Inspect what Docker created</div>
+            <span class="step-h-status shs-todo" id="shs-1-2">todo</span>
+          </div>
+          <div class="step-block-body">
+            <div class="step-body-desc">These 3 commands are your <strong>daily Docker toolkit</strong> — you'll use them 50 times a day:</div>
+            <div class="term">
+              <div class="term-bar"><div class="td td-r"></div><div class="td td-y"></div><div class="td td-g"></div><div class="t-ttl">Daily toolkit</div></div>
+              <div class="term-body">
+<span class="tc"># Running containers (live right now)</span><br>
+<span class="tcmd">docker ps</span><br>
+<span class="tout">CONTAINER ID  IMAGE  STATUS  PORTS  NAMES</span><br>
+<span class="tout"># Empty — hello-world finished and exited</span><br><br>
+<span class="tc"># ALL containers including stopped ones</span><br>
+<span class="tcmd">docker ps -a</span><br>
+<span class="ts">abc123def  hello-world  Exited (0) 2m ago  loving_tesla</span><br><br>
+<span class="tc"># All local images (your library)</span><br>
+<span class="tcmd">docker images</span><br>
+<span class="ts">REPOSITORY   TAG     IMAGE ID    SIZE</span><br>
+<span class="ts">hello-world  latest  d1165f2212  13.3kB</span>
+              </div>
+            </div>
+            <button class="run-btn" onclick="doneStep('1-2',this)">▶ Done — I see the container and image</button>
+            <div class="verify" id="v-1-2">
+              <div class="verify-ttl">✅ Understanding the output</div>
+              <div class="verify-body"><strong>Exited (0)</strong> = finished successfully (exit code 0 = success in Linux, non-zero = error). <strong>loving_tesla</strong> = Docker auto-generates fun names if you don't set <code>--name</code>. <strong>IMAGE ID</strong> = unique fingerprint of the image.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-block" id="sb-1-3">
+          <div class="step-block-header">
+            <div class="step-n">3</div>
+            <div class="step-h-title">Run a real web server — nginx</div>
+            <span class="step-h-status shs-todo" id="shs-1-3">todo</span>
+          </div>
+          <div class="step-block-body">
+            <div class="step-body-desc">Let's run a container that stays running — an nginx web server:</div>
+            <div class="term">
+              <div class="term-bar"><div class="td td-r"></div><div class="td td-y"></div><div class="td td-g"></div><div class="t-ttl">Run nginx web server</div></div>
+              <div class="term-body">
+<span class="tc"># -d = detached (runs in background)</span><br>
+<span class="tc"># -p 8080:80 = VM port 8080 → container port 80</span><br>
+<span class="tc"># --name = give it a friendly name</span><br>
+<span class="tcmd">docker run</span> <span class="tf">-d -p 8080:80 --name</span> <span class="ts">my-web</span> nginx<br><br>
+<span class="tc"># It's running!</span><br>
+<span class="tcmd">docker ps</span><br>
+<span class="ts">CONTAINER ID  IMAGE  STATUS      PORTS</span><br>
+<span class="ts">xyz789abc     nginx  Up 3s   0.0.0.0:8080->80/tcp</span><br><br>
+<span class="tc"># Test it</span><br>
+<span class="tcmd">curl</span> http://localhost:8080<br>
+<span class="ts"># Returns: "Welcome to nginx!"</span><br><br>
+<span class="tc"># See its logs</span><br>
+<span class="tcmd">docker logs</span> my-web<br><br>
+<span class="tc"># Stop and remove when done</span><br>
+<span class="tcmd">docker stop</span> my-web && <span class="tcmd">docker rm</span> my-web
+              </div>
+            </div>
+            <button class="run-btn" onclick="doneStep('1-3',this)">▶ Done — nginx returned "Welcome to nginx!"</button>
+            <div class="verify" id="v-1-3">
+              <div class="verify-ttl">🎉 You ran your first real service in Docker!</div>
+              <div class="verify-body">nginx is a production web server used by Netflix, GitHub, Cloudflare. You just ran it in 1 command with zero installation. That's the power of containers.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="quiz-block">
+          <div class="quiz-q">What is the difference between <code>docker stop</code> and <code>docker rm</code>?</div>
+          <div class="quiz-opts" id="q-m1">
+            <button class="qopt" onclick="qa(this,'A','B','q-m1')"><div class="ql">A</div> They do the same thing — both delete the container completely</button>
+            <button class="qopt" onclick="qa(this,'B','B','q-m1')"><div class="ql">B</div> stop = gracefully stops a running container (it still exists). rm = permanently deletes the stopped container.</button>
+            <button class="qopt" onclick="qa(this,'C','B','q-m1')"><div class="ql">C</div> stop = deletes container. rm = deletes the image</button>
+            <button class="qopt" onclick="qa(this,'D','B','q-m1')"><div class="ql">D</div> rm works on running containers, stop works on stopped ones</button>
+          </div>
+        </div>
+
+        <div class="errors-section">
+          <div class="err-ttl">🚨 Errors You'll Hit + Fixes</div>
+          <div class="err-item">
+            <div class="err-msg">Got permission denied while trying to connect to the Docker daemon</div>
+            <div class="err-fix">✅ FIX: sudo usermod -aG docker $USER → then logout and login again (or: newgrp docker)</div>
+          </div>
+          <div class="err-item">
+            <div class="err-msg">docker: Error response from daemon: port is already allocated</div>
+            <div class="err-fix">✅ FIX: Something else uses port 8080. Use a different port: -p 8081:80 OR kill the process: lsof -i :8080 → kill -9 PID</div>
+          </div>
+          <div class="err-item">
+            <div class="err-msg">Unable to find image 'hello-world:latest' locally — then network timeout</div>
+            <div class="err-fix">✅ FIX: No internet on VM. Check: curl google.com. If fails, check GCP firewall rules allow egress traffic.</div>
+          </div>
+        </div>
+
+        <button class="complete-btn" id="cb-1" onclick="completeMission(1,50)" disabled>
+          🏆 Complete Mission 01 — Claim 50 XP
+        </button>
+
+        <div class="mission-nav">
+          <span></span>
+          <button class="mnav-btn mnav-next" onclick="showMission(2)">Mission 02 →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MISSION 2 -->
+    <div class="mission-card" id="mc-2">
+      <div class="mc-header">
+        <div class="mc-top">
+          <span class="mc-num">DOCKER · MISSION 02</span>
+          <span class="mc-xp">⚡ +80 XP</span>
+        </div>
+        <div class="mc-title">Write Your First Dockerfile</div>
+        <div class="mc-desc">Package DreamChat backend into a Docker image. Multi-stage build. Security best practices from day one.</div>
+      </div>
+      <div class="mc-body">
+        <div class="concept">
+          <div class="concept-icon">📋</div>
+          <div>
+            <div class="concept-title">Dockerfile = Recipe for your Image</div>
+            <div class="concept-desc">
+              Each line in a Dockerfile creates a <strong>layer</strong>. Layers are <strong>cached</strong> — if you only change your code (not package.json), Docker reuses the npm install layer. This makes rebuilds 10× faster.<br><br>
+              <strong>Order matters!</strong> Put things that change least at top (FROM, npm install), things that change most at bottom (COPY . .). This maximizes cache hits.
+            </div>
+          </div>
+        </div>
+
+        <div class="step-block" id="sb-2-1">
+          <div class="step-block-header">
+            <div class="step-n">1</div>
+            <div class="step-h-title">Create the DreamChat backend</div>
+            <span class="step-h-status shs-todo" id="shs-2-1">todo</span>
+          </div>
+          <div class="step-block-body">
+            <div class="term">
+              <div class="term-bar"><div class="td td-r"></div><div class="td td-y"></div><div class="td td-g"></div><div class="t-ttl">Create project</div></div>
+              <div class="term-body">
+<span class="tcmd">mkdir</span> <span class="ts">-p ~/dream-chat/backend</span> && <span class="tcmd">cd</span> ~/dream-chat/backend<br><br>
+<span class="tc"># Create simple server</span><br>
+<span class="tcmd">cat</span> > server.js << 'EOF'<br>
+<span class="tk">const</span> http = require(<span class="ts">'http'</span>);<br>
+<span class="tk">const</span> server = http.createServer((req, res) => {<br>
+&nbsp;&nbsp;<span class="tk">if</span> (req.url === <span class="ts">'/health'</span>) {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;res.writeHead(<span class="tf">200</span>);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;res.end(JSON.stringify({status:<span class="ts">'ok'</span>,uptime:process.uptime()}));<br>
+&nbsp;&nbsp;} <span class="tk">else</span> {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;res.end(<span class="ts">'DreamChat Backend 🚀'</span>);<br>
+&nbsp;&nbsp;}<br>
+});<br>
+server.listen(<span class="tf">3001</span>, () => console.log(<span class="ts">'Running on 3001'</span>));<br>
+EOF<br><br>
+<span class="tcmd">npm init -y</span>
+              </div>
+            </div>
+            <button class="run-btn" onclick="doneStep('2-1',this)">▶ Created server.js</button>
+            <div class="verify" id="v-2-1">
+              <div class="verify-ttl">✅ Good</div>
+              <div class="verify-body">You have <strong>server.js</strong> and <strong>package.json</strong>. Notice we added a <code>/health</code> endpoint — Kubernetes will use this to check if your app is alive!</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-block" id="sb-2-2">
+          <div class="step-block-header">
+            <div class="step-n">2</div>
+            <div class="step-h-title">Write the production-grade Dockerfile</div>
+            <span class="step-h-status shs-todo" id="shs-2-2">todo</span>
+          </div>
+          <div class="step-block-body">
+            <div class="term">
+              <div class="term-bar"><div class="td td-r"></div><div class="td td-y"></div><div class="td td-g"></div><div class="t-ttl">backend/Dockerfile</div></div>
+              <div class="term-body">
+<span class="tcmd">nano</span> Dockerfile<br><br>
+<span class="tc"># ═══ Paste this exactly ═══</span><br><br>
+<span class="tc"># Stage 1: Install dependencies (build stage)</span><br>
+<span class="tk">FROM</span> node:20-alpine <span class="tk">AS</span> builder<br>
+<span class="tk">WORKDIR</span> /app<br>
+<span class="tc"># Copy package files FIRST (cache optimization!)</span><br>
+<span class="tk">COPY</span> package*.json ./<br>
+<span class="tk">RUN</span> npm ci --only=production<br><br>
+<span class="tc"># Stage 2: Runtime (final tiny image)</span><br>
+<span class="tk">FROM</span> node:20-alpine<br>
+<span class="tc"># Security: never run as root</span><br>
+<span class="tk">RUN</span> addgroup -S appgrp && adduser -S appuser -G appgrp<br>
+<span class="tk">WORKDIR</span> /app<br>
+<span class="tc"># Copy only what we need from builder</span><br>
+<span class="tk">COPY</span> --from=builder /app/node_modules ./node_modules<br>
+<span class="tk">COPY</span> . .<br>
+<span class="tc"># Switch to non-root user</span><br>
+<span class="tk">USER</span> appuser<br>
+<span class="tk">EXPOSE</span> 3001<br>
+<span class="tc"># Health check — K8s uses this!</span><br>
+<span class="tk">HEALTHCHECK</span> --interval=30s --timeout=3s \<br>
+&nbsp;&nbsp;<span class="tk">CMD</span> wget -q http://localhost:3001/health || exit 1<br>
+<span class="tk">CMD</span> ["node", "server.js"]
+              </div>
+            </div>
+            <button class="run-btn" onclick="doneStep('2-2',this)">▶ Dockerfile created</button>
+            <div class="verify" id="v-2-2">
+              <div class="verify-ttl">✅ Why each line is important</div>
+              <div class="verify-body">
+                <strong>node:20-alpine</strong> = 5MB base (vs 900MB ubuntu). <strong>npm ci</strong> = reproducible installs (locks versions). <strong>--only=production</strong> = skip devDependencies. <strong>Multi-stage</strong> = build tools not in final image. <strong>USER appuser</strong> = security. <strong>HEALTHCHECK</strong> = K8s restarts unhealthy pods.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-block" id="sb-2-3">
+          <div class="step-block-header">
+            <div class="step-n">3</div>
+            <div class="step-h-title">Build, run, and verify</div>
+            <span class="step-h-status shs-todo" id="shs-2-3">todo</span>
+          </div>
+          <div class="step-block-body">
+            <div class="term">
+              <div class="term-bar"><div class="td td-r"></div><div class="td td-y"></div><div class="td td-g"></div><div class="t-ttl">Build + run your image</div></div>
+              <div class="term-body">
+<span class="tc"># Build the image (. = current directory)</span><br>
+<span class="tcmd">docker build</span> <span class="tf">-t</span> dream-backend:v1 .<br>
+<span class="ts">Step 1/10 : FROM node:20-alpine AS builder</span><br>
+<span class="ts">Successfully built a1b2c3d4e5f6</span><br>
+<span class="ts">Successfully tagged dream-backend:v1</span><br><br>
+<span class="tc"># Check image size</span><br>
+<span class="tcmd">docker images</span> dream-backend<br>
+<span class="ts">dream-backend  v1  abc123  ~85MB  ← tiny!</span><br><br>
+<span class="tc"># Run it</span><br>
+<span class="tcmd">docker run</span> <span class="tf">-d -p 3001:3001 --name</span> backend dream-backend:v1<br><br>
+<span class="tc"># Test health endpoint</span><br>
+<span class="tcmd">curl</span> http://localhost:3001/health<br>
+<span class="ts">{"status":"ok","uptime":2.34}</span>  ← 
+              </div>
+            </div>
+            <button class="run-btn" onclick="doneStep('2-3',this)">▶ Health endpoint returns JSON!</button>
+            <div class="verify" id="v-2-3">
+              <div class="verify-ttl">🎉 You built a production-grade Docker image!</div>
+              <div class="verify-body">~85MB image. Non-root user. Health check. Multi-stage build. This is better than 80% of Dockerfiles in the wild. You just went from code to containerized app in minutes.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="info ib-amber">
+          <span class="ii">💡</span>
+          <div class="it"><strong>Interview tip:</strong> When asked "how do you optimize a Dockerfile?" say: multi-stage builds, alpine base image, order layers by change frequency (least-changed first), combine RUN commands with &&, use .dockerignore to exclude node_modules and .git from build context.</div>
+        </div>
+
+        <div class="errors-section">
+          <div class="err-ttl">🚨 Common Dockerfile Errors + Fixes</div>
+          <div class="err-item">
+            <div class="err-msg">COPY failed: file not found in build context: stat package.json</div>
+            <div class="err-fix">✅ FIX: You're running docker build from wrong directory. Must be in the folder with Dockerfile: cd ~/dream-chat/backend && docker build -t dream-backend:v1 .</div>
+          </div>
+          <div class="err-item">
+            <div class="err-msg">RUN npm ci → sh: npm: not found</div>
+            <div class="err-fix">✅ FIX: Alpine images use minimal shell. The issue is the WORKDIR might not exist. Add: RUN mkdir -p /app before WORKDIR /app</div>
+          </div>
+          <div class="err-item">
+            <div class="err-msg">container exited immediately with code 1</div>
+            <div class="err-fix">✅ FIX: Check logs: docker logs backend. 99% of the time it's an app error — missing env var, can't connect to DB, syntax error in code.</div>
+          </div>
+        </div>
+
+        <button class="complete-btn" id="cb-2" onclick="completeMission(2,80)" disabled>
+          🏆 Complete Mission 02 — Claim 80 XP
+        </button>
+
+        <div class="mission-nav">
+          <button class="mnav-btn mnav-prev" onclick="showMission(1)">← Mission 01</button>
+          <button class="mnav-btn mnav-next" onclick="showMission(3)">Mission 03 →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MISSIONS 3-15 PLACEHOLDER -->
+    <div class="mission-card" id="mc-3">
+      <div class="mc-header">
+        <div class="mc-top"><span class="mc-num">DOCKER · MISSION 03</span><span class="mc-xp">⚡ +90 XP</span></div>
+        <div class="mc-title">Multi-Stage Builds Deep Dive</div>
+        <div class="mc-desc">Reduce image from 900MB to 85MB. Understand build stages. Copy only what you need.</div>
+      </div>
+      <div class="mc-body">
+        <div class="info ib-blue"><span class="ii">🔓</span><div class="it"><strong>Complete Mission 02 to unlock this mission.</strong> Progress saves automatically — come back anytime!</div></div>
+        <div class="mission-nav">
+          <button class="mnav-btn mnav-prev" onclick="showMission(2)">← Mission 02</button>
+          <button class="mnav-btn mnav-next" onclick="showMission(4)">Mission 04 →</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="mission-card" id="mc-4">
+      <div class="mc-header">
+        <div class="mc-top"><span class="mc-num">DOCKER · MISSION 04</span><span class="mc-xp">⚡ +80 XP</span></div>
+        <div class="mc-title">Container Networking</div>
+        <div class="mc-desc">Why localhost doesn't work between containers. Bridge, host, custom networks. Connect DreamChat services.</div>
+      </div>
+      <div class="mc-body">
+        <div class="info ib-blue"><span class="ii">🔓</span><div class="it"><strong>Complete Mission 03 to unlock.</strong></div></div>
+        <div class="mission-nav"><button class="mnav-btn mnav-prev" onclick="showMission(3)">← M03</button><button class="mnav-btn mnav-next" onclick="showMission(5)">M05 →</button></div>
+      </div>
+    </div>
+
+    <div class="mission-card" id="mc-5">
+      <div class="mc-header">
+        <div class="mc-top"><span class="mc-num">DOCKER · MISSION 05</span><span class="mc-xp">⚡ +80 XP</span></div>
+        <div class="mc-title">Volumes — Persistent Data</div>
+        <div class="mc-desc">Kill MongoDB container, all data gone. Fix it with volumes. Never lose data again.</div>
+      </div>
+      <div class="mc-body">
+        <div class="info ib-blue"><span class="ii">🔓</span><div class="it"><strong>Complete Mission 04 to unlock.</strong></div></div>
+        <div class="mission-nav"><button class="mnav-btn mnav-prev" onclick="showMission(4)">← M04</button><button class="mnav-btn mnav-next" onclick="showMission(6)">M06 →</button></div>
+      </div>
+    </div>
+
+    <div class="mission-card" id="mc-6">
+      <div class="mc-header">
+        <div class="mc-top"><span class="mc-num">DOCKER · MISSION 06</span><span class="mc-xp">⚡ +120 XP</span></div>
+        <div class="mc-title">Docker Compose — Full Stack</div>
+        <div class="mc-desc">Deploy frontend + backend + MongoDB with single docker-compose.yml. One command = entire app.</div>
+      </div>
+      <div class="mc-body">
+        <div class="info ib-blue"><span class="ii">🔓</span><div class="it"><strong>Complete Mission 05 to unlock.</strong></div></div>
+        <div class="mission-nav"><button class="mnav-btn mnav-prev" onclick="showMission(5)">← M05</button><button class="mnav-btn mnav-next" onclick="showMission(7)">M07 →</button></div>
+      </div>
+    </div>
+
+    <!-- Missions 7-15 similar structure -->
+    <div class="mission-card" id="mc-7"><div class="mc-header"><div class="mc-top"><span class="mc-num">DOCKER · MISSION 07</span><span class="mc-xp">⚡ +100 XP</span></div><div class="mc-title">Docker Security Hardening</div><div class="mc-desc">Non-root users, read-only filesystem, secret management, .dockerignore. Security from day one.</div></div><div class="mc-body"><div class="info ib-blue"><span class="ii">🔓</span><div class="it"><strong>Complete Mission 06 to unlock.</strong></div></div><div class="mission-nav"><button class="mnav-btn mnav-prev" onclick="showMission(6)">← M06</button><button class="mnav-btn mnav-next" onclick="showMission(8)">M08 →</button></div></div></div>
+
+    <div class="mission-card" id="mc-8"><div class="mc-header"><div class="mc-top"><span class="mc-num">DOCKER · MISSION 08</span><span class="mc-xp">⚡ +90 XP</span></div><div class="mc-title">Push to GCR Registry</div><div class="mc-desc">Tag your image with GCR URI. Authenticate Docker to GCP. Push. Pull from Kubernetes.</div></div><div class="mc-body"><div class="info ib-blue"><span class="ii">🔓</span><div class="it"><strong>Complete Mission 07 to unlock.</strong></div></div><div class="mission-nav"><button class="mnav-btn mnav-prev" onclick="showMission(7)">← M07</button><button class="mnav-btn mnav-next" onclick="showMission(9)">M09 →</button></div></div></div>
+
+    <div class="mission-card" id="mc-9"><div class="mc-header"><div class="mc-top"><span class="mc-num">DOCKER · MISSION 09</span><span class="mc-xp">⚡ +80 XP</span></div><div class="mc-title">Debug Like a Pro</div><div class="mc-desc">exec into containers, inspect, stats, events. Find and fix 5 common container problems.</div></div><div class="mc-body"><div class="info ib-blue"><span class="ii">🔓</span><div class="it"><strong>Complete Mission 08 to unlock.</strong></div></div><div class="mission-nav"><button class="mnav-btn mnav-prev" onclick="showMission(8)">← M08</button><button class="mnav-btn mnav-next" onclick="showMission(10)">M10 →</button></div></div></div>
+
+    <div class="mission-card" id="mc-10"><div class="mc-header"><div class="mc-top"><span class="mc-num">DOCKER · MISSION 10</span><span class="mc-xp">⚡ +150 XP</span></div><div class="mc-title">DreamChat Full Stack Deploy</div><div class="mc-desc">Containerize ALL DreamChat services. Frontend + Backend + MongoDB running together. Access from your Mac browser.</div></div><div class="mc-body"><div class="info ib-blue"><span class="ii">🔓</span><div class="it"><strong>Complete Mission 09 to unlock.</strong></div></div><div class="mission-nav"><button class="mnav-btn mnav-prev" onclick="showMission(9)">← M09</button><button class="mnav-btn mnav-next" onclick="showMission(11)">M11 →</button></div></div></div>
+
+    <div class="mission-card" id="mc-11"><div class="mc-header"><div class="mc-top"><span class="mc-num">DOCKER · MISSION 11</span><span class="mc-xp">⚡ +90 XP</span></div><div class="mc-title">Build Optimization</div><div class="mc-desc">.dockerignore, BuildKit, layer caching strategy. Go from 45s builds to 8s builds.</div></div><div class="mc-body"><div class="info ib-blue"><span class="ii">🔓</span><div class="it"><strong>Complete Mission 10 to unlock.</strong></div></div><div class="mission-nav"><button class="mnav-btn mnav-prev" onclick="showMission(10)">← M10</button><button class="mnav-btn mnav-next" onclick="showMission(12)">M12 →</button></div></div></div>
+
+    <div class="mission-card" id="mc-12"><div class="mc-header"><div class="mc-top"><span class="mc-num">DOCKER · MISSION 12</span><span class="mc-xp">⚡ +80 XP</span></div><div class="mc-title">Container Monitoring</div><div class="mc-desc">docker stats, cAdvisor, resource limits. Know how much CPU/memory your containers use.</div></div><div class="mc-body"><div class="info ib-blue"><span class="ii">🔓</span><div class="it"><strong>Complete Mission 11 to unlock.</strong></div></div><div class="mission-nav"><button class="mnav-btn mnav-prev" onclick="showMission(11)">← M11</button><button class="mnav-btn mnav-next" onclick="showMission(13)">M13 →</button></div></div></div>
+
+    <div class="mission-card" id="mc-13"><div class="mc-header"><div class="mc-top"><span class="mc-num">DOCKER · MISSION 13</span><span class="mc-xp">⚡ +100 XP</span></div><div class="mc-title">Trivy Security Scan</div><div class="mc-desc">Scan your Docker images for CVEs. Fix HIGH and CRITICAL vulnerabilities. Build a secure image.</div></div><div class="mc-body"><div class="info ib-blue"><span class="ii">🔓</span><div class="it"><strong>Complete Mission 12 to unlock.</strong></div></div><div class="mission-nav"><button class="mnav-btn mnav-prev" onclick="showMission(12)">← M12</button><button class="mnav-btn mnav-next" onclick="showMission(14)">M14 →</button></div></div></div>
+
+    <div class="mission-card" id="mc-14"><div class="mc-header"><div class="mc-top"><span class="mc-num">DOCKER · MISSION 14</span><span class="mc-xp">⚡ +100 XP</span></div><div class="mc-title">Production Dockerfile Patterns</div><div class="mc-desc">distroless images, scratch base, OCI labels, SBOM. Enterprise-grade containerization.</div></div><div class="mc-body"><div class="info ib-blue"><span class="ii">🔓</span><div class="it"><strong>Complete Mission 13 to unlock.</strong></div></div><div class="mission-nav"><button class="mnav-btn mnav-prev" onclick="showMission(13)">← M13</button><button class="mnav-btn mnav-next" onclick="showMission(15)">M15 →</button></div></div></div>
+
+    <div class="mission-card" id="mc-15">
+      <div class="mc-header">
+        <div class="mc-top"><span class="mc-num">DOCKER · MISSION 15</span><span class="mc-xp">⚡ +200 XP</span></div>
+        <div class="mc-title">🏆 Docker Track Boss Challenge</div>
+        <div class="mc-desc">Build and deploy a complete secure Docker setup from memory. Time limit: 45 minutes. No hints.</div>
+      </div>
+      <div class="mc-body">
+        <div class="info ib-blue"><span class="ii">🔓</span><div class="it"><strong>Complete all 14 missions to unlock the Boss Challenge.</strong></div></div>
+        <div class="mission-nav"><button class="mnav-btn mnav-prev" onclick="showMission(14)">← M14</button><a href="forge-kubernetes.html" class="mnav-btn mnav-next">Start K8s Track →</a></div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<footer>
+  <div>FORGE · Docker Track · 15 Missions · akshc15.github.io/forge.html</div>
+  <div style="margin-top:8px">
+    <a href="forge.html">← All Tracks</a>
+    <a href="forge-kubernetes.html">K8s Track →</a>
+    <a href="forge-terraform.html">Terraform Track →</a>
+    <a href="dream-interview.html">Interview Quiz</a>
+  </div>
+</footer>
+
+<script>
+// ── STATE ──
+let state=JSON.parse(localStorage.getItem('forge-state')||'{}');
+if(!state.done) state={xp:0,streak:0,done:{linux:[],git:[],docker:[],k8s:[],terraform:[],ansible:[]}};
+
+function saveState(){localStorage.setItem('forge-state',JSON.stringify(state));}
+
+// ── NAV XP ──
+document.getElementById('nav-xp').textContent=state.xp||0;
+
+// ── SHOW MISSION ──
+let stepsPerMission={};
+function showMission(n){
+  document.querySelectorAll('.mission-card').forEach(c=>c.classList.remove('active'));
+  document.querySelectorAll('.sidebar-mission').forEach(s=>s.classList.remove('active'));
+  const mc=document.getElementById('mc-'+n);
+  const sm=document.getElementById('sm-'+n);
+  if(mc) mc.classList.add('active');
+  if(sm) sm.classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+  // Restore step states for this mission
+  restoreSteps(n);
+}
+
+// ── DONE STEP ──
+function doneStep(id,btn){
+  btn.style.display='none';
+  btn.closest('.step-block').classList.add('done-block');
+  const status=document.getElementById('shs-'+id);
+  if(status){status.textContent='done';status.className='step-h-status shs-done';}
+  const vbox=document.getElementById('v-'+id);
+  if(vbox) vbox.classList.add('show');
+
+  // Track steps for this mission
+  const mNum=id.split('-')[0];
+  if(!stepsPerMission[mNum]) stepsPerMission[mNum]=new Set();
+  stepsPerMission[mNum].add(id);
+
+  // Save to localStorage
+  const key='forge-steps-'+mNum;
+  const existing=JSON.parse(localStorage.getItem(key)||'[]');
+  if(!existing.includes(id)){existing.push(id);localStorage.setItem(key,JSON.stringify(existing));}
+
+  // Enable complete btn if enough steps done
+  const cb=document.getElementById('cb-'+mNum);
+  if(cb && stepsPerMission[mNum].size>=2) cb.disabled=false;
+}
+
+// ── RESTORE STEPS ──
+function restoreSteps(mNum){
+  const key='forge-steps-'+mNum;
+  const saved=JSON.parse(localStorage.getItem(key)||'[]');
+  if(!stepsPerMission[mNum]) stepsPerMission[mNum]=new Set();
+  saved.forEach(id=>{
+    stepsPerMission[mNum].add(id);
+    const status=document.getElementById('shs-'+id);
+    if(status){status.textContent='done';status.className='step-h-status shs-done';}
+    const sb=document.getElementById('sb-'+id);
+    if(sb) sb.classList.add('done-block');
+    const vbox=document.getElementById('v-'+id);
+    if(vbox) vbox.classList.add('show');
+    const btn=sb?sb.querySelector('.run-btn'):null;
+    if(btn) btn.style.display='none';
+  });
+  const cb=document.getElementById('cb-'+mNum);
+  if(cb && stepsPerMission[mNum].size>=2) cb.disabled=false;
+}
+
+// ── COMPLETE MISSION ──
+function completeMission(n,xp){
+  if(!state.done.docker) state.done.docker=[];
+  const id='m'+n;
+  if(!state.done.docker.includes(id)){
+    state.done.docker.push(id);
+    state.xp=(state.xp||0)+xp;
+    saveState();
+  }
+  document.getElementById('nav-xp').textContent=state.xp;
+
+  // Update sidebar badge
+  const sm=document.getElementById('sm-'+n);
+  if(sm){
+    sm.querySelector('.sm-badge').textContent='done';
+    sm.querySelector('.sm-badge').className='sm-badge smb-done';
+    sm.querySelector('.sm-icon').textContent='✅';
+    sm.classList.add('done');
+  }
+
+  const cb=document.getElementById('cb-'+n);
+  if(cb){
+    cb.textContent='✅ Mission '+String(n).padStart(2,'0')+' Complete! +'+xp+' XP Earned!';
+    cb.style.background='linear-gradient(135deg,var(--lime),#00e05e)';
+    cb.style.boxShadow='0 8px 30px rgba(0,200,81,0.3)';
+  }
+  showToast('🏆 Mission '+String(n).padStart(2,'0')+' Complete! +'+xp+' XP!');
+
+  // Auto advance after 1.5s
+  setTimeout(()=>showMission(n+1),1500);
+}
+
+// ── QUIZ ──
+function qa(btn,chosen,correct,qId){
+  const opts=document.querySelectorAll('#'+qId+' .qopt');
+  const ls=['A','B','C','D'];
+  opts.forEach((o,i)=>{
+    o.style.pointerEvents='none';
+    if(ls[i]===correct) o.classList.add('correct');
+    else if(ls[i]===chosen&&chosen!==correct) o.classList.add('wrong');
+    const l=o.querySelector('.ql');
+    if(ls[i]===correct){l.style.background='var(--lime)';l.style.color='white';}
+    else if(ls[i]===chosen&&chosen!==correct){l.style.background='var(--red)';l.style.color='white';}
+  });
+}
+
+// ── TOAST ──
+function showToast(msg){
+  const t=document.createElement('div');
+  t.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1a1f3a;color:white;font-family:var(--code);font-size:13px;padding:12px 24px;border-radius:10px;box-shadow:0 8px 30px rgba(0,0,0,0.2);z-index:9999;border:1px solid rgba(255,255,255,0.1);';
+  t.textContent=msg;
+  document.body.appendChild(t);
+  setTimeout(()=>t.remove(),3000);
+}
+
+// ── INIT ──
+restoreSteps(1);
+// Mark done missions in sidebar
+if(state.done&&state.done.docker){
+  state.done.docker.forEach(id=>{
+    const n=parseInt(id.replace('m',''));
+    const sm=document.getElementById('sm-'+n);
+    if(sm){
+      sm.querySelector('.sm-badge').textContent='done';
+      sm.querySelector('.sm-badge').className='sm-badge smb-done';
+      sm.querySelector('.sm-icon').textContent='✅';
+      sm.classList.add('done');
+    }
+  });
+}
+</script>
+</body>
+</html>
