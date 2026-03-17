@@ -1,0 +1,59 @@
+name: DevPath CI/CD
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+
+  validate:
+    name: Validate Files
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Check all HTML files have content
+        run: |
+          for f in $(find . -name "*.html" \
+            -not -path "./.git/*"); do
+            if [ ! -s "$f" ]; then
+              echo "❌ Empty file: $f"
+              exit 1
+            fi
+          done
+          echo "✅ All HTML files valid"
+
+      - name: Check CSS and JS exist
+        run: |
+          test -f css/main.css && \
+            echo "✅ main.css exists" || \
+            echo "⚠️ main.css missing"
+          test -f js/app.js && \
+            echo "✅ app.js exists" || \
+            echo "⚠️ app.js missing"
+
+  deploy:
+    name: Deploy to GitHub Pages
+    runs-on: ubuntu-latest
+    needs: validate
+    if: github.ref == 'refs/heads/main'
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./
+          commit_message: |
+            deploy: ${{ github.event.head_commit.message }}
+
+      - name: Print live URL
+        run: echo "🚀 Live at https://akshc15.github.io"
