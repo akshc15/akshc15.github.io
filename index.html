@@ -3,222 +3,257 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>My DevOps Learning Portal</title>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<title>akshc15 — DevOps Learning Portal</title>
+<link rel="stylesheet" href="css/main.css">
 <style>
-  :root {
-    --bg: #060910;
-    --accent: #00e5ff;
-    --orange: #FF6B35;
-    --yellow: #FFD93D;
-    --green: #6BCB77;
-    --text: #e2e8f0;
-    --muted: #64748b;
-    --panel: #101520;
-    --border: #1e2840;
-    --display: 'Bebas Neue', cursive;
-    --body: 'Nunito', sans-serif;
-    --mono: 'JetBrains Mono', monospace;
-  }
-  * { margin:0; padding:0; box-sizing:border-box; }
-  body {
-    background: var(--bg);
-    font-family: var(--body);
-    color: var(--text);
-    min-height: 100vh;
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    padding: 40px 20px;
-    position: relative;
-    overflow-x: hidden;
-  }
-  body::before {
-    content: '';
-    position: fixed; inset: 0;
-    background:
-      radial-gradient(ellipse at 20% 20%, rgba(0,229,255,0.06) 0%, transparent 50%),
-      radial-gradient(ellipse at 80% 80%, rgba(255,107,53,0.05) 0%, transparent 50%);
-    pointer-events: none;
-  }
-
-  .badge {
-    font-family: var(--mono);
-    font-size: 12px;
-    color: var(--accent);
-    border: 1px solid rgba(0,229,255,0.3);
-    background: rgba(0,229,255,0.07);
-    padding: 5px 16px;
-    border-radius: 20px;
-    margin-bottom: 24px;
-    letter-spacing: 0.1em;
-    animation: fadeIn 0.6s both;
-  }
-  @keyframes fadeIn { from{opacity:0;transform:translateY(-10px)} to{opacity:1;transform:translateY(0)} }
-
-  h1 {
-    font-family: var(--display);
-    font-size: clamp(48px, 10vw, 96px);
-    line-height: 0.95;
+  .hero-gradient {
+    background: linear-gradient(135deg, #f0f7ff 0%, #fafafa 50%, #f5f0ff 100%);
+    border-bottom: 1px solid #e8e8ed;
+    padding: 80px 24px 64px;
     text-align: center;
-    letter-spacing: 3px;
-    margin-bottom: 12px;
-    animation: fadeIn 0.6s 0.1s both;
   }
-  h1 span.line1 { display:block; color: var(--text); }
-  h1 span.line2 { display:block; color: var(--accent); }
-
-  .sub {
-    color: var(--muted);
-    text-align: center;
-    font-size: 16px;
-    max-width: 500px;
-    margin-bottom: 50px;
-    animation: fadeIn 0.6s 0.2s both;
-    line-height: 1.6;
+  .avatar {
+    width: 72px; height: 72px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #0071e3, #5e5ce6);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 28px;
+    margin: 0 auto 20px;
+    box-shadow: 0 8px 24px rgba(0,113,227,0.2);
   }
-
-  .cards {
+  .portal-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 20px;
-    max-width: 750px;
-    width: 100%;
-    animation: fadeIn 0.6s 0.3s both;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 16px;
+    max-width: 1080px;
+    margin: 48px auto 0;
+    padding: 0 24px;
   }
-
-  .card {
-    background: var(--panel);
-    border: 2px solid var(--border);
-    border-radius: 16px;
+  .portal-card {
+    background: white;
+    border: 1px solid #e8e8ed;
+    border-radius: 18px;
     padding: 28px;
     text-decoration: none;
-    transition: all 0.2s;
+    display: block;
+    transition: all 0.25s;
     position: relative;
     overflow: hidden;
+  }
+  .portal-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: var(--card-color, #0071e3);
+    border-radius: 18px 18px 0 0;
+  }
+  .portal-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.08);
+    border-color: rgba(0,113,227,0.2);
+  }
+  .card-icon {
+    font-size: 40px;
+    margin-bottom: 14px;
     display: block;
   }
-  .card::before {
-    content: '';
-    position: absolute; inset: 0;
-    opacity: 0;
-    transition: opacity 0.3s;
-    border-radius: 14px;
-  }
-  .card.blue::before { background: radial-gradient(ellipse at top left, rgba(0,229,255,0.1), transparent 60%); }
-  .card.orange::before { background: radial-gradient(ellipse at top left, rgba(255,107,53,0.1), transparent 60%); }
-  .card:hover { transform: translateY(-6px); border-color: var(--accent); }
-  .card.orange:hover { border-color: var(--orange); }
-  .card:hover::before { opacity: 1; }
-
-  .card-icon { font-size: 52px; margin-bottom: 14px; display: block; }
   .card-title {
-    font-family: var(--display);
-    font-size: 28px;
-    letter-spacing: 2px;
-    margin-bottom: 8px;
-    color: var(--accent);
-  }
-  .card.orange .card-title { color: var(--orange); }
-  .card-desc { color: var(--muted); font-size: 14px; line-height: 1.6; margin-bottom: 18px; }
-  .card-btn {
-    display: inline-flex; align-items: center; gap: 8px;
-    font-family: var(--mono);
-    font-size: 12px;
+    font-size: 19px;
     font-weight: 700;
-    color: var(--accent);
-    letter-spacing: 0.05em;
+    color: #1d1d1f;
+    letter-spacing: -0.02em;
+    margin-bottom: 8px;
+  }
+  .card-desc {
+    font-size: 14px;
+    color: #6e6e73;
+    line-height: 1.6;
+    margin-bottom: 18px;
+  }
+  .card-link {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--card-color, #0071e3);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .featured {
+    background: linear-gradient(135deg, #f0f7ff, #f5f0ff);
+    border-color: rgba(0,113,227,0.2);
+  }
+  .new-badge {
+    position: absolute;
+    top: 20px; right: 20px;
+    font-size: 10px;
+    font-weight: 700;
+    color: white;
+    background: #0071e3;
+    padding: 3px 10px;
+    border-radius: 100px;
+    letter-spacing: 0.04em;
     text-transform: uppercase;
-  }
-  .card.orange .card-btn { color: var(--orange); }
-
-  .footer {
-    margin-top: 50px;
-    color: var(--muted);
-    font-family: var(--mono);
-    font-size: 12px;
-    text-align: center;
-    animation: fadeIn 0.6s 0.5s both;
-  }
-  .footer a { color: var(--accent); text-decoration: none; }
-
-  .stars {
-    position: fixed; inset: 0; pointer-events: none;
-    background:
-      radial-gradient(1px 1px at 15% 25%, rgba(255,255,255,0.8), transparent),
-      radial-gradient(1px 1px at 40% 60%, rgba(255,255,255,0.6), transparent),
-      radial-gradient(1px 1px at 65% 15%, rgba(255,255,255,0.7), transparent),
-      radial-gradient(1px 1px at 85% 75%, rgba(255,255,255,0.5), transparent),
-      radial-gradient(1px 1px at 25% 85%, rgba(255,255,255,0.6), transparent),
-      radial-gradient(1px 1px at 75% 45%, rgba(255,255,255,0.4), transparent),
-      radial-gradient(2px 2px at 50% 35%, rgba(255,255,255,0.3), transparent);
   }
 </style>
 </head>
 <body>
-<div class="stars"></div>
-<div class="badge">● MY DEVOPS LEARNING PORTAL</div>
-<h1>
-  <span class="line1">DEVOPS</span>
-</h1>
-<p class="sub">Complete learning materials for the End-to-End Kubernetes Three-Tier DevSecOps Project on AWS EKS.</p>
 
-<div class="cards" style="max-width:1000px;grid-template-columns:repeat(auto-fit,minmax(260px,1fr))">
-  <a href="devops-mastery-guide.html" class="card blue">
-    <span class="card-icon">📖</span>
-    <div class="card-title">MASTER GUIDE</div>
-    <p class="card-desc">Complete step-by-step project guide — from AWS account creation to EKS deployment. Every command, every click explained.</p>
-    <div class="card-btn">Open Guide →</div>
-  </a>
+<!-- NAV -->
+<nav class="nav">
+  <a href="index.html" class="nav-brand">akshc15</a>
+  <div class="nav-links">
+    <a href="devpath.html">DevPath</a>
+    <a href="dream-project.html">Dream Project</a>
+    <a href="dream-interview.html">Interview Quiz</a>
+    <a href="https://github.com/akshc15" target="_blank">GitHub ↗</a>
+  </div>
+</nav>
 
-  <a href="apple-devops-portal.html" class="card" style="border-color:#333;--accent:#BF5AF2">
-    <span class="card-icon">🛠️</span>
-    <div class="card-title" style="color:#BF5AF2">SRE GUIDE</div>
-    <p class="card-desc">Deep project guide for SRE/DevOps — HPA, RBAC, Loki, SLOs, incident response, 40+ interview Q&A, error bible, and real-world reliability patterns.</p>
-    <div class="card-btn" style="color:#BF5AF2">Explore SRE →</div>
-  </a>
+<!-- HERO -->
+<div class="hero-gradient">
+  <div class="avatar">👨‍💻</div>
+  <h1 style="font-size:clamp(32px,5vw,52px);letter-spacing:-.03em;margin-bottom:12px;">
+    DevOps Learning Portal
+  </h1>
+  <p style="font-size:17px;color:#6e6e73;max-width:480px;margin:0 auto 28px;line-height:1.6;">
+    Everything you need to go from zero to
+    DevOps engineer. Free. Open source. Built by Akshay.
+  </p>
+  <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
+    <a href="devpath.html" class="btn btn-blue">
+      Start Learning
+    </a>
+    <a href="dream-project.html" class="btn btn-outline">
+      View Projects
+    </a>
+  </div>
+</div>
 
-  <a href="devops-cartoon.html" class="card orange">
-    <span class="card-icon">🎬</span>
-    <div class="card-title">CARTOON STORY</div>
-    <p class="card-desc">10-episode animated cartoon that teaches every DevOps concept with analogies, stories, and real error fixes you'll never forget.</p>
-    <div class="card-btn">Start Adventure →</div>
-  </a>
+<!-- CARDS GRID -->
+<div class="portal-grid">
 
-  <a href="projects.html" class="card" style="border-color:rgba(245,158,11,0.3);">
-    <span class="card-icon">🗺️</span>
-    <div class="card-title" style="color:#f59e0b;">PROJECTS ROADMAP</div>
-    <p class="card-desc">20 spoon-fed projects from Rookie to Pro — Docker, Kubernetes, Terraform, Ansible, CI/CD, Git & Monitoring. Click-by-click guides for every single one.</p>
-    <div class="card-btn" style="color:#f59e0b;">Start Building →</div>
-  </a>
-  <a href="cloud-setup.html" class="card" style="border-color:rgba(52,211,153,0.3);">
-    <span class="card-icon">☁️</span>
-    <div class="card-title" style="color:#34d399;">CLOUD VM UNIVERSE</div>
-    <p class="card-desc">Create your FREE cloud computer on AWS/Azure/GCP. Connect VS Code from M4 Mac. Run all 20 projects in the cloud — zero Mac storage used!</p>
-    <div class="card-btn" style="color:#34d399;">Launch Cloud →</div>
-  </a>
-  <a href="dream-project.html" class="card" style="border-color:rgba(0,245,255,0.4);background:linear-gradient(135deg,rgba(0,245,255,0.04),rgba(192,132,252,0.04));">
-    <span class="card-icon">💬</span>
-    <div class="card-title" style="color:#00f5ff;">DREAM PROJECT</div>
-    <p class="card-desc">End-to-end Chat App on Kubernetes — Docker, Terraform, Ansible, CI/CD, Monitoring. All 3 clouds compared. Free to run. Interview-winning portfolio.</p>
-    <div class="card-btn" style="color:#00f5ff;">Build Dream →</div>
-  </a>
-
-  <a href="dream-interview.html" class="card" style="border-color:rgba(192,132,252,0.4);">
-    <span class="card-icon">🧠</span>
-    <div class="card-title" style="color:#c084fc;">INTERVIEW QUIZ</div>
-    <p class="card-desc">100 real DevOps questions with instant feedback + scoring. 60-day battle plan. Answer → get scored → learn the perfect answer.</p>
-    <div class="card-btn" style="color:#c084fc;">Start Quiz →</div>
-  </a>
-  <a href="forge.html" class="card" style="border-color:rgba(0,102,255,0.4);">
+  <!-- DEVPATH — FEATURED -->
+  <a href="devpath.html" class="portal-card featured"
+    style="--card-color:#0071e3;grid-column:1/-1;">
+    <span class="new-badge">New</span>
     <span class="card-icon">⚒️</span>
-    <div class="card-title" style="color:#0071e3;">PLAYGROUND</div>
-    <p class="card-desc">Interactive DevOps learning. 90+ missions — Docker, K8s, Terraform, Ansible, Linux, Git. Real commands on your GCP VM. Progress saved. ₹0 cost.</p>
-    <div class="card-btn" style="color:#0071e3;">Start Learning →</div>
+    <div class="card-title">DevPath — Interactive Learning Platform</div>
+    <p class="card-desc">
+      The complete DevOps learning ecosystem.
+      90+ missions across Docker, Kubernetes, Terraform,
+      Ansible, Linux and Git. Real commands on your cloud VM.
+      Projects to build. Architecture maps to visualise.
+      Progress saved automatically. Free forever.
+    </p>
+    <div class="card-link">Start your journey →</div>
   </a>
+
+  <!-- MASTER GUIDE -->
+  <a href="devops-mastery-guide.html" class="portal-card"
+    style="--card-color:#0071e3;">
+    <span class="card-icon">📖</span>
+    <div class="card-title">Master Guide</div>
+    <p class="card-desc">
+      Complete step-by-step project guide.
+      AWS account to EKS deployment.
+      Every command, every click explained.
+    </p>
+    <div class="card-link">Open guide →</div>
+  </a>
+
+  <!-- CARTOON -->
+  <a href="devops-cartoon.html" class="portal-card"
+    style="--card-color:#ff9f0a;">
+    <span class="card-icon">🎬</span>
+    <div class="card-title">Cartoon Story</div>
+    <p class="card-desc">
+      10-episode animated cartoon.
+      Learn every DevOps concept with stories
+      and real error fixes you'll never forget.
+    </p>
+    <div class="card-link" style="color:#ff9f0a;">Watch now →</div>
+  </a>
+
+  <!-- SRE -->
+  <a href="apple-devops-portal.html" class="portal-card"
+    style="--card-color:#5e5ce6;">
+    <span class="card-icon">🛠️</span>
+    <div class="card-title">SRE Guide</div>
+    <p class="card-desc">
+      Deep dive into SRE practices.
+      HPA, RBAC, Loki, SLOs, incident response,
+      40+ interview Q&amp;A and error bible.
+    </p>
+    <div class="card-link" style="color:#5e5ce6;">Explore →</div>
+  </a>
+
+  <!-- PROJECTS ROADMAP -->
+  <a href="projects.html" class="portal-card"
+    style="--card-color:#ff9f0a;">
+    <span class="card-icon">🗺️</span>
+    <div class="card-title">Projects Roadmap</div>
+    <p class="card-desc">
+      20 projects from Rookie to Pro.
+      Docker, Kubernetes, Terraform, Ansible,
+      CI/CD and Monitoring. Click-by-click guides.
+    </p>
+    <div class="card-link" style="color:#ff9f0a;">Start building →</div>
+  </a>
+
+  <!-- CLOUD VM -->
+  <a href="cloud-setup.html" class="portal-card"
+    style="--card-color:#34c759;">
+    <span class="card-icon">☁️</span>
+    <div class="card-title">Cloud VM Setup</div>
+    <p class="card-desc">
+      Create your free cloud computer on
+      AWS, Azure or GCP. Connect VS Code from
+      your Mac. Zero Mac storage used.
+    </p>
+    <div class="card-link" style="color:#34c759;">Setup guide →</div>
+  </a>
+
+  <!-- DREAM PROJECT -->
+  <a href="dream-project.html" class="portal-card"
+    style="--card-color:#0071e3;">
+    <span class="card-icon">💬</span>
+    <div class="card-title">Dream Project</div>
+    <p class="card-desc">
+      End-to-end Chat App on Kubernetes.
+      Docker, Terraform, Ansible, CI/CD,
+      Monitoring. All 3 clouds compared.
+    </p>
+    <div class="card-link">Build it →</div>
+  </a>
+
+  <!-- INTERVIEW QUIZ -->
+  <a href="dream-interview.html" class="portal-card"
+    style="--card-color:#5e5ce6;">
+    <span class="card-icon">🧠</span>
+    <div class="card-title">Interview Quiz</div>
+    <p class="card-desc">
+      100 real DevOps questions.
+      Answer and get instant feedback.
+      60-day battle plan included.
+    </p>
+    <div class="card-link" style="color:#5e5ce6;">Start quiz →</div>
+  </a>
+
 </div>
 
-<div class="footer">
-  Built with ❤️ using AWS EKS · Terraform · Jenkins · ArgoCD · Prometheus<br>
-  <span style="margin-top:6px;display:block">Hosted free on <a href="https://pages.github.com" target="_blank">GitHub Pages</a></span>
-</div>
+<!-- FOOTER -->
+<footer style="margin-top:64px;">
+  <div class="f-brand">akshc15</div>
+  <p>DevOps Learning Portal · Built with GitHub Pages · Free forever</p>
+  <div>
+    <a href="devpath.html">DevPath</a>
+    <a href="dream-project.html">Dream Project</a>
+    <a href="dream-interview.html">Interview Quiz</a>
+    <a href="https://github.com/akshc15" target="_blank">GitHub</a>
+  </div>
+</footer>
+
+<script src="js/app.js"></script>
 </body>
 </html>
